@@ -1,0 +1,4161 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    >
+
+    <meta
+        name="description"
+        content="Schattenschreck — Horror-Event am 31. Oktober 2026 in Wardersee."
+    >
+
+    <meta name="theme-color" content="#090909">
+    <meta name="color-scheme" content="dark">
+
+    <title>Schattenschreck — Horror-Event 2026</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Oswald:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <style>
+        :root {
+            --bg: #080808;
+            --bg-soft: #0d0d0d;
+            --panel: #111111;
+            --panel-2: #151515;
+
+            --white: #f4f4f1;
+            --text: #e9e9e6;
+            --muted: #929292;
+            --muted-2: #666;
+
+            --red: #a80710;
+            --red-bright: #d20c18;
+            --red-dark: #450509;
+
+            --line: rgba(255,255,255,.11);
+            --line-soft: rgba(255,255,255,.065);
+
+            --max-width: 1180px;
+            --header-height: 74px;
+
+            --radius: 4px;
+            --shadow: 0 20px 70px rgba(0,0,0,.45);
+
+            --scroll-progress: 0%;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            background: var(--bg);
+        }
+
+        body {
+            margin: 0;
+            background:
+                radial-gradient(
+                    circle at 50% 8%,
+                    rgba(120,0,8,.10),
+                    transparent 35%
+                ),
+                var(--bg);
+
+            color: var(--text);
+            font-family: "DM Sans", Arial, sans-serif;
+            line-height: 1.6;
+
+            overflow-x: hidden;
+
+            -webkit-font-smoothing: antialiased;
+            text-rendering: optimizeLegibility;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 9990;
+
+            background:
+                linear-gradient(
+                    rgba(255,255,255,.018) 1px,
+                    transparent 1px
+                );
+
+            background-size: 100% 5px;
+            opacity: .18;
+            mix-blend-mode: overlay;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 9989;
+
+            background:
+                radial-gradient(
+                    ellipse at center,
+                    transparent 35%,
+                    rgba(0,0,0,.55) 100%
+                );
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button,
+        a {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        button {
+            font: inherit;
+        }
+
+        img {
+            max-width: 100%;
+            display: block;
+        }
+
+        ::selection {
+            background: var(--red);
+            color: white;
+        }
+
+        /* --------------------------------
+           ACCESSIBILITY
+        -------------------------------- */
+
+        :focus-visible {
+            outline: 2px solid var(--red-bright);
+            outline-offset: 4px;
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0,0,0,0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* --------------------------------
+           SCROLL PROGRESS
+        -------------------------------- */
+
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 10001;
+
+            width: var(--scroll-progress);
+            height: 2px;
+
+            background: var(--red-bright);
+
+            box-shadow:
+                0 0 12px rgba(210,12,24,.5);
+
+            pointer-events: none;
+        }
+
+        /* --------------------------------
+           HEADER
+        -------------------------------- */
+
+        .site-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+
+            z-index: 1000;
+
+            padding-top: env(safe-area-inset-top);
+
+            height:
+                calc(
+                    var(--header-height) +
+                    env(safe-area-inset-top)
+                );
+
+            border-bottom: 1px solid transparent;
+
+            background: rgba(8,8,8,.72);
+
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+
+            transition:
+                background .3s ease,
+                border-color .3s ease,
+                box-shadow .3s ease;
+        }
+
+        .site-header.scrolled {
+            background: rgba(7,7,7,.94);
+            border-color: var(--line);
+            box-shadow: 0 12px 40px rgba(0,0,0,.28);
+        }
+
+        .header-inner {
+            width: min(
+                calc(100% - 48px),
+                var(--max-width)
+            );
+
+            height: var(--header-height);
+
+            margin: 0 auto;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 30px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+
+            flex: 0 0 auto;
+
+            transition: opacity .2s ease;
+        }
+
+        .brand:hover {
+            opacity: .8;
+        }
+
+        .brand img {
+            width: 128px;
+            height: auto;
+        }
+
+        .desktop-nav {
+            display: flex;
+            align-items: center;
+            gap: 28px;
+        }
+
+        .desktop-nav a {
+            position: relative;
+
+            color: #a9a9a9;
+
+            font-family: "Oswald", sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+
+            letter-spacing: .19em;
+            text-transform: uppercase;
+
+            padding: 8px 0;
+
+            transition:
+                color .2s ease;
+        }
+
+        .desktop-nav a::after {
+            content: "";
+
+            position: absolute;
+            left: 0;
+            bottom: 0;
+
+            width: 0;
+            height: 1px;
+
+            background: var(--red-bright);
+
+            transition: width .25s ease;
+        }
+
+        .desktop-nav a:hover {
+            color: white;
+        }
+
+        .desktop-nav a:hover::after {
+            width: 100%;
+        }
+
+        /* Bewerbungslink ist bewusst klein */
+        .desktop-nav .nav-application {
+            color: #737373;
+        }
+
+        .desktop-nav .nav-application::before {
+            content: "LIVE-ERSCHRECKER";
+            display: block;
+
+            margin-bottom: 2px;
+
+            color: #555;
+
+            font-family: "DM Sans", sans-serif;
+            font-size: 7px;
+            font-weight: 600;
+
+            letter-spacing: .12em;
+        }
+
+        .mobile-menu-button {
+            display: none;
+
+            width: 44px;
+            height: 44px;
+
+            padding: 0;
+
+            border: 1px solid var(--line);
+            border-radius: 50%;
+
+            background: rgba(255,255,255,.025);
+
+            color: white;
+
+            cursor: pointer;
+
+            align-items: center;
+            justify-content: center;
+
+            transition:
+                background .2s ease,
+                border-color .2s ease;
+        }
+
+        .mobile-menu-button:hover {
+            background: rgba(255,255,255,.07);
+            border-color: rgba(255,255,255,.2);
+        }
+
+        .hamburger {
+            width: 17px;
+            height: 12px;
+
+            position: relative;
+        }
+
+        .hamburger span {
+            position: absolute;
+            left: 0;
+
+            width: 100%;
+            height: 1px;
+
+            background: white;
+
+            transition:
+                transform .25s ease,
+                top .25s ease;
+        }
+
+        .hamburger span:nth-child(1) {
+            top: 0;
+        }
+
+        .hamburger span:nth-child(2) {
+            top: 6px;
+        }
+
+        .hamburger span:nth-child(3) {
+            top: 12px;
+        }
+
+        .mobile-menu-button.open .hamburger span:nth-child(1) {
+            top: 6px;
+            transform: rotate(45deg);
+        }
+
+        .mobile-menu-button.open .hamburger span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .mobile-menu-button.open .hamburger span:nth-child(3) {
+            top: 6px;
+            transform: rotate(-45deg);
+        }
+
+        /* --------------------------------
+           MOBILE MENU
+        -------------------------------- */
+
+        .mobile-menu {
+            position: fixed;
+            inset: 0;
+
+            z-index: 999;
+
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .mobile-menu-backdrop {
+            position: absolute;
+            inset: 0;
+
+            background: rgba(0,0,0,.7);
+
+            opacity: 0;
+            transition: opacity .25s ease;
+        }
+
+        .mobile-menu-panel {
+            position: absolute;
+
+            top:
+                calc(
+                    var(--header-height) +
+                    env(safe-area-inset-top)
+                );
+
+            left: 14px;
+            right: 14px;
+
+            padding: 18px;
+
+            border: 1px solid var(--line);
+            background:
+                linear-gradient(
+                    145deg,
+                    #151515,
+                    #0a0a0a
+                );
+
+            box-shadow: var(--shadow);
+
+            transform: translateY(-12px);
+            opacity: 0;
+
+            transition:
+                transform .3s ease,
+                opacity .3s ease;
+        }
+
+        .mobile-menu.open {
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        .mobile-menu.open .mobile-menu-backdrop {
+            opacity: 1;
+        }
+
+        .mobile-menu.open .mobile-menu-panel {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .mobile-menu-label {
+            margin-bottom: 8px;
+
+            color: #555;
+
+            font-family: "Oswald", sans-serif;
+            font-size: 10px;
+            font-weight: 600;
+
+            letter-spacing: .25em;
+            text-transform: uppercase;
+        }
+
+        .mobile-menu-panel a {
+            display: block;
+
+            padding: 15px 4px;
+
+            border-bottom: 1px solid var(--line-soft);
+
+            color: #ddd;
+
+            font-family: "Oswald", sans-serif;
+            font-size: 17px;
+
+            letter-spacing: .08em;
+            text-transform: uppercase;
+        }
+
+        .mobile-menu-panel a:last-child {
+            border-bottom: 0;
+        }
+
+        .mobile-menu-panel .mobile-application {
+            margin-top: 10px;
+            padding: 13px 14px;
+
+            border: 1px solid rgba(255,255,255,.08);
+
+            color: #777;
+
+            font-family: "DM Sans", sans-serif;
+            font-size: 11px;
+
+            letter-spacing: .04em;
+            text-transform: none;
+        }
+
+        /* --------------------------------
+           GENERAL
+        -------------------------------- */
+
+        main {
+            position: relative;
+            z-index: 1;
+        }
+
+        section {
+            scroll-margin-top:
+                calc(
+                    var(--header-height) +
+                    env(safe-area-inset-top) +
+                    20px
+                );
+        }
+
+        .container {
+            width: min(
+                calc(100% - 48px),
+                var(--max-width)
+            );
+
+            margin: 0 auto;
+        }
+
+        .section {
+            padding: 120px 0;
+            position: relative;
+        }
+
+        .section-label {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+
+            margin-bottom: 22px;
+
+            color: #707070;
+
+            font-family: "Oswald", sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+
+            letter-spacing: .28em;
+            text-transform: uppercase;
+        }
+
+        .section-label::before {
+            content: "";
+
+            width: 30px;
+            height: 1px;
+
+            background: var(--red-bright);
+
+            flex: 0 0 auto;
+        }
+
+        .section-heading {
+            max-width: 760px;
+
+            margin: 0;
+
+            color: var(--white);
+
+            font-family: "Oswald", sans-serif;
+            font-size: clamp(42px, 6vw, 78px);
+            font-weight: 600;
+
+            line-height: .98;
+
+            letter-spacing: -.025em;
+            text-transform: uppercase;
+        }
+
+        .section-intro {
+            max-width: 680px;
+
+            margin: 22px 0 0;
+
+            color: var(--muted);
+
+            font-size: 17px;
+            line-height: 1.8;
+        }
+
+        .section-divider {
+            width: 100%;
+            height: 1px;
+
+            background: var(--line);
+        }
+
+        /* --------------------------------
+           HERO
+        -------------------------------- */
+
+        .hero {
+            min-height: 100svh;
+
+            position: relative;
+
+            display: flex;
+            align-items: center;
+
+            padding:
+                calc(
+                    var(--header-height) +
+                    env(safe-area-inset-top) +
+                    90px
+                )
+                0
+                70px;
+
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: "";
+
+            position: absolute;
+            inset: 0;
+
+            background:
+                radial-gradient(
+                    ellipse at 50% 46%,
+                    rgba(105,0,8,.20),
+                    transparent 45%
+                ),
+                radial-gradient(
+                    ellipse at 80% 10%,
+                    rgba(120,0,10,.09),
+                    transparent 32%
+                );
+
+            pointer-events: none;
+        }
+
+        .hero::after {
+            content: "";
+
+            position: absolute;
+
+            width: 620px;
+            height: 620px;
+
+            left: 50%;
+            top: 45%;
+
+            transform: translate(-50%, -50%);
+
+            border-radius: 50%;
+
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(130,0,10,.08),
+                    transparent 68%
+                );
+
+            filter: blur(20px);
+
+            animation: breathe 8s ease-in-out infinite;
+
+            pointer-events: none;
+        }
+
+        @keyframes breathe {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: .7;
+            }
+
+            50% {
+                transform: translate(-50%, -50%) scale(1.08);
+                opacity: 1;
+            }
+        }
+
+        .hero-inner {
+            position: relative;
+            z-index: 2;
+
+            width: 100%;
+        }
+
+        .hero-meta {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+
+            margin-bottom: 45px;
+
+            color: #888;
+
+            font-family: "Oswald", sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+
+            letter-spacing: .22em;
+            text-transform: uppercase;
+        }
+
+        .hero-meta::before {
+            content: "";
+
+            width: 48px;
+            height: 1px;
+
+            background: var(--red-bright);
+        }
+
+        .hero-logo-wrap {
+            width: min(760px, 100%);
+
+            margin: 0 auto 58px;
+
+            position: relative;
+        }
+
+        .hero-logo-wrap::before,
+        .hero-logo-wrap::after {
+            content: "";
+
+            position: absolute;
+
+            width: 14px;
+            height: 14px;
+
+            border-color: rgba(255,255,255,.16);
+            border-style: solid;
+        }
+
+        .hero-logo-wrap::before {
+            top: -16px;
+            left: -16px;
+
+            border-width: 1px 0 0 1px;
+        }
+
+        .hero-logo-wrap::after {
+            right: -16px;
+            bottom: -16px;
+
+            border-width: 0 1px 1px 0;
+        }
+
+        .hero-logo {
+            width: 100%;
+            max-width: 720px;
+
+            margin: 0 auto;
+
+            filter:
+                drop-shadow(0 18px 35px rgba(0,0,0,.65));
+
+            animation: logoFloat 7s ease-in-out infinite;
+        }
+
+        @keyframes logoFloat {
+            0%, 100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .hero-copy {
+            max-width: 780px;
+            margin: 0 auto;
+
+            text-align: center;
+        }
+
+        .hero-title {
+            margin: 0 0 20px;
+
+            color: var(--white);
+
+            font-size: clamp(27px, 4vw, 42px);
+            font-weight: 700;
+
+            line-height: 1.25;
+            letter-spacing: -.025em;
+        }
+
+        .hero-description {
+            max-width: 720px;
+
+            margin: 0 auto;
+
+            color: #929292;
+
+            font-size: clamp(15px, 2vw, 18px);
+            line-height: 1.85;
+        }
+
+        .hero-bottom {
+            margin-top: 65px;
+
+            display: grid;
+            grid-template-columns: 1fr auto;
+            align-items: end;
+
+            gap: 40px;
+        }
+
+        /* --------------------------------
+           COUNTDOWN
+        -------------------------------- */
+
+        .countdown {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(70px, 1fr));
+
+            max-width: 610px;
+
+            border-top: 1px solid var(--line);
+            border-bottom: 1px solid var(--line);
+        }
+
+        .countdown-item {
+            padding: 19px 18px 18px;
+
+            border-right: 1px solid var(--line);
+
+            text-align: center;
+        }
+
+        .countdown-item:last-child {
+            border-right: 0;
+        }
+
+        .countdown-value {
+            display: block;
+
+            color: white;
+
+            font-family: "Oswald", sans-serif;
+            font-size: clamp(29px, 4vw, 44px);
+            font-weight: 600;
+
+            line-height: 1;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .countdown-label {
+            display: block;
+
+            margin-top: 8px;
+
+            color: #626262;
+
+            font-family: "Oswald", sans-serif;
+            font-size: 9px;
+            font-weight: 600;
+
+            letter-spacing: .2em;
+            text-transform: uppercase;
+        }
+
+        .countdown-note {
+            margin-top: 11px;
+
+            color: #555;
+
+            font-size: 11px;
+            letter-spacing: .05em;
+        }
+
+        .hero-scroll {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+
+            color: #555;
+
+            font-family: "Oswald", sans-serif;
+            font-size: 9px;
+            font-weight: 600;
+
+            letter-spacing: .22em;
+            text-transform: uppercase;
+
+            white-space: nowrap;
+        }
+
+        .hero-scroll span {
+            display: block;
+
+            width: 1px;
+            height: 35px;
+
+            background:
+                linear-gradient(
+                    to bottom,
+                    var(--red-bright),
+                    transparent
+                );
+        }
+
+        /* --------------------------------
+           QUICK INFO
+        -------------------------------- */
+
+        .quick-info {
+            padding: 0 0 110px;
+        }
+
+        .quick-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+
+            border-top: 1px solid var(--line);
+            border-bottom: 1px solid var(--line);
+        }
+
+        .quick-item {
+            padding: 28px 24px;
+
+            border-right: 1px solid var(--line);
+        }
+
+        .quick-item:first-child {
+            padding-left: 0;
+        }
+
+        .quick-item:last-child {
+            border-right: 0;
+        }
+
+        .quick-label {
+            margin-bottom: 8px;
+
+            color: #5f5f5f;
+
+            font-family: "Oswald", sans-serif;
+            font-size: 10px;
+            font-weight: 600;
+
+            letter-spacing: .22em;
+            text-transform: uppercase;
+        }
+
+        .quick-value {
+            color: white;
+
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        /* --------------------------------
+           EXPERIENCE
+        -------------------------------- */
+
+        .experience-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+
+            margin-top: 65px;
+
+            border-top: 1px solid var(--line);
+            border-left: 1px solid var(--line);
+        }
+
+        .experience-card {
+            position: relative;
+
+            min-width: 0;
+
+            padding: 34px 27px 38px;
+
+            border-right: 1px solid var(--line);
+            border-bottom: 1px solid var(--line);
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(255,255,255,.025),
+                    transparent 65%
+                );
+
+            transition:
+                background .3s ease,
+                transform .3s ease;
+        }
+
+        .experience-number {
+            display: block;
+
+            margin-bottom: 58px;
+
+            color: #3f3f3f;
+
+            font-family: "Oswald", sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+
+            letter-spacing: .16em;
+        }
+
+        .experience-card h3 {
+            margin: 0 0 12px;
+
+            color: white;
+
+            font-family: "Oswald", sans-serif;
+            font-size: 21px;
+            font-weight: 600;
+
+            line-height: 1.1;
+            text-transform: uppercase;
+        }
+
+        .experience-card p {
+            margin: 0;
+
+            color: #777;
+
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        @media (hover: hover) {
+            .experience-card:hover {
+                background:
+                    linear-gradient(
+                        145deg,
+                        rgba(160,0,12,.10),
+                        transparent 65%
+                    );
+
+                transform: translateY(-4px);
+            }
+        }
+
+        /* --------------------------------
+           EVENT DETAILS
+        -------------------------------- */
+
+        .event-layout {
+            display: grid;
+            grid-template-columns: .72fr 1.28fr;
+
+            gap: 80px;
+
+            margin-top: 70px;
+        }
+
+        .event-date {
+            position: sticky;
+            top:
+                calc(
+                    var(--header-height) +
+                    env(safe-area-inset-top) +
+                    30px
+                );
+
+            align-self: start;
+
+            padding: 34px 0;
+
+            border-top: 1px solid var(--line);
+            border-bottom: 1px solid var(--line);
+        }
+
+        .event-date-small {
+            margin-bottom: 13px;
+
+            color: #777;
+
+            font-family: "Oswald", sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+
+            letter-spacing: .25em;
+            text-transform: uppercase;
+        }
+
+        .event-date-big {
+            color: white;
+
+            font-family: "Oswald", sans-serif;
+            font-size: clamp(52px, 6vw, 82px);
+            font-weight: 600;
+
+            line-height: .9;
+
+            letter-spacing: -.035em;
+        }
+
+        .event-location {
+            margin-top: 20px;
+
+            color: #737373;
+
+            font-size: 14px;
+        }
+
+        /*
+           WICHTIG:
+           Das Event-Grid ist auf Mobile nicht mehr
+           zweispaltig. Dadurch kann z.B.
+           "VERANSTALTER" niemals mit "GOGOS Gruppe"
+           kollidieren.
+        */
+
+        .event-details {
+            border-top: 1px solid var(--line);
+        }
+
+        .event-row {
+            display: grid;
+
+            grid-template-columns:
+                minmax(145px, .7fr)
+                minmax(0, 1.3fr);
+
+            gap: 30px;
+
+            padding: 27px 0;
+
+            border-bottom: 1px solid var(--line);
+
+            align-items: center;
+        }
+
+        .event-row-label {
+            min-width: 0;
+
+            color: #626262;
+
+            font-family: "Oswald", sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+
+            letter-spacing: .25em;
+            text-transform: uppercase;
+
+            overflow-wrap: anywhere;
+        }
+
+        .event-row-value {
+            min-width: 0;
+
+            color: #f2f2ef;
+
+            font-size: clamp(20px, 2.5vw, 30px);
+            font-weight: 600;
+
+            line-height: 1.2;
+
+            overflow-wrap: anywhere;
+            word-break: normal;
+        }
+
+        .event-row-value.small {
+            font-size: 17px;
+        }
+
+        /* --------------------------------
+           FAQ
+        -------------------------------- */
+
+        .faq-list {
+            max-width: 900px;
+
+            margin-top: 65px;
+
+            border-top: 1px solid var(--line);
+        }
+
+        .faq-item {
+            border-bottom: 1px solid var(--line);
+        }
+
+        .faq-question {
+            width: 100%;
+
+            padding: 25px 0;
+
+            display: grid;
+            grid-template-columns: 1fr auto;
+
+            gap: 20px;
+
+            border: 0;
+            background: transparent;
+
+            color: white;
+
+            text-align: left;
+
+            cursor: pointer;
+        }
+
+        .faq-question-text {
+            font-family: "Oswald", sans-serif;
+            font-size: clamp(18px, 2.2vw, 23px);
+            font-weight: 500;
+
+            line-height: 1.3;
+
+            text-transform: uppercase;
+            letter-spacing: .015em;
+        }
+
+        .faq-icon {
+            position: relative;
+
+            width: 24px;
+            height: 24px;
+
+            border: 1px solid #444;
+            border-radius: 50%;
+
+            transition:
+                border-color .25s ease,
+                transform .25s ease;
+        }
+
+        .faq-icon::before,
+        .faq-icon::after {
+            content: "";
+
+            position: absolute;
+
+            top: 50%;
+            left: 50%;
+
+            width: 9px;
+            height: 1px;
+
+            background: #999;
+
+            transform: translate(-50%, -50%);
+        }
+
+        .faq-icon::after {
+            transform:
+                translate(-50%, -50%)
+                rotate(90deg);
+
+            transition: transform .25s ease;
+        }
+
+        .faq-question[aria-expanded="true"] .faq-icon {
+            border-color: var(--red-bright);
+        }
+
+        .faq-question[aria-expanded="true"] .faq-icon::after {
+            transform:
+                translate(-50%, -50%)
+                rotate(0deg);
+        }
+
+        .faq-answer {
+            display: grid;
+
+            grid-template-rows: 0fr;
+
+            transition: grid-template-rows .35s ease;
+        }
+
+        .faq-answer-inner {
+            overflow: hidden;
+
+            color: #858585;
+
+            font-size: 15px;
+            line-height: 1.8;
+        }
+
+        .faq-answer-inner p {
+            margin: 0;
+            padding: 0 50px 25px 0;
+        }
+
+        .faq-item.open .faq-answer {
+            grid-template-rows: 1fr;
+        }
+
+        /* --------------------------------
+           CTA
+        -------------------------------- */
+
+        .cta-section {
+            padding: 100px 0 120px;
+        }
+
+        .cta-box {
+            position: relative;
+
+            overflow: hidden;
+
+            padding: clamp(35px, 7vw, 75px);
+
+            border: 1px solid var(--line);
+
+            background:
+                radial-gradient(
+                    circle at 90% 30%,
+                    rgba(150,0,10,.13),
+                    transparent 40%
+                ),
+                #0d0d0d;
+        }
+
+        .cta-box::before {
+            content: "31 / 10 / 26";
+
+            position: absolute;
+
+            right: 35px;
+            top: 27px;
+
+            color: rgba(255,255,255,.05);
+
+            font-family: "Oswald", sans-serif;
+            font-size: clamp(35px, 6vw, 75px);
+            font-weight: 600;
+
+            letter-spacing: .05em;
+        }
+
+        .cta-label {
+            position: relative;
+            z-index: 2;
+
+            margin-bottom: 14px;
+
+            color: #6e6e6e;
+
+            font-family: "Oswald", sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+
+            letter-spacing: .25em;
+            text-transform: uppercase;
+        }
+
+        .cta-title {
+            position: relative;
+            z-index: 2;
+
+            max-width: 700px;
+
+            margin: 0;
+
+            color: white;
+
+            font-family: "Oswald", sans-serif;
+            font-size: clamp(38px, 6vw, 70px);
+            font-weight: 600;
+
+            line-height: .98;
+
+            text-transform: uppercase;
+        }
+
+        .cta-text {
+            position: relative;
+            z-index: 2;
+
+            max-width: 600px;
+
+            margin: 20px 0 30px;
+
+            color: #888;
+
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        .cta-button {
+            position: relative;
+            z-index: 2;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+
+            min-height: 53px;
+
+            padding: 0 27px;
+
+            border: 1px solid rgba(255,255,255,.18);
+
+            background: var(--red);
+
+            color: white;
+
+            font-family: "Oswald", sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+
+            letter-spacing: .16em;
+            text-transform: uppercase;
+
+            transition:
+                background .2s ease,
+                transform .2s ease,
+                border-color .2s ease;
+        }
+
+        .cta-button span {
+            font-size: 18px;
+            transition: transform .2s ease;
+        }
+
+        .cta-button:hover {
+            background: var(--red-bright);
+            border-color: var(--red-bright);
+            transform: translateY(-2px);
+        }
+
+        .cta-button:hover span {
+            transform: translateX(4px);
+        }
+
+        /* --------------------------------
+           FOOTER
+        -------------------------------- */
+
+        footer {
+            border-top: 1px solid var(--line);
+
+            padding:
+                65px
+                0
+                calc(
+                    40px +
+                    env(safe-area-inset-bottom)
+                );
+
+            background: #060606;
+        }
+
+        .footer-top {
+            display: grid;
+
+            grid-template-columns: 1fr auto;
+
+            gap: 60px;
+
+            align-items: start;
+        }
+
+        .footer-logo {
+            width: 145px;
+
+            opacity: .85;
+
+            margin-bottom: 20px;
+        }
+
+        .footer-description {
+            max-width: 450px;
+
+            color: #666;
+
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .footer-contact {
+            text-align: right;
+        }
+
+        .footer-contact-label {
+            margin-bottom: 7px;
+
+            color: #555;
+
+            font-family: "Oswald", sans-serif;
+            font-size: 10px;
+            font-weight: 600;
+
+            letter-spacing: .22em;
+            text-transform: uppercase;
+        }
+
+        .footer-email {
+            color: #aaa;
+
+            font-size: 13px;
+
+            overflow-wrap: anywhere;
+
+            transition: color .2s ease;
+        }
+
+        .footer-email:hover {
+            color: white;
+        }
+
+        /*
+           Bewerbung jetzt NUR HIER.
+           Dezent und klar als Option für
+           Live-Erschrecker gekennzeichnet.
+        */
+
+        .footer-application {
+            margin-top: 45px;
+
+            padding-top: 24px;
+
+            border-top: 1px solid var(--line-soft);
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 25px;
+        }
+
+        .footer-application-copy {
+            min-width: 0;
+        }
+
+        .footer-application-label {
+            margin-bottom: 4px;
+
+            color: #5b5b5b;
+
+            font-family: "Oswald", sans-serif;
+            font-size: 9px;
+            font-weight: 600;
+
+            letter-spacing: .22em;
+            text-transform: uppercase;
+        }
+
+        .footer-application-text {
+            color: #777;
+
+            font-size: 12px;
+        }
+
+        .footer-application-link {
+            flex: 0 0 auto;
+
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+
+            color: #8d8d8d;
+
+            font-family: "Oswald", sans-serif;
+            font-size: 10px;
+            font-weight: 600;
+
+            letter-spacing: .15em;
+            text-transform: uppercase;
+
+            transition: color .2s ease;
+        }
+
+        .footer-application-link:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 25px;
+
+            margin-top: 55px;
+            padding-top: 22px;
+
+            border-top: 1px solid var(--line-soft);
+
+            color: #454545;
+
+            font-size: 11px;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 20px;
+
+            flex-wrap: wrap;
+        }
+
+        .footer-links button {
+            padding: 0;
+
+            border: 0;
+            background: none;
+
+            color: #666;
+
+            font-size: 11px;
+
+            cursor: pointer;
+
+            transition: color .2s ease;
+        }
+
+        .footer-links button:hover {
+            color: white;
+        }
+
+        /* --------------------------------
+           MODAL
+        -------------------------------- */
+
+        .modal {
+            position: fixed;
+            inset: 0;
+
+            z-index: 10000;
+
+            display: grid;
+            place-items: center;
+
+            padding:
+                25px
+                25px
+                calc(
+                    25px +
+                    env(safe-area-inset-bottom)
+                );
+
+            background: rgba(0,0,0,.82);
+
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+
+            transition:
+                opacity .25s ease,
+                visibility .25s ease;
+        }
+
+        .modal.open {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            position: relative;
+
+            width: min(760px, 100%);
+            max-height: min(760px, 88svh);
+
+            overflow-y: auto;
+
+            padding: clamp(28px, 5vw, 55px);
+
+            border: 1px solid var(--line);
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #151515,
+                    #090909
+                );
+
+            box-shadow: 0 35px 100px rgba(0,0,0,.7);
+
+            transform: translateY(15px) scale(.98);
+
+            transition: transform .3s ease;
+        }
+
+        .modal.open .modal-content {
+            transform: translateY(0) scale(1);
+        }
+
+        .modal-close {
+            position: absolute;
+
+            top: 18px;
+            right: 18px;
+
+            width: 40px;
+            height: 40px;
+
+            border: 1px solid var(--line);
+            border-radius: 50%;
+
+            background: transparent;
+
+            color: #aaa;
+
+            cursor: pointer;
+
+            font-size: 23px;
+            line-height: 1;
+
+            transition:
+                color .2s ease,
+                border-color .2s ease;
+        }
+
+        .modal-close:hover {
+            color: white;
+            border-color: rgba(255,255,255,.25);
+        }
+
+        .modal-label {
+            margin-bottom: 12px;
+
+            color: var(--red-bright);
+
+            font-family: "Oswald", sans-serif;
+            font-size: 10px;
+            font-weight: 600;
+
+            letter-spacing: .25em;
+            text-transform: uppercase;
+        }
+
+        .modal h2 {
+            margin: 0 0 28px;
+
+            color: white;
+
+            font-family: "Oswald", sans-serif;
+            font-size: clamp(34px, 6vw, 55px);
+            font-weight: 600;
+
+            line-height: 1;
+            text-transform: uppercase;
+        }
+
+        .modal-body {
+            color: #888;
+
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .modal-body strong {
+            color: #ddd;
+        }
+
+        .modal-body p {
+            margin: 0 0 18px;
+        }
+
+        .modal-body p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* --------------------------------
+           BACK TO TOP
+        -------------------------------- */
+
+        .back-to-top {
+            position: fixed;
+
+            right: 22px;
+            bottom:
+                calc(
+                    22px +
+                    env(safe-area-inset-bottom)
+                );
+
+            z-index: 900;
+
+            width: 43px;
+            height: 43px;
+
+            border: 1px solid var(--line);
+            border-radius: 50%;
+
+            background: rgba(12,12,12,.88);
+
+            color: #aaa;
+
+            cursor: pointer;
+
+            opacity: 0;
+            visibility: hidden;
+
+            transform: translateY(10px);
+
+            transition:
+                opacity .25s ease,
+                visibility .25s ease,
+                transform .25s ease,
+                color .2s ease;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .back-to-top:hover {
+            color: white;
+        }
+
+        /* --------------------------------
+           REVEAL ANIMATIONS
+        -------------------------------- */
+
+        .js .reveal {
+            opacity: 0;
+            transform: translateY(22px);
+
+            transition:
+                opacity .75s ease,
+                transform .75s ease;
+        }
+
+        .js .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .js .delay-1 {
+            transition-delay: .08s;
+        }
+
+        .js .delay-2 {
+            transition-delay: .16s;
+        }
+
+        .js .delay-3 {
+            transition-delay: .24s;
+        }
+
+        /* --------------------------------
+           AMBIENT EMBERS
+        -------------------------------- */
+
+        .embers {
+            position: fixed;
+            inset: 0;
+
+            z-index: 0;
+
+            overflow: hidden;
+
+            pointer-events: none;
+        }
+
+        .ember {
+            position: absolute;
+
+            width: 2px;
+            height: 2px;
+
+            border-radius: 50%;
+
+            background: rgba(210,12,24,.55);
+
+            box-shadow:
+                0 0 8px rgba(210,12,24,.4);
+
+            animation:
+                emberFloat
+                var(--duration)
+                linear
+                infinite;
+
+            animation-delay: var(--delay);
+
+            opacity: 0;
+        }
+
+        @keyframes emberFloat {
+            0% {
+                transform:
+                    translate3d(0, 105vh, 0)
+                    scale(.5);
+
+                opacity: 0;
+            }
+
+            10% {
+                opacity: .65;
+            }
+
+            90% {
+                opacity: .25;
+            }
+
+            100% {
+                transform:
+                    translate3d(
+                        var(--drift),
+                        -10vh,
+                        0
+                    )
+                    scale(1);
+                opacity: 0;
+            }
+        }
+
+        /* --------------------------------
+           RESPONSIVE
+        -------------------------------- */
+
+        @media (max-width: 1050px) {
+            .experience-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .experience-card:nth-child(3) {
+                border-right: 0;
+            }
+
+            .experience-card:nth-child(4) {
+                border-right: 1px solid var(--line);
+            }
+
+            .event-layout {
+                gap: 50px;
+            }
+        }
+
+        @media (max-width: 800px) {
+            :root {
+                --header-height: 66px;
+            }
+
+            .header-inner {
+                width: min(
+                    calc(100% - 32px),
+                    var(--max-width)
+                );
+            }
+
+            .brand img {
+                width: 110px;
+            }
+
+            .desktop-nav {
+                display: none;
+            }
+
+            .mobile-menu-button {
+                display: flex;
+            }
+
+            .container {
+                width: min(
+                    calc(100% - 32px),
+                    var(--max-width)
+                );
+            }
+
+            .section {
+                padding: 85px 0;
+            }
+
+            .hero {
+                min-height: auto;
+
+                padding:
+                    calc(
+                        var(--header-height) +
+                        env(safe-area-inset-top) +
+                        60px
+                    )
+                    0
+                    75px;
+            }
+
+            .hero-meta {
+                margin-bottom: 35px;
+
+                font-size: 10px;
+                letter-spacing: .17em;
+            }
+
+            .hero-logo-wrap {
+                margin-bottom: 43px;
+            }
+
+            .hero-logo-wrap::before {
+                left: -8px;
+            }
+
+            .hero-logo-wrap::after {
+                right: -8px;
+            }
+
+            .hero-title {
+                font-size: clamp(26px, 7vw, 34px);
+            }
+
+            .hero-description {
+                font-size: 15px;
+                line-height: 1.75;
+            }
+
+            .hero-bottom {
+                margin-top: 48px;
+
+                grid-template-columns: 1fr;
+                gap: 25px;
+            }
+
+            .countdown {
+                max-width: none;
+            }
+
+            .hero-scroll {
+                display: none;
+            }
+
+            .quick-info {
+                padding-bottom: 75px;
+            }
+
+            .quick-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .quick-item,
+            .quick-item:first-child {
+                padding: 22px 16px;
+            }
+
+            .quick-item:nth-child(2) {
+                border-right: 0;
+            }
+
+            .quick-item:nth-child(3),
+            .quick-item:nth-child(4) {
+                border-top: 1px solid var(--line);
+            }
+
+            .experience-grid {
+                grid-template-columns: repeat(2, 1fr);
+
+                margin-top: 45px;
+            }
+
+            .experience-card:nth-child(2n) {
+                border-right: 0;
+            }
+
+            .experience-card:nth-child(3) {
+                border-right: 1px solid var(--line);
+            }
+
+            .event-layout {
+                grid-template-columns: 1fr;
+
+                gap: 40px;
+
+                margin-top: 45px;
+            }
+
+            .event-date {
+                position: static;
+            }
+
+            .event-row {
+                grid-template-columns: 1fr;
+
+                gap: 8px;
+
+                padding: 21px 0;
+            }
+
+            .event-row-value {
+                font-size: 23px;
+            }
+
+            .event-row-value.small {
+                font-size: 16px;
+            }
+
+            .faq-list {
+                margin-top: 45px;
+            }
+
+            .faq-question {
+                padding: 21px 0;
+            }
+
+            .faq-answer-inner p {
+                padding-right: 0;
+                padding-bottom: 22px;
+            }
+
+            .cta-section {
+                padding: 70px 0 85px;
+            }
+
+            .footer-top {
+                grid-template-columns: 1fr;
+                gap: 35px;
+            }
+
+            .footer-contact {
+                text-align: left;
+            }
+
+            .footer-application {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .footer-bottom {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .section-heading {
+                font-size: 42px;
+            }
+
+            .section-intro {
+                font-size: 15px;
+                line-height: 1.7;
+            }
+
+            .hero {
+                padding-bottom: 60px;
+            }
+
+            .hero-meta {
+                align-items: flex-start;
+            }
+
+            .hero-meta::before {
+                width: 25px;
+                margin-top: 7px;
+            }
+
+            .hero-logo-wrap {
+                margin-left: 5px;
+                margin-right: 5px;
+            }
+
+            .hero-title {
+                font-size: 25px;
+                line-height: 1.3;
+            }
+
+            .hero-description {
+                font-size: 14px;
+            }
+
+            .countdown-item {
+                padding: 17px 8px;
+            }
+
+            .countdown-value {
+                font-size: 27px;
+            }
+
+            .countdown-label {
+                font-size: 8px;
+                letter-spacing: .13em;
+            }
+
+            .quick-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-item,
+            .quick-item:first-child,
+            .quick-item:nth-child(2),
+            .quick-item:nth-child(3),
+            .quick-item:nth-child(4) {
+                padding: 20px 0;
+
+                border-right: 0;
+                border-top: 1px solid var(--line);
+            }
+
+            .quick-item:first-child {
+                border-top: 0;
+            }
+
+            .experience-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .experience-card,
+            .experience-card:nth-child(3),
+            .experience-card:nth-child(4) {
+                border-right: 0;
+            }
+
+            .experience-card {
+                padding: 27px 22px 31px;
+            }
+
+            .experience-number {
+                margin-bottom: 35px;
+            }
+
+            .event-date-big {
+                font-size: 59px;
+            }
+
+            .event-row-label {
+                font-size: 10px;
+                letter-spacing: .2em;
+            }
+
+            .event-row-value {
+                font-size: 22px;
+            }
+
+            .cta-box {
+                padding: 31px 23px;
+            }
+
+            .cta-box::before {
+                right: 18px;
+                top: 20px;
+            }
+
+            .cta-title {
+                font-size: 43px;
+            }
+
+            .cta-button {
+                width: 100%;
+            }
+
+            .modal {
+                padding:
+                    15px
+                    15px
+                    calc(
+                        15px +
+                        env(safe-area-inset-bottom)
+                    );
+            }
+
+            .modal-content {
+                max-height: 90svh;
+
+                padding: 27px 21px;
+            }
+
+            .modal-close {
+                top: 12px;
+                right: 12px;
+            }
+
+            .back-to-top {
+                right: 14px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            html {
+                scroll-behavior: auto;
+            }
+
+            *,
+            *::before,
+            *::after {
+                animation-duration: .01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: .01ms !important;
+            }
+
+            .js .reveal {
+                opacity: 1;
+                transform: none;
+            }
+
+            .embers {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="scroll-progress" id="scrollProgress"></div>
+
+    <div class="embers" id="embers" aria-hidden="true"></div>
+
+    <!-- ==========================================
+         HEADER
+    =========================================== -->
+
+    <header class="site-header" id="siteHeader">
+
+        <div class="header-inner">
+
+            <a
+                href="#top"
+                class="brand"
+                aria-label="Schattenschreck Startseite"
+            >
+                <img
+                    src="https://i.imgur.com/Cl27hzM.png"
+                    alt="Schattenschreck Horror"
+                    width="128"
+                    height="auto"
+                    loading="eager"
+                >
+            </a>
+
+            <nav
+                class="desktop-nav"
+                aria-label="Hauptnavigation"
+            >
+                <a href="#event">Event</a>
+                <a href="#erlebnis">Erlebnis</a>
+                <a href="#faq">FAQ</a>
+
+                <!--
+                    BEWERBUNG ABSICHTLICH NICHT MEHR
+                    ALS NORMALER HEADER-BUTTON.
+                    Der Link befindet sich nur noch
+                    ganz unten im Footer.
+                -->
+            </nav>
+
+            <button
+                class="mobile-menu-button"
+                id="mobileMenuButton"
+                type="button"
+                aria-label="Menü öffnen"
+                aria-expanded="false"
+                aria-controls="mobileMenu"
+            >
+                <span class="hamburger" aria-hidden="true">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </span>
+            </button>
+
+        </div>
+    </header>
+
+
+    <!-- ==========================================
+         MOBILE NAVIGATION
+    =========================================== -->
+
+    <div
+        class="mobile-menu"
+        id="mobileMenu"
+        aria-hidden="true"
+    >
+
+        <div
+            class="mobile-menu-backdrop"
+            id="mobileMenuBackdrop"
+        ></div>
+
+        <nav
+            class="mobile-menu-panel"
+            aria-label="Mobile Navigation"
+        >
+
+            <div class="mobile-menu-label">
+                Navigation
+            </div>
+
+            <a href="#top">Startseite</a>
+            <a href="#event">Event</a>
+            <a href="#erlebnis">Erlebnis</a>
+            <a href="#faq">FAQ</a>
+
+        </nav>
+    </div>
+
+
+    <main id="top">
+
+        <!-- ==========================================
+             HERO
+        =========================================== -->
+
+        <section class="hero">
+
+            <div class="container hero-inner">
+
+                <div class="hero-meta reveal">
+                    31. Oktober 2026 · Wardersee
+                </div>
+
+                <div class="hero-logo-wrap reveal delay-1">
+
+                    <img
+                        class="hero-logo"
+                        src="https://i.imgur.com/Cl27hzM.png"
+                        alt="Schattenschreck Horror"
+                        width="720"
+                        height="auto"
+                        decoding="async"
+                    >
+
+                </div>
+
+                <div class="hero-copy">
+
+                    <h1 class="hero-title reveal delay-2">
+                        Eine Nacht, die du nicht einfach vergessen wirst.
+                    </h1>
+
+                    <p class="hero-description reveal delay-3">
+                        Schattenschreck ist unser privates Horror-Event
+                        am 31. Oktober 2026. Eine inszenierte Welt aus
+                        Atmosphäre, Geschichte, Aufgaben und
+                        Live-Erschreckern.
+                    </p>
+
+                </div>
+
+                <div class="hero-bottom reveal">
+
+                    <div>
+
+                        <div
+                            class="countdown"
+                            aria-label="Countdown bis zum Event"
+                        >
+
+                            <div class="countdown-item">
+                                <span
+                                    class="countdown-value"
+                                    id="days"
+                                    aria-live="polite"
+                                >
+                                    00
+                                </span>
+
+                                <span class="countdown-label">
+                                    Tage
+                                </span>
+                            </div>
+
+                            <div class="countdown-item">
+                                <span
+                                    class="countdown-value"
+                                    id="hours"
+                                    aria-live="polite"
+                                >
+                                    00
+                                </span>
+
+                                <span class="countdown-label">
+                                    Stunden
+                                </span>
+                            </div>
+
+                            <div class="countdown-item">
+                                <span
+                                    class="countdown-value"
+                                    id="minutes"
+                                    aria-live="polite"
+                                >
+                                    00
+                                </span>
+
+                                <span class="countdown-label">
+                                    Minuten
+                                </span>
+                            </div>
+
+                            <div class="countdown-item">
+                                <span
+                                    class="countdown-value"
+                                    id="seconds"
+                                    aria-live="polite"
+                                >
+                                    00
+                                </span>
+
+                                <span class="countdown-label">
+                                    Sekunden
+                                </span>
+                            </div>
+
+                        </div>
+
+                        <div
+                            class="countdown-note"
+                            id="countdownNote"
+                        >
+                            Beginn: 31.10.2026 · 18:00 Uhr
+                        </div>
+
+                    </div>
+
+                    <div class="hero-scroll" aria-hidden="true">
+                        <span></span>
+                        Scroll
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- ==========================================
+             QUICK INFO
+        =========================================== -->
+
+        <section class="quick-info">
+
+            <div class="container">
+
+                <div class="quick-grid reveal">
+
+                    <div class="quick-item">
+
+                        <div class="quick-label">
+                            Datum
+                        </div>
+
+                        <div class="quick-value">
+                            Samstag, 31. Oktober 2026
+                        </div>
+
+                    </div>
+
+                    <div class="quick-item">
+
+                        <div class="quick-label">
+                            Start
+                        </div>
+
+                        <div class="quick-value">
+                            18:00 Uhr
+                        </div>
+
+                    </div>
+
+                    <div class="quick-item">
+
+                        <div class="quick-label">
+                            Letzter Einlass
+                        </div>
+
+                        <div class="quick-value">
+                            20:00 Uhr
+                        </div>
+
+                    </div>
+
+                    <div class="quick-item">
+
+                        <div class="quick-label">
+                            Eintritt
+                        </div>
+
+                        <div class="quick-value">
+                            Kostenlos
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- ==========================================
+             ERLEBNIS
+        =========================================== -->
+
+        <section
+            class="section"
+            id="erlebnis"
+        >
+
+            <div class="container">
+
+                <div class="section-label reveal">
+                    Das Erlebnis
+                </div>
+
+                <h2 class="section-heading reveal delay-1">
+                    Mehr als nur<br>
+                    Erschrecken.
+                </h2>
+
+                <p class="section-intro reveal delay-2">
+                    Schattenschreck verbindet Atmosphäre, Geschichte,
+                    Aufgaben und Live-Erschrecker zu einem gemeinsamen
+                    Halloween-Erlebnis.
+                </p>
+
+
+                <div class="experience-grid">
+
+                    <article class="experience-card reveal">
+
+                        <span class="experience-number">
+                            01 / 05
+                        </span>
+
+                        <h3>
+                            Atmosphäre
+                        </h3>
+
+                        <p>
+                            Dunkle Kulissen, Licht, Geräusche und
+                            eine Umgebung, die dich direkt in die
+                            Welt von Schattenschreck versetzt.
+                        </p>
+
+                    </article>
+
+
+                    <article class="experience-card reveal delay-1">
+
+                        <span class="experience-number">
+                            02 / 05
+                        </span>
+
+                        <h3>
+                            Live-Erschrecker
+                        </h3>
+
+                        <p>
+                            Live-Erschrecker sorgen für Begegnungen,
+                            die du nicht einfach planen kannst.
+                        </p>
+
+                    </article>
+
+
+                    <article class="experience-card reveal delay-2">
+
+                        <span class="experience-number">
+                            03 / 05
+                        </span>
+
+                        <h3>
+                            Geschichte
+                        </h3>
+
+                        <p>
+                            Das Event ist mehr als einzelne
+                            Schreckmomente und erzählt seine eigene
+                            kleine Geschichte.
+                        </p>
+
+                    </article>
+
+
+                    <article class="experience-card reveal delay-3">
+
+                        <span class="experience-number">
+                            04 / 05
+                        </span>
+
+                        <h3>
+                            Aufgaben
+                        </h3>
+
+                        <p>
+                            Entdecke die Umgebung und stelle dich
+                            verschiedenen Aufgaben innerhalb des
+                            Erlebnisses.
+                        </p>
+
+                    </article>
+
+
+                    <article class="experience-card reveal">
+
+                        <span class="experience-number">
+                            05 / 05
+                        </span>
+
+                        <h3>
+                            Für alle
+                        </h3>
+
+                        <p>
+                            Der Zugang ist barrierefrei und das
+                            Event ist darauf ausgelegt, gemeinsam
+                            erlebt zu werden.
+                        </p>
+
+                    </article>
+
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- ==========================================
+             EVENT DETAILS
+        =========================================== -->
+
+        <section
+            class="section"
+            id="event"
+        >
+
+            <div class="container">
+
+                <div class="section-label reveal">
+                    Eventinformationen
+                </div>
+
+                <h2 class="section-heading reveal delay-1">
+                    Wann &amp;<br>
+                    wo?
+                </h2>
+
+                <div class="event-layout">
+
+                    <div class="event-date reveal">
+
+                        <div class="event-date-small">
+                            Samstag
+                        </div>
+
+                        <div class="event-date-big">
+                            31.<br>
+                            OKT.
+                        </div>
+
+                        <div class="event-location">
+                            Wardersee · Deutschland
+                        </div>
+
+                    </div>
+
+
+                    <div class="event-details reveal delay-1">
+
+                        <div class="event-row">
+
+                            <div class="event-row-label">
+                                Start
+                            </div>
+
+                            <div class="event-row-value">
+                                18:00 Uhr
+                            </div>
+
+                        </div>
+
+
+                        <div class="event-row">
+
+                            <div class="event-row-label">
+                                Einlass
+                            </div>
+
+                            <div class="event-row-value">
+                                18:00 – 20:00 Uhr
+                            </div>
+
+                        </div>
+
+
+                        <div class="event-row">
+
+                            <div class="event-row-label">
+                                Eintritt
+                            </div>
+
+                            <div class="event-row-value">
+                                Kostenlos
+                            </div>
+
+                        </div>
+
+
+                        <div class="event-row">
+
+                            <div class="event-row-label">
+                                Zugang
+                            </div>
+
+                            <div class="event-row-value">
+                                Barrierefrei
+                            </div>
+
+                        </div>
+
+
+                        <div class="event-row">
+
+                            <div class="event-row-label">
+                                Veranstalter
+                            </div>
+
+                            <div class="event-row-value">
+                                GOGOS Gruppe
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- ==========================================
+             FAQ
+        =========================================== -->
+
+        <section
+            class="section"
+            id="faq"
+        >
+
+            <div class="container">
+
+                <div class="section-label reveal">
+                    Häufige Fragen
+                </div>
+
+                <h2 class="section-heading reveal delay-1">
+                    Vor deinem<br>
+                    Besuch.
+                </h2>
+
+                <p class="section-intro reveal delay-2">
+                    Die wichtigsten Informationen zum Ablauf,
+                    Einlass und Event findest du hier.
+                </p>
+
+
+                <div class="faq-list">
+
+
+                    <div class="faq-item reveal">
+
+                        <button
+                            class="faq-question"
+                            type="button"
+                            aria-expanded="false"
+                            aria-controls="faq-answer-1"
+                        >
+
+                            <span class="faq-question-text">
+                                Wie läuft das Event ab?
+                            </span>
+
+                            <span
+                                class="faq-icon"
+                                aria-hidden="true"
+                            ></span>
+
+                        </button>
+
+                        <div
+                            class="faq-answer"
+                            id="faq-answer-1"
+                            aria-hidden="true"
+                        >
+
+                            <div class="faq-answer-inner">
+
+                                <p>
+                                    Schattenschreck ist ein inszeniertes
+                                    Horror-Erlebnis. Dich erwarten
+                                    Atmosphäre, Geschichte, Aufgaben
+                                    und Live-Erschrecker.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="faq-item reveal">
+
+                        <button
+                            class="faq-question"
+                            type="button"
+                            aria-expanded="false"
+                            aria-controls="faq-answer-2"
+                        >
+
+                            <span class="faq-question-text">
+                                Wann ist Einlass?
+                            </span>
+
+                            <span
+                                class="faq-icon"
+                                aria-hidden="true"
+                            ></span>
+
+                        </button>
+
+                        <div
+                            class="faq-answer"
+                            id="faq-answer-2"
+                            aria-hidden="true"
+                        >
+
+                            <div class="faq-answer-inner">
+
+                                <p>
+                                    Der Einlass beginnt um 18:00 Uhr.
+                                    Der letzte Einlass ist um 20:00 Uhr.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="faq-item reveal">
+
+                        <button
+                            class="faq-question"
+                            type="button"
+                            aria-expanded="false"
+                            aria-controls="faq-answer-3"
+                        >
+
+                            <span class="faq-question-text">
+                                Kostet der Eintritt etwas?
+                            </span>
+
+                            <span
+                                class="faq-icon"
+                                aria-hidden="true"
+                            ></span>
+
+                        </button>
+
+                        <div
+                            class="faq-answer"
+                            id="faq-answer-3"
+                            aria-hidden="true"
+                        >
+
+                            <div class="faq-answer-inner">
+
+                                <p>
+                                    Nein. Der Eintritt zum
+                                    Schattenschreck-Event ist kostenlos.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="faq-item reveal">
+
+                        <button
+                            class="faq-question"
+                            type="button"
+                            aria-expanded="false"
+                            aria-controls="faq-answer-4"
+                        >
+
+                            <span class="faq-question-text">
+                                Ist der Zugang barrierefrei?
+                            </span>
+
+                            <span
+                                class="faq-icon"
+                                aria-hidden="true"
+                            ></span>
+
+                        </button>
+
+                        <div
+                            class="faq-answer"
+                            id="faq-answer-4"
+                            aria-hidden="true"
+                        >
+
+                            <div class="faq-answer-inner">
+
+                                <p>
+                                    Ja. Der Zugang zum Event ist
+                                    barrierefrei.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="faq-item reveal">
+
+                        <button
+                            class="faq-question"
+                            type="button"
+                            aria-expanded="false"
+                            aria-controls="faq-answer-5"
+                        >
+
+                            <span class="faq-question-text">
+                                Kann ich als Live-Erschrecker mitmachen?
+                            </span>
+
+                            <span
+                                class="faq-icon"
+                                aria-hidden="true"
+                            ></span>
+
+                        </button>
+
+                        <div
+                            class="faq-answer"
+                            id="faq-answer-5"
+                            aria-hidden="true"
+                        >
+
+                            <div class="faq-answer-inner">
+
+                                <p>
+                                    Ja. Für Personen, die selbst als
+                                    Live-Erschrecker mitwirken möchten,
+                                    gibt es eine separate Bewerbung.
+                                    Den entsprechenden Link findest du
+                                    ausschließlich am Ende der Website.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="faq-item reveal">
+
+                        <button
+                            class="faq-question"
+                            type="button"
+                            aria-expanded="false"
+                            aria-controls="faq-answer-6"
+                        >
+
+                            <span class="faq-question-text">
+                                Wie kann ich Kontakt aufnehmen?
+                            </span>
+
+                            <span
+                                class="faq-icon"
+                                aria-hidden="true"
+                            ></span>
+
+                        </button>
+
+                        <div
+                            class="faq-answer"
+                            id="faq-answer-6"
+                            aria-hidden="true"
+                        >
+
+                            <div class="faq-answer-inner">
+
+                                <p>
+                                    Bei Fragen kannst du dich per
+                                    E-Mail an
+                                    gogosofficialgroup@gmail.com
+                                    wenden.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- ==========================================
+             BESUCHER CTA
+        =========================================== -->
+
+        <section class="cta-section">
+
+            <div class="container">
+
+                <div class="cta-box reveal">
+
+                    <div class="cta-label">
+                        Dein Halloween
+                    </div>
+
+                    <h2 class="cta-title">
+                        Bist du bereit?
+                    </h2>
+
+                    <p class="cta-text">
+                        Merke dir den 31. Oktober 2026 vor und
+                        komm ab 18:00 Uhr zum Schattenschreck
+                        nach Wardersee.
+                    </p>
+
+                    <a
+                        class="cta-button"
+                        href="#event"
+                    >
+                        Eventinformationen
+                        <span aria-hidden="true">→</span>
+                    </a>
+
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+
+    <!-- ==========================================
+         FOOTER
+    =========================================== -->
+
+    <footer>
+
+        <div class="container">
+
+            <div class="footer-top">
+
+                <div>
+
+                    <img
+                        class="footer-logo"
+                        src="https://i.imgur.com/CAD6jqP.png"
+                        alt="GOGOS Gruppe"
+                        width="145"
+                        height="auto"
+                        loading="lazy"
+                    >
+
+                    <div class="footer-description">
+                        Schattenschreck ist ein privates
+                        Horror-Event der GOGOS Gruppe am
+                        31. Oktober 2026 in Wardersee.
+                    </div>
+
+                </div>
+
+
+                <div class="footer-contact">
+
+                    <div class="footer-contact-label">
+                        Kontakt
+                    </div>
+
+                    <a
+                        class="footer-email"
+                        href="mailto:gogosofficialgroup@gmail.com"
+                    >
+                        gogosofficialgroup@gmail.com
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!--
+                BEWERBUNG NUR NOCH HIER.
+                Kein Button im Header.
+                Kein Button im Hero.
+                Kein großer CTA.
+            -->
+
+            <div class="footer-application">
+
+                <div class="footer-application-copy">
+
+                    <div class="footer-application-label">
+                        Du möchtest mitmachen?
+                    </div>
+
+                    <div class="footer-application-text">
+                        Bewerbung ausschließlich für Live-Erschrecker.
+                    </div>
+
+                </div>
+
+                <a
+                    class="footer-application-link"
+                    href="https://docs.google.com/forms/d/e/1FAIpQLSd1jpwdN4MAMib7BjutnEdS7nMr-MxyooshVK8fpC9cV7wmfA/viewform"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    Bewerbung für Live-Erschrecker
+                    <span aria-hidden="true">↗</span>
+                </a>
+
+            </div>
+
+
+            <div class="footer-bottom">
+
+                <div>
+                    © 2026 GOGOS Gruppe
+                </div>
+
+                <div class="footer-links">
+
+                    <button
+                        type="button"
+                        id="impressumButton"
+                    >
+                        Impressum
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </footer>
+
+
+    <!-- ==========================================
+         IMPRESSUM MODAL
+    =========================================== -->
+
+    <div
+        class="modal"
+        id="impressumModal"
+        aria-hidden="true"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="impressumTitle"
+    >
+
+        <div
+            class="modal-content"
+            role="document"
+        >
+
+            <button
+                class="modal-close"
+                id="modalClose"
+                type="button"
+                aria-label="Impressum schließen"
+            >
+                ×
+            </button>
+
+            <div class="modal-label">
+                Rechtliche Informationen
+            </div>
+
+            <h2 id="impressumTitle">
+                Impressum
+            </h2>
+
+            <div class="modal-body">
+
+                <p>
+                    <strong>GOGOS Gruppe © 2026</strong>
+                </p>
+
+                <p>
+                    Dieses Event ist ein privates Event ohne
+                    kommerziellen Zweck. Die GOGOS Gruppe ist
+                    keine eingetragene Vereinigung und keine
+                    geschäftliche Organisation.
+                </p>
+
+                <p>
+                    <strong>Inhaber:</strong><br>
+                    Ulf T.
+                </p>
+
+                <p>
+                    <strong>Technischer Leiter:</strong><br>
+                    Paul W.
+                </p>
+
+                <p>
+                    <strong>Geschäftsführer:</strong><br>
+                    Ben T.
+                </p>
+
+                <p>
+                    <strong>Oberste Sekretärin:</strong><br>
+                    Ute T.
+                </p>
+
+                <p>
+                    <strong>Anschrift:</strong><br>
+                    Lindenstraße XX, Rohlstorf,
+                    23821 Deutschland<br><br>
+
+                    Karl-Marx-Straße 23, Pößneck,
+                    07381 Deutschland
+                </p>
+
+                <p>
+                    <strong>E-Mail:</strong><br>
+                    gogosofficialgroup@gmail.com
+                </p>
+
+                <p>
+                    Die Inhalte dieser Website dienen ausschließlich
+                    privaten Zwecken. Eine Haftung für externe Inhalte
+                    und verlinkte Seiten wird im Rahmen der gesetzlichen
+                    Möglichkeiten ausgeschlossen.
+                </p>
+
+                <p>
+                    Inhalte, Texte, Gestaltung und verwendete
+                    Materialien dieser Website dürfen nicht ohne
+                    Zustimmung übernommen oder anderweitig verwendet
+                    werden.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ==========================================
+         BACK TO TOP
+    =========================================== -->
+
+    <button
+        class="back-to-top"
+        id="backToTop"
+        type="button"
+        aria-label="Zurück nach oben"
+    >
+        ↑
+    </button>
+
+
+    <script>
+        /* ==========================================
+           BASIC JS STATE
+        =========================================== */
+
+        document.documentElement.classList.add("js");
+
+
+        /* ==========================================
+           HEADER / SCROLL
+        =========================================== */
+
+        const siteHeader =
+            document.getElementById("siteHeader");
+
+        const scrollProgress =
+            document.getElementById("scrollProgress");
+
+        const backToTop =
+            document.getElementById("backToTop");
+
+
+        function updateScrollUI() {
+
+            const scrollTop =
+                window.scrollY || document.documentElement.scrollTop;
+
+            const documentHeight =
+                document.documentElement.scrollHeight -
+                window.innerHeight;
+
+            const progress =
+                documentHeight > 0
+                    ? (scrollTop / documentHeight) * 100
+                    : 0;
+
+            document.documentElement.style.setProperty(
+                "--scroll-progress",
+                progress + "%"
+            );
+
+            siteHeader.classList.toggle(
+                "scrolled",
+                scrollTop > 15
+            );
+
+            backToTop.classList.toggle(
+                "visible",
+                scrollTop > 600
+            );
+        }
+
+
+        window.addEventListener(
+            "scroll",
+            updateScrollUI,
+            { passive: true }
+        );
+
+        updateScrollUI();
+
+
+        backToTop.addEventListener(
+            "click",
+            () => {
+                window.scrollTo({
+                    top: 0,
+                    behavior: "smooth"
+                });
+            }
+        );
+
+
+        /* ==========================================
+           MOBILE MENU
+        =========================================== */
+
+        const mobileMenuButton =
+            document.getElementById("mobileMenuButton");
+
+        const mobileMenu =
+            document.getElementById("mobileMenu");
+
+        const mobileMenuBackdrop =
+            document.getElementById("mobileMenuBackdrop");
+
+
+        function setBodyLock() {
+
+            const menuOpen =
+                mobileMenu.classList.contains("open");
+
+            const modalOpen =
+                impressumModal.classList.contains("open");
+
+            document.body.style.overflow =
+                menuOpen || modalOpen
+                    ? "hidden"
+                    : "";
+        }
+
+
+        function openMobileMenu() {
+
+            mobileMenu.classList.add("open");
+
+            mobileMenu.setAttribute(
+                "aria-hidden",
+                "false"
+            );
+
+            mobileMenuButton.classList.add("open");
+
+            mobileMenuButton.setAttribute(
+                "aria-expanded",
+                "true"
+            );
+
+            mobileMenuButton.setAttribute(
+                "aria-label",
+                "Menü schließen"
+            );
+
+            setBodyLock();
+        }
+
+
+        function closeMobileMenu() {
+
+            mobileMenu.classList.remove("open");
+
+            mobileMenu.setAttribute(
+                "aria-hidden",
+                "true"
+            );
+
+            mobileMenuButton.classList.remove("open");
+
+            mobileMenuButton.setAttribute(
+                "aria-expanded",
+                "false"
+            );
+
+            mobileMenuButton.setAttribute(
+                "aria-label",
+                "Menü öffnen"
+            );
+
+            setBodyLock();
+        }
+
+
+        mobileMenuButton.addEventListener(
+            "click",
+            () => {
+
+                if (
+                    mobileMenu.classList.contains("open")
+                ) {
+                    closeMobileMenu();
+                } else {
+                    openMobileMenu();
+                }
+
+            }
+        );
+
+
+        mobileMenuBackdrop.addEventListener(
+            "click",
+            closeMobileMenu
+        );
+
+
+        document
+            .querySelectorAll(".mobile-menu-panel a")
+            .forEach(link => {
+
+                link.addEventListener(
+                    "click",
+                    closeMobileMenu
+                );
+
+            });
+
+
+        /* ==========================================
+           COUNTDOWN
+           Deutschland:
+           31.10.2026 ist MEZ / UTC+1.
+        =========================================== */
+
+        const eventDate =
+            new Date(
+                "2026-10-31T18:00:00+01:00"
+            ).getTime();
+
+
+        const daysEl =
+            document.getElementById("days");
+
+        const hoursEl =
+            document.getElementById("hours");
+
+        const minutesEl =
+            document.getElementById("minutes");
+
+        const secondsEl =
+            document.getElementById("seconds");
+
+        const countdownNote =
+            document.getElementById("countdownNote");
+
+
+        function pad(number) {
+            return String(number).padStart(2, "0");
+        }
+
+
+        function updateCountdown() {
+
+            const now =
+                Date.now();
+
+            const difference =
+                eventDate - now;
+
+
+            if (difference <= 0) {
+
+                daysEl.textContent = "00";
+                hoursEl.textContent = "00";
+                minutesEl.textContent = "00";
+                secondsEl.textContent = "00";
+
+                countdownNote.textContent =
+                    "Schattenschreck hat begonnen.";
+
+                return false;
+            }
+
+
+            const totalSeconds =
+                Math.floor(
+                    difference / 1000
+                );
+
+            const days =
+                Math.floor(
+                    totalSeconds / 86400
+                );
+
+            const hours =
+                Math.floor(
+                    (totalSeconds % 86400) / 3600
+                );
+
+            const minutes =
+                Math.floor(
+                    (totalSeconds % 3600) / 60
+                );
+
+            const seconds =
+                totalSeconds % 60;
+
+
+            daysEl.textContent =
+                pad(days);
+
+            hoursEl.textContent =
+                pad(hours);
+
+            minutesEl.textContent =
+                pad(minutes);
+
+            secondsEl.textContent =
+                pad(seconds);
+
+
+            return true;
+        }
+
+
+        updateCountdown();
+
+
+        const countdownInterval =
+            setInterval(
+                () => {
+
+                    const active =
+                        updateCountdown();
+
+                    if (!active) {
+                        clearInterval(
+                            countdownInterval
+                        );
+                    }
+
+                },
+                1000
+            );
+
+
+        /* ==========================================
+           FAQ
+        =========================================== */
+
+        const faqItems =
+            document.querySelectorAll(".faq-item");
+
+
+        faqItems.forEach(item => {
+
+            const button =
+                item.querySelector(".faq-question");
+
+            const answer =
+                item.querySelector(".faq-answer");
+
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    const isOpen =
+                        item.classList.contains("open");
+
+
+                    /* Alle anderen schließen */
+                    faqItems.forEach(otherItem => {
+
+                        if (otherItem !== item) {
+
+                            otherItem.classList.remove(
+                                "open"
+                            );
+
+                            const otherButton =
+                                otherItem.querySelector(
+                                    ".faq-question"
+                                );
+
+                            const otherAnswer =
+                                otherItem.querySelector(
+                                    ".faq-answer"
+                                );
+
+                            otherButton.setAttribute(
+                                "aria-expanded",
+                                "false"
+                            );
+
+                            otherAnswer.setAttribute(
+                                "aria-hidden",
+                                "true"
+                            );
+                        }
+
+                    });
+
+
+                    if (isOpen) {
+
+                        item.classList.remove("open");
+
+                        button.setAttribute(
+                            "aria-expanded",
+                            "false"
+                        );
+
+                        answer.setAttribute(
+                            "aria-hidden",
+                            "true"
+                        );
+
+                    } else {
+
+                        item.classList.add("open");
+
+                        button.setAttribute(
+                            "aria-expanded",
+                            "true"
+                        );
+
+                        answer.setAttribute(
+                            "aria-hidden",
+                            "false"
+                        );
+
+                    }
+
+                }
+            );
+
+        });
+
+
+        /* ==========================================
+           REVEAL ON SCROLL
+        =========================================== */
+
+        const revealElements =
+            document.querySelectorAll(".reveal");
+
+
+        const reducedMotion =
+            window.matchMedia(
+                "(prefers-reduced-motion: reduce)"
+            ).matches;
+
+
+        if (
+            reducedMotion ||
+            !("IntersectionObserver" in window)
+        ) {
+
+            revealElements.forEach(
+                element =>
+                    element.classList.add("visible")
+            );
+
+        } else {
+
+            const observer =
+                new IntersectionObserver(
+                    entries => {
+
+                        entries.forEach(entry => {
+
+                            if (entry.isIntersecting) {
+
+                                entry.target.classList.add(
+                                    "visible"
+                                );
+
+                                observer.unobserve(
+                                    entry.target
+                                );
+
+                            }
+
+                        });
+
+                    },
+                    {
+                        threshold: .12,
+                        rootMargin: "0px 0px -30px 0px"
+                    }
+                );
+
+
+            revealElements.forEach(
+                element =>
+                    observer.observe(element)
+            );
+
+        }
+
+
+        /* ==========================================
+           AMBIENT EMBERS
+        =========================================== */
+
+        const embers =
+            document.getElementById("embers");
+
+
+        if (!reducedMotion) {
+
+            const emberCount = 18;
+
+            for (
+                let i = 0;
+                i < emberCount;
+                i++
+            ) {
+
+                const ember =
+                    document.createElement("span");
+
+                ember.className = "ember";
+
+                const left =
+                    Math.random() * 100;
+
+                const duration =
+                    10 + Math.random() * 14;
+
+                const delay =
+                    Math.random() * -20;
+
+                const drift =
+                    (-80 + Math.random() * 160) + "px";
+
+
+                ember.style.left =
+                    left + "%";
+
+                ember.style.setProperty(
+                    "--duration",
+                    duration + "s"
+                );
+
+                ember.style.setProperty(
+                    "--delay",
+                    delay + "s"
+                );
+
+                ember.style.setProperty(
+                    "--drift",
+                    drift
+                );
+
+
+                embers.appendChild(ember);
+
+            }
+
+        }
+
+
+        /* ==========================================
+           IMPRESSUM MODAL
+        =========================================== */
+
+        const impressumButton =
+            document.getElementById(
+                "impressumButton"
+            );
+
+        const impressumModal =
+            document.getElementById(
+                "impressumModal"
+            );
+
+        const modalClose =
+            document.getElementById(
+                "modalClose"
+            );
+
+
+        let previousFocusedElement = null;
+
+
+        function openModal() {
+
+            previousFocusedElement =
+                document.activeElement;
+
+            impressumModal.classList.add(
+                "open"
+            );
+
+            impressumModal.setAttribute(
+                "aria-hidden",
+                "false"
+            );
+
+            setBodyLock();
+
+            window.setTimeout(
+                () => modalClose.focus(),
+                50
+            );
+        }
+
+
+        function closeModal() {
+
+            impressumModal.classList.remove(
+                "open"
+            );
+
+            impressumModal.setAttribute(
+                "aria-hidden",
+                "true"
+            );
+
+            setBodyLock();
+
+
+            if (
+                previousFocusedElement &&
+                typeof previousFocusedElement.focus === "function"
+            ) {
+                previousFocusedElement.focus();
+            }
+
+        }
+
+
+        impressumButton.addEventListener(
+            "click",
+            openModal
+        );
+
+
+        modalClose.addEventListener(
+            "click",
+            closeModal
+        );
+
+
+        impressumModal.addEventListener(
+            "click",
+            event => {
+
+                if (
+                    event.target === impressumModal
+                ) {
+                    closeModal();
+                }
+
+            }
+        );
+
+
+        /* ==========================================
+           ESCAPE KEY
+        =========================================== */
+
+        document.addEventListener(
+            "keydown",
+            event => {
+
+                if (event.key !== "Escape") {
+                    return;
+                }
+
+
+                if (
+                    impressumModal.classList.contains("open")
+                ) {
+                    closeModal();
+                    return;
+                }
+
+
+                if (
+                    mobileMenu.classList.contains("open")
+                ) {
+                    closeMobileMenu();
+                }
+
+            }
+        );
+
+
+        /* ==========================================
+           MODAL FOCUS TRAP
+        =========================================== */
+
+        impressumModal.addEventListener(
+            "keydown",
+            event => {
+
+                if (event.key !== "Tab") {
+                    return;
+                }
+
+
+                const focusable =
+                    impressumModal.querySelectorAll(
+                        'button, a[href], input, textarea, select, [tabindex]:not([tabindex="-1"])'
+                    );
+
+
+                if (!focusable.length) {
+                    return;
+                }
+
+
+                const first =
+                    focusable[0];
+
+                const last =
+                    focusable[
+                        focusable.length - 1
+                    ];
+
+
+                if (
+                    event.shiftKey &&
+                    document.activeElement === first
+                ) {
+
+                    event.preventDefault();
+                    last.focus();
+
+                } else if (
+                    !event.shiftKey &&
+                    document.activeElement === last
+                ) {
+
+                    event.preventDefault();
+                    first.focus();
+
+                }
+
+            }
+        );
+
+
+        /* ==========================================
+           SMOOTH ANCHOR OFFSET
+        =========================================== */
+
+        document
+            .querySelectorAll('a[href^="#"]')
+            .forEach(anchor => {
+
+                anchor.addEventListener(
+                    "click",
+                    event => {
+
+                        const id =
+                            anchor.getAttribute(
+                                "href"
+                            );
+
+                        if (
+                            !id ||
+                            id === "#"
+                        ) {
+                            return;
+                        }
+
+
+                        const target =
+                            document.querySelector(id);
+
+                        if (!target) {
+                            return;
+                        }
+
+
+                        event.preventDefault();
+
+
+                        target.scrollIntoView({
+                            behavior:
+                                reducedMotion
+                                    ? "auto"
+                                    : "smooth",
+                            block: "start"
+                        });
+
+                    }
+                );
+
+            });
+
+
+        /* ==========================================
+           RESIZE SAFETY
+        =========================================== */
+
+        window.addEventListener(
+            "resize",
+            () => {
+
+                if (
+                    window.innerWidth > 800 &&
+                    mobileMenu.classList.contains("open")
+                ) {
+                    closeMobileMenu();
+                }
+
+            },
+            { passive: true }
+        );
+
+    </script>
+
+</body>
+</html>
