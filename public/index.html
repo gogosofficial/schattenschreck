@@ -18,7 +18,6 @@
 
     <title>Schattenschreck — Horror-Event 2026</title>
 
-    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
@@ -28,32 +27,31 @@
     >
 
     <style>
-
-        /* =========================================================
-           RESET
-        ========================================================= */
-
         :root {
-            --bg: #090909;
-            --bg-2: #0d0d0d;
+            --bg: #080808;
+            --bg-soft: #0d0d0d;
             --panel: #111111;
-            --panel-light: #151515;
+            --panel-2: #151515;
 
-            --white: #f3f3f0;
-            --text: #dededb;
-            --muted: #8b8b88;
-            --muted-dark: #5e5e5b;
+            --white: #f4f4f1;
+            --text: #e9e9e6;
+            --muted: #929292;
+            --muted-2: #666;
 
-            --red: #b20812;
-            --red-hover: #d00d19;
+            --red: #a80710;
+            --red-bright: #d20c18;
+            --red-dark: #450509;
 
-            --border: rgba(255,255,255,.10);
-            --border-light: rgba(255,255,255,.065);
+            --line: rgba(255,255,255,.11);
+            --line-soft: rgba(255,255,255,.065);
 
-            --max-width: 1240px;
+            --max-width: 1180px;
             --header-height: 74px;
 
-            --radius: 3px;
+            --radius: 4px;
+            --shadow: 0 20px 70px rgba(0,0,0,.45);
+
+            --scroll-progress: 0%;
         }
 
         * {
@@ -61,32 +59,22 @@
         }
 
         html {
-            margin: 0;
-            padding: 0;
-
-            background: var(--bg);
-
             scroll-behavior: smooth;
+            background: var(--bg);
         }
 
         body {
             margin: 0;
-            padding: 0;
-
-            min-width: 320px;
-
             background:
                 radial-gradient(
-                    circle at 50% 0%,
-                    rgba(115, 0, 10, .075),
-                    transparent 32%
+                    circle at 50% 8%,
+                    rgba(120,0,8,.10),
+                    transparent 35%
                 ),
                 var(--bg);
 
             color: var(--text);
-
             font-family: "DM Sans", Arial, sans-serif;
-
             line-height: 1.6;
 
             overflow-x: hidden;
@@ -96,25 +84,37 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* WICHTIG:
-           Keine festen transparenten Overlays mehr.
-           Dadurch wird die komplette Website nicht mehr
-           künstlich abgedunkelt.
-        */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 9990;
 
-        body.modal-open,
-        body.menu-open {
-            overflow: hidden;
+            background:
+                linear-gradient(
+                    rgba(255,255,255,.018) 1px,
+                    transparent 1px
+                );
+
+            background-size: 100% 5px;
+            opacity: .18;
+            mix-blend-mode: overlay;
         }
 
-        ::selection {
-            background: var(--red);
-            color: white;
-        }
+        body::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 9989;
 
-        img {
-            display: block;
-            max-width: 100%;
+            background:
+                radial-gradient(
+                    ellipse at center,
+                    transparent 35%,
+                    rgba(0,0,0,.55) 100%
+                );
         }
 
         a {
@@ -122,46 +122,73 @@
             text-decoration: none;
         }
 
-        button {
-            font: inherit;
-        }
-
         button,
         a {
             -webkit-tap-highlight-color: transparent;
         }
 
+        button {
+            font: inherit;
+        }
+
+        img {
+            max-width: 100%;
+            display: block;
+        }
+
+        ::selection {
+            background: var(--red);
+            color: white;
+        }
+
+        /* --------------------------------
+           ACCESSIBILITY
+        -------------------------------- */
+
         :focus-visible {
-            outline: 2px solid var(--red-hover);
+            outline: 2px solid var(--red-bright);
             outline-offset: 4px;
         }
 
-        .container {
-            width: min(
-                calc(100% - 64px),
-                var(--max-width)
-            );
-
-            margin: 0 auto;
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0,0,0,0);
+            white-space: nowrap;
+            border: 0;
         }
 
-        section {
-            scroll-margin-top:
-                calc(
-                    var(--header-height) +
-                    env(safe-area-inset-top) +
-                    25px
-                );
-        }
+        /* --------------------------------
+           SCROLL PROGRESS
+        -------------------------------- */
 
-
-        /* =========================================================
-           HEADER
-        ========================================================= */
-
-        .header {
+        .scroll-progress {
             position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 10001;
 
+            width: var(--scroll-progress);
+            height: 2px;
+
+            background: var(--red-bright);
+
+            box-shadow:
+                0 0 12px rgba(210,12,24,.5);
+
+            pointer-events: none;
+        }
+
+        /* --------------------------------
+           HEADER
+        -------------------------------- */
+
+        .site-header {
+            position: fixed;
             top: 0;
             left: 0;
             right: 0;
@@ -170,87 +197,103 @@
 
             padding-top: env(safe-area-inset-top);
 
-            background: rgba(9,9,9,.92);
+            height:
+                calc(
+                    var(--header-height) +
+                    env(safe-area-inset-top)
+                );
 
             border-bottom: 1px solid transparent;
 
+            background: rgba(8,8,8,.72);
+
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+
             transition:
-                background .25s ease,
-                border-color .25s ease,
-                box-shadow .25s ease;
+                background .3s ease,
+                border-color .3s ease,
+                box-shadow .3s ease;
         }
 
-        .header.scrolled {
-            background: rgba(9,9,9,.97);
-
-            border-bottom-color: var(--border);
-
-            box-shadow:
-                0 10px 35px rgba(0,0,0,.25);
+        .site-header.scrolled {
+            background: rgba(7,7,7,.94);
+            border-color: var(--line);
+            box-shadow: 0 12px 40px rgba(0,0,0,.28);
         }
 
         .header-inner {
+            width: min(
+                calc(100% - 48px),
+                var(--max-width)
+            );
+
             height: var(--header-height);
+
+            margin: 0 auto;
 
             display: flex;
             align-items: center;
             justify-content: space-between;
 
-            gap: 40px;
+            gap: 30px;
         }
 
-        .logo-link {
+        .brand {
             display: flex;
             align-items: center;
 
-            flex-shrink: 0;
+            flex: 0 0 auto;
+
+            transition: opacity .2s ease;
         }
 
-        .header-logo {
-            width: 130px;
+        .brand:hover {
+            opacity: .8;
+        }
+
+        .brand img {
+            width: 128px;
             height: auto;
         }
 
         .desktop-nav {
             display: flex;
             align-items: center;
-
-            gap: 34px;
+            gap: 28px;
         }
 
         .desktop-nav a {
             position: relative;
 
-            padding: 8px 0;
-
-            color: #898987;
+            color: #a9a9a9;
 
             font-family: "Oswald", sans-serif;
-
             font-size: 12px;
             font-weight: 600;
 
-            letter-spacing: .18em;
-
+            letter-spacing: .19em;
             text-transform: uppercase;
 
-            transition: color .2s ease;
+            padding: 8px 0;
+
+            transition:
+                color .2s ease;
         }
 
         .desktop-nav a::after {
             content: "";
 
             position: absolute;
-
             left: 0;
-            bottom: 1px;
+            bottom: 0;
 
             width: 0;
             height: 1px;
 
-            background: var(--red-hover);
+            background: var(--red-bright);
 
-            transition: width .2s ease;
+            transition: width .25s ease;
         }
 
         .desktop-nav a:hover {
@@ -261,14 +304,27 @@
             width: 100%;
         }
 
-        /* Bewerbung bewusst NICHT im Header */
+        /* Bewerbungslink ist bewusst klein */
+        .desktop-nav .nav-application {
+            color: #737373;
+        }
 
+        .desktop-nav .nav-application::before {
+            content: "LIVE-ERSCHRECKER";
+            display: block;
 
-        /* =========================================================
-           MOBILE MENU
-        ========================================================= */
+            margin-bottom: 2px;
 
-        .menu-button {
+            color: #555;
+
+            font-family: "DM Sans", sans-serif;
+            font-size: 7px;
+            font-weight: 600;
+
+            letter-spacing: .12em;
+        }
+
+        .mobile-menu-button {
             display: none;
 
             width: 44px;
@@ -276,28 +332,37 @@
 
             padding: 0;
 
-            border: 1px solid var(--border);
+            border: 1px solid var(--line);
             border-radius: 50%;
 
-            background: transparent;
+            background: rgba(255,255,255,.025);
 
             color: white;
 
             cursor: pointer;
+
+            align-items: center;
+            justify-content: center;
+
+            transition:
+                background .2s ease,
+                border-color .2s ease;
         }
 
-        .menu-icon {
-            position: relative;
+        .mobile-menu-button:hover {
+            background: rgba(255,255,255,.07);
+            border-color: rgba(255,255,255,.2);
+        }
 
+        .hamburger {
             width: 17px;
-            height: 13px;
+            height: 12px;
 
-            margin: auto;
+            position: relative;
         }
 
-        .menu-icon span {
+        .hamburger span {
             position: absolute;
-
             left: 0;
 
             width: 100%;
@@ -306,40 +371,42 @@
             background: white;
 
             transition:
-                transform .2s ease,
-                top .2s ease,
-                opacity .2s ease;
+                transform .25s ease,
+                top .25s ease;
         }
 
-        .menu-icon span:nth-child(1) {
+        .hamburger span:nth-child(1) {
             top: 0;
         }
 
-        .menu-icon span:nth-child(2) {
+        .hamburger span:nth-child(2) {
             top: 6px;
         }
 
-        .menu-icon span:nth-child(3) {
+        .hamburger span:nth-child(3) {
             top: 12px;
         }
 
-        .menu-button.open .menu-icon span:nth-child(1) {
+        .mobile-menu-button.open .hamburger span:nth-child(1) {
             top: 6px;
             transform: rotate(45deg);
         }
 
-        .menu-button.open .menu-icon span:nth-child(2) {
+        .mobile-menu-button.open .hamburger span:nth-child(2) {
             opacity: 0;
         }
 
-        .menu-button.open .menu-icon span:nth-child(3) {
+        .mobile-menu-button.open .hamburger span:nth-child(3) {
             top: 6px;
             transform: rotate(-45deg);
         }
 
+        /* --------------------------------
+           MOBILE MENU
+        -------------------------------- */
+
         .mobile-menu {
             position: fixed;
-
             inset: 0;
 
             z-index: 999;
@@ -348,25 +415,14 @@
             pointer-events: none;
         }
 
-        .mobile-menu.open {
-            visibility: visible;
-            pointer-events: auto;
-        }
-
-        .mobile-menu-background {
+        .mobile-menu-backdrop {
             position: absolute;
-
             inset: 0;
 
-            background: rgba(0,0,0,.72);
+            background: rgba(0,0,0,.7);
 
             opacity: 0;
-
             transition: opacity .25s ease;
-        }
-
-        .mobile-menu.open .mobile-menu-background {
-            opacity: 1;
         }
 
         .mobile-menu-panel {
@@ -381,22 +437,33 @@
             left: 14px;
             right: 14px;
 
-            padding: 15px 20px;
+            padding: 18px;
 
-            background: #111;
+            border: 1px solid var(--line);
+            background:
+                linear-gradient(
+                    145deg,
+                    #151515,
+                    #0a0a0a
+                );
 
-            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
 
-            box-shadow:
-                0 25px 70px rgba(0,0,0,.5);
-
-            transform: translateY(-10px);
-
+            transform: translateY(-12px);
             opacity: 0;
 
             transition:
-                transform .25s ease,
-                opacity .25s ease;
+                transform .3s ease,
+                opacity .3s ease;
+        }
+
+        .mobile-menu.open {
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        .mobile-menu.open .mobile-menu-backdrop {
+            opacity: 1;
         }
 
         .mobile-menu.open .mobile-menu-panel {
@@ -405,60 +472,168 @@
         }
 
         .mobile-menu-label {
-            padding: 8px 0 12px;
+            margin-bottom: 8px;
 
             color: #555;
 
             font-family: "Oswald", sans-serif;
-
-            font-size: 9px;
+            font-size: 10px;
             font-weight: 600;
 
             letter-spacing: .25em;
-
             text-transform: uppercase;
         }
 
         .mobile-menu-panel a {
             display: block;
 
-            padding: 15px 0;
+            padding: 15px 4px;
 
-            border-top: 1px solid var(--border-light);
+            border-bottom: 1px solid var(--line-soft);
 
             color: #ddd;
 
             font-family: "Oswald", sans-serif;
-
             font-size: 17px;
-            font-weight: 500;
 
             letter-spacing: .08em;
-
             text-transform: uppercase;
         }
 
+        .mobile-menu-panel a:last-child {
+            border-bottom: 0;
+        }
 
-        /* =========================================================
+        .mobile-menu-panel .mobile-application {
+            margin-top: 10px;
+            padding: 13px 14px;
+
+            border: 1px solid rgba(255,255,255,.08);
+
+            color: #777;
+
+            font-family: "DM Sans", sans-serif;
+            font-size: 11px;
+
+            letter-spacing: .04em;
+            text-transform: none;
+        }
+
+        /* --------------------------------
+           GENERAL
+        -------------------------------- */
+
+        main {
+            position: relative;
+            z-index: 1;
+        }
+
+        section {
+            scroll-margin-top:
+                calc(
+                    var(--header-height) +
+                    env(safe-area-inset-top) +
+                    20px
+                );
+        }
+
+        .container {
+            width: min(
+                calc(100% - 48px),
+                var(--max-width)
+            );
+
+            margin: 0 auto;
+        }
+
+        .section {
+            padding: 120px 0;
+            position: relative;
+        }
+
+        .section-label {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+
+            margin-bottom: 22px;
+
+            color: #707070;
+
+            font-family: "Oswald", sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+
+            letter-spacing: .28em;
+            text-transform: uppercase;
+        }
+
+        .section-label::before {
+            content: "";
+
+            width: 30px;
+            height: 1px;
+
+            background: var(--red-bright);
+
+            flex: 0 0 auto;
+        }
+
+        .section-heading {
+            max-width: 760px;
+
+            margin: 0;
+
+            color: var(--white);
+
+            font-family: "Oswald", sans-serif;
+            font-size: clamp(42px, 6vw, 78px);
+            font-weight: 600;
+
+            line-height: .98;
+
+            letter-spacing: -.025em;
+            text-transform: uppercase;
+        }
+
+        .section-intro {
+            max-width: 680px;
+
+            margin: 22px 0 0;
+
+            color: var(--muted);
+
+            font-size: 17px;
+            line-height: 1.8;
+        }
+
+        .section-divider {
+            width: 100%;
+            height: 1px;
+
+            background: var(--line);
+        }
+
+        /* --------------------------------
            HERO
-        ========================================================= */
+        -------------------------------- */
 
         .hero {
+            min-height: 100svh;
+
             position: relative;
 
-            min-height: 820px;
+            display: flex;
+            align-items: center;
 
             padding:
                 calc(
                     var(--header-height) +
                     env(safe-area-inset-top) +
-                    80px
+                    90px
                 )
                 0
-                100px;
-
-            display: flex;
-            align-items: center;
+                70px;
 
             overflow: hidden;
         }
@@ -467,262 +642,212 @@
             content: "";
 
             position: absolute;
+            inset: 0;
 
-            width: 800px;
-            height: 800px;
+            background:
+                radial-gradient(
+                    ellipse at 50% 46%,
+                    rgba(105,0,8,.20),
+                    transparent 45%
+                ),
+                radial-gradient(
+                    ellipse at 80% 10%,
+                    rgba(120,0,10,.09),
+                    transparent 32%
+                );
+
+            pointer-events: none;
+        }
+
+        .hero::after {
+            content: "";
+
+            position: absolute;
+
+            width: 620px;
+            height: 620px;
 
             left: 50%;
             top: 45%;
 
-            transform:
-                translate(-50%, -50%);
+            transform: translate(-50%, -50%);
 
             border-radius: 50%;
 
             background:
                 radial-gradient(
                     circle,
-                    rgba(120,0,10,.09),
+                    rgba(130,0,10,.08),
                     transparent 68%
                 );
 
+            filter: blur(20px);
+
+            animation: breathe 8s ease-in-out infinite;
+
             pointer-events: none;
+        }
+
+        @keyframes breathe {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: .7;
+            }
+
+            50% {
+                transform: translate(-50%, -50%) scale(1.08);
+                opacity: 1;
+            }
         }
 
         .hero-inner {
             position: relative;
             z-index: 2;
+
+            width: 100%;
         }
 
-        .hero-topline {
+        .hero-meta {
             display: flex;
             align-items: center;
-
             gap: 14px;
 
-            margin-bottom: 50px;
+            margin-bottom: 45px;
 
-            color: #777;
+            color: #888;
 
             font-family: "Oswald", sans-serif;
-
             font-size: 12px;
             font-weight: 600;
 
-            letter-spacing: .23em;
-
+            letter-spacing: .22em;
             text-transform: uppercase;
         }
 
-        .hero-topline::before {
+        .hero-meta::before {
             content: "";
 
-            width: 42px;
+            width: 48px;
             height: 1px;
 
-            flex-shrink: 0;
-
-            background: var(--red);
+            background: var(--red-bright);
         }
 
-        /*
-           Desktop:
-           Logo und Information stehen nebeneinander.
-           Dadurch wirkt die Seite auf großen Bildschirmen
-           nicht wie eine vergrößerte Handyseite.
-        */
+        .hero-logo-wrap {
+            width: min(760px, 100%);
 
-        .hero-grid {
-            display: grid;
+            margin: 0 auto 58px;
 
-            grid-template-columns:
-                minmax(0, 1.25fr)
-                minmax(330px, .75fr);
-
-            gap: 80px;
-
-            align-items: center;
-        }
-
-        .hero-logo-area {
-            min-width: 0;
-        }
-
-        .hero-logo-frame {
             position: relative;
-
-            padding: 34px;
-
-            border-top: 1px solid var(--border);
-            border-bottom: 1px solid var(--border);
         }
 
-        .hero-logo-frame::before,
-        .hero-logo-frame::after {
+        .hero-logo-wrap::before,
+        .hero-logo-wrap::after {
             content: "";
 
             position: absolute;
 
-            width: 18px;
-            height: 18px;
+            width: 14px;
+            height: 14px;
 
             border-color: rgba(255,255,255,.16);
             border-style: solid;
         }
 
-        .hero-logo-frame::before {
-            left: 0;
-            top: 0;
+        .hero-logo-wrap::before {
+            top: -16px;
+            left: -16px;
 
             border-width: 1px 0 0 1px;
         }
 
-        .hero-logo-frame::after {
-            right: 0;
-            bottom: 0;
+        .hero-logo-wrap::after {
+            right: -16px;
+            bottom: -16px;
 
             border-width: 0 1px 1px 0;
         }
 
         .hero-logo {
-            width: min(720px, 100%);
+            width: 100%;
+            max-width: 720px;
 
             margin: 0 auto;
 
             filter:
-                drop-shadow(
-                    0 20px 35px
-                    rgba(0,0,0,.35)
-                );
+                drop-shadow(0 18px 35px rgba(0,0,0,.65));
+
+            animation: logoFloat 7s ease-in-out infinite;
         }
 
-        .hero-info {
-            min-width: 0;
+        @keyframes logoFloat {
+            0%, 100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .hero-copy {
+            max-width: 780px;
+            margin: 0 auto;
+
+            text-align: center;
         }
 
         .hero-title {
-            margin: 0 0 22px;
+            margin: 0 0 20px;
 
-            color: white;
+            color: var(--white);
 
-            font-size:
-                clamp(
-                    30px,
-                    3.2vw,
-                    48px
-                );
-
+            font-size: clamp(27px, 4vw, 42px);
             font-weight: 700;
 
-            line-height: 1.17;
-
-            letter-spacing: -.03em;
+            line-height: 1.25;
+            letter-spacing: -.025em;
         }
 
         .hero-description {
-            margin: 0;
+            max-width: 720px;
 
-            color: #8d8d8a;
+            margin: 0 auto;
 
-            font-size: 16px;
+            color: #929292;
 
-            line-height: 1.8;
+            font-size: clamp(15px, 2vw, 18px);
+            line-height: 1.85;
         }
 
-        .hero-event-card {
-            margin-top: 35px;
-
-            padding-top: 26px;
-
-            border-top: 1px solid var(--border);
+        .hero-bottom {
+            margin-top: 65px;
 
             display: grid;
+            grid-template-columns: 1fr auto;
+            align-items: end;
 
-            grid-template-columns: 1fr 1fr;
-
-            gap: 20px;
+            gap: 40px;
         }
 
-        .hero-event-label {
-            margin-bottom: 5px;
-
-            color: #575754;
-
-            font-family: "Oswald", sans-serif;
-
-            font-size: 9px;
-            font-weight: 600;
-
-            letter-spacing: .2em;
-
-            text-transform: uppercase;
-        }
-
-        .hero-event-value {
-            color: #ddd;
-
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-
-        /* =========================================================
+        /* --------------------------------
            COUNTDOWN
-        ========================================================= */
-
-        .countdown-section {
-            margin-top: 75px;
-
-            padding-top: 28px;
-
-            border-top: 1px solid var(--border);
-        }
-
-        .countdown-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-
-            gap: 20px;
-
-            margin-bottom: 20px;
-        }
-
-        .countdown-title {
-            color: #656563;
-
-            font-family: "Oswald", sans-serif;
-
-            font-size: 10px;
-            font-weight: 600;
-
-            letter-spacing: .25em;
-
-            text-transform: uppercase;
-        }
-
-        .countdown-date {
-            color: #555;
-
-            font-size: 11px;
-        }
+        -------------------------------- */
 
         .countdown {
             display: grid;
+            grid-template-columns: repeat(4, minmax(70px, 1fr));
 
-            grid-template-columns:
-                repeat(4, minmax(0, 1fr));
+            max-width: 610px;
 
-            max-width: 720px;
-
-            border-top: 1px solid var(--border);
-            border-bottom: 1px solid var(--border);
+            border-top: 1px solid var(--line);
+            border-bottom: 1px solid var(--line);
         }
 
         .countdown-item {
-            padding: 20px 16px;
+            padding: 19px 18px 18px;
 
-            border-right: 1px solid var(--border);
+            border-right: 1px solid var(--line);
 
             text-align: center;
         }
@@ -731,24 +856,16 @@
             border-right: 0;
         }
 
-        .countdown-number {
+        .countdown-value {
             display: block;
 
             color: white;
 
             font-family: "Oswald", sans-serif;
-
-            font-size:
-                clamp(
-                    30px,
-                    4vw,
-                    45px
-                );
-
+            font-size: clamp(29px, 4vw, 44px);
             font-weight: 600;
 
             line-height: 1;
-
             font-variant-numeric: tabular-nums;
         }
 
@@ -757,22 +874,59 @@
 
             margin-top: 8px;
 
-            color: #5c5c5a;
+            color: #626262;
 
             font-family: "Oswald", sans-serif;
-
             font-size: 9px;
             font-weight: 600;
 
-            letter-spacing: .18em;
-
+            letter-spacing: .2em;
             text-transform: uppercase;
         }
 
+        .countdown-note {
+            margin-top: 11px;
 
-        /* =========================================================
+            color: #555;
+
+            font-size: 11px;
+            letter-spacing: .05em;
+        }
+
+        .hero-scroll {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+
+            color: #555;
+
+            font-family: "Oswald", sans-serif;
+            font-size: 9px;
+            font-weight: 600;
+
+            letter-spacing: .22em;
+            text-transform: uppercase;
+
+            white-space: nowrap;
+        }
+
+        .hero-scroll span {
+            display: block;
+
+            width: 1px;
+            height: 35px;
+
+            background:
+                linear-gradient(
+                    to bottom,
+                    var(--red-bright),
+                    transparent
+                );
+        }
+
+        /* --------------------------------
            QUICK INFO
-        ========================================================= */
+        -------------------------------- */
 
         .quick-info {
             padding: 0 0 110px;
@@ -780,20 +934,16 @@
 
         .quick-grid {
             display: grid;
+            grid-template-columns: repeat(4, 1fr);
 
-            grid-template-columns:
-                repeat(4, 1fr);
-
-            border-top: 1px solid var(--border);
-            border-bottom: 1px solid var(--border);
+            border-top: 1px solid var(--line);
+            border-bottom: 1px solid var(--line);
         }
 
         .quick-item {
-            min-width: 0;
+            padding: 28px 24px;
 
-            padding: 27px 24px;
-
-            border-right: 1px solid var(--border);
+            border-right: 1px solid var(--line);
         }
 
         .quick-item:first-child {
@@ -807,345 +957,259 @@
         .quick-label {
             margin-bottom: 8px;
 
-            color: #5c5c59;
+            color: #5f5f5f;
 
             font-family: "Oswald", sans-serif;
-
-            font-size: 9px;
+            font-size: 10px;
             font-weight: 600;
 
             letter-spacing: .22em;
-
             text-transform: uppercase;
         }
 
         .quick-value {
-            color: #e5e5e2;
-
-            font-size: 14px;
-            font-weight: 600;
-
-            overflow-wrap: anywhere;
-        }
-
-
-        /* =========================================================
-           SECTIONS
-        ========================================================= */
-
-        .section {
-            padding: 120px 0;
-        }
-
-        .section-label {
-            display: flex;
-            align-items: center;
-
-            gap: 12px;
-
-            margin-bottom: 20px;
-
-            color: #656562;
-
-            font-family: "Oswald", sans-serif;
-
-            font-size: 10px;
-            font-weight: 600;
-
-            letter-spacing: .25em;
-
-            text-transform: uppercase;
-        }
-
-        .section-label::before {
-            content: "";
-
-            width: 30px;
-            height: 1px;
-
-            background: var(--red);
-
-            flex-shrink: 0;
-        }
-
-        .section-title {
-            max-width: 760px;
-
-            margin: 0;
-
             color: white;
 
-            font-family: "Oswald", sans-serif;
-
-            font-size:
-                clamp(
-                    42px,
-                    6vw,
-                    76px
-                );
-
-            font-weight: 600;
-
-            line-height: .98;
-
-            letter-spacing: -.02em;
-
-            text-transform: uppercase;
-        }
-
-        .section-text {
-            max-width: 680px;
-
-            margin: 22px 0 0;
-
-            color: #858582;
-
             font-size: 16px;
-
-            line-height: 1.8;
+            font-weight: 600;
         }
 
-
-        /* =========================================================
-           ERLEBNIS
-        ========================================================= */
+        /* --------------------------------
+           EXPERIENCE
+        -------------------------------- */
 
         .experience-grid {
-            content-visibility: auto;
-            contain-intrinsic-size: 0 520px;
             display: grid;
-
-            grid-template-columns:
-                repeat(5, 1fr);
+            grid-template-columns: repeat(5, 1fr);
 
             margin-top: 65px;
 
-            border-top: 1px solid var(--border);
-            border-left: 1px solid var(--border);
+            border-top: 1px solid var(--line);
+            border-left: 1px solid var(--line);
         }
 
         .experience-card {
+            position: relative;
+
             min-width: 0;
 
-            padding: 32px 25px 35px;
+            padding: 34px 27px 38px;
 
-            border-right: 1px solid var(--border);
-            border-bottom: 1px solid var(--border);
+            border-right: 1px solid var(--line);
+            border-bottom: 1px solid var(--line);
 
-            background: transparent;
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(255,255,255,.025),
+                    transparent 65%
+                );
 
             transition:
-                background .25s ease,
-                transform .25s ease;
-        }
-
-        .experience-card:hover {
-            background: rgba(255,255,255,.018);
-
-            transform: translateY(-3px);
+                background .3s ease,
+                transform .3s ease;
         }
 
         .experience-number {
             display: block;
 
-            margin-bottom: 55px;
+            margin-bottom: 58px;
 
-            color: #3f3f3d;
+            color: #3f3f3f;
 
             font-family: "Oswald", sans-serif;
-
-            font-size: 10px;
+            font-size: 11px;
             font-weight: 600;
 
-            letter-spacing: .18em;
+            letter-spacing: .16em;
         }
 
         .experience-card h3 {
             margin: 0 0 12px;
 
-            color: #f1f1ee;
+            color: white;
 
             font-family: "Oswald", sans-serif;
-
-            font-size: 20px;
+            font-size: 21px;
             font-weight: 600;
 
             line-height: 1.1;
-
             text-transform: uppercase;
         }
 
         .experience-card p {
             margin: 0;
 
-            color: #777774;
+            color: #777;
 
             font-size: 13px;
-
             line-height: 1.7;
         }
 
+        @media (hover: hover) {
+            .experience-card:hover {
+                background:
+                    linear-gradient(
+                        145deg,
+                        rgba(160,0,12,.10),
+                        transparent 65%
+                    );
 
-        /* =========================================================
-           EVENT
-        ========================================================= */
+                transform: translateY(-4px);
+            }
+        }
+
+        /* --------------------------------
+           EVENT DETAILS
+        -------------------------------- */
 
         .event-layout {
             display: grid;
+            grid-template-columns: .72fr 1.28fr;
 
-            grid-template-columns:
-                minmax(250px, .65fr)
-                minmax(0, 1.35fr);
-
-            gap: 90px;
+            gap: 80px;
 
             margin-top: 70px;
         }
 
         .event-date {
+            position: sticky;
+            top:
+                calc(
+                    var(--header-height) +
+                    env(safe-area-inset-top) +
+                    30px
+                );
+
             align-self: start;
 
-            padding: 30px 0;
+            padding: 34px 0;
 
-            border-top: 1px solid var(--border);
-            border-bottom: 1px solid var(--border);
+            border-top: 1px solid var(--line);
+            border-bottom: 1px solid var(--line);
         }
 
-        .event-date-label {
-            margin-bottom: 12px;
+        .event-date-small {
+            margin-bottom: 13px;
 
-            color: #666663;
+            color: #777;
 
             font-family: "Oswald", sans-serif;
-
-            font-size: 10px;
+            font-size: 11px;
             font-weight: 600;
 
             letter-spacing: .25em;
-
             text-transform: uppercase;
         }
 
-        .event-date-number {
+        .event-date-big {
             color: white;
 
             font-family: "Oswald", sans-serif;
-
-            font-size:
-                clamp(
-                    55px,
-                    6vw,
-                    82px
-                );
-
+            font-size: clamp(52px, 6vw, 82px);
             font-weight: 600;
 
             line-height: .9;
 
-            letter-spacing: -.03em;
+            letter-spacing: -.035em;
         }
 
-        .event-place {
-            margin-top: 22px;
+        .event-location {
+            margin-top: 20px;
 
-            color: #777;
+            color: #737373;
 
             font-size: 14px;
         }
 
-        .event-table {
-            border-top: 1px solid var(--border);
+        /*
+           WICHTIG:
+           Das Event-Grid ist auf Mobile nicht mehr
+           zweispaltig. Dadurch kann z.B.
+           "VERANSTALTER" niemals mit "GOGOS Gruppe"
+           kollidieren.
+        */
+
+        .event-details {
+            border-top: 1px solid var(--line);
         }
 
         .event-row {
             display: grid;
 
             grid-template-columns:
-                180px minmax(0, 1fr);
-
-            align-items: center;
-
-            min-height: 90px;
+                minmax(145px, .7fr)
+                minmax(0, 1.3fr);
 
             gap: 30px;
 
-            border-bottom: 1px solid var(--border);
+            padding: 27px 0;
+
+            border-bottom: 1px solid var(--line);
+
+            align-items: center;
         }
 
-        .event-label {
-            color: #62625f;
+        .event-row-label {
+            min-width: 0;
+
+            color: #626262;
 
             font-family: "Oswald", sans-serif;
-
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 600;
 
-            letter-spacing: .24em;
-
+            letter-spacing: .25em;
             text-transform: uppercase;
 
             overflow-wrap: anywhere;
         }
 
-        .event-value {
+        .event-row-value {
             min-width: 0;
 
-            color: #ededeb;
+            color: #f2f2ef;
 
-            font-size:
-                clamp(
-                    20px,
-                    2.4vw,
-                    29px
-                );
-
+            font-size: clamp(20px, 2.5vw, 30px);
             font-weight: 600;
 
-            line-height: 1.25;
+            line-height: 1.2;
 
             overflow-wrap: anywhere;
+            word-break: normal;
         }
 
-        .event-value.small {
-            font-size: 16px;
+        .event-row-value.small {
+            font-size: 17px;
         }
 
-
-        /* =========================================================
+        /* --------------------------------
            FAQ
-        ========================================================= */
+        -------------------------------- */
 
         .faq-list {
-            content-visibility: auto;
-            contain-intrinsic-size: 0 700px;
             max-width: 900px;
 
-            margin-top: 60px;
+            margin-top: 65px;
 
-            border-top: 1px solid var(--border);
+            border-top: 1px solid var(--line);
         }
 
         .faq-item {
-            border-bottom: 1px solid var(--border);
+            border-bottom: 1px solid var(--line);
         }
 
         .faq-question {
             width: 100%;
 
-            padding: 24px 0;
+            padding: 25px 0;
 
             display: grid;
-
-            grid-template-columns:
-                minmax(0, 1fr)
-                28px;
-
-            align-items: center;
+            grid-template-columns: 1fr auto;
 
             gap: 20px;
 
             border: 0;
-
             background: transparent;
 
             color: white;
@@ -1156,30 +1220,32 @@
         }
 
         .faq-question-text {
-            min-width: 0;
-
             font-family: "Oswald", sans-serif;
-
-            font-size: 20px;
+            font-size: clamp(18px, 2.2vw, 23px);
             font-weight: 500;
 
             line-height: 1.3;
 
             text-transform: uppercase;
+            letter-spacing: .015em;
         }
 
-        .faq-plus {
+        .faq-icon {
             position: relative;
 
-            width: 25px;
-            height: 25px;
+            width: 24px;
+            height: 24px;
 
-            border: 1px solid #3f3f3d;
+            border: 1px solid #444;
             border-radius: 50%;
+
+            transition:
+                border-color .25s ease,
+                transform .25s ease;
         }
 
-        .faq-plus::before,
-        .faq-plus::after {
+        .faq-icon::before,
+        .faq-icon::after {
             content: "";
 
             position: absolute;
@@ -1195,19 +1261,19 @@
             transform: translate(-50%, -50%);
         }
 
-        .faq-plus::after {
+        .faq-icon::after {
             transform:
                 translate(-50%, -50%)
                 rotate(90deg);
 
-            transition: transform .2s ease;
+            transition: transform .25s ease;
         }
 
-        .faq-question[aria-expanded="true"] .faq-plus {
-            border-color: var(--red);
+        .faq-question[aria-expanded="true"] .faq-icon {
+            border-color: var(--red-bright);
         }
 
-        .faq-question[aria-expanded="true"] .faq-plus::after {
+        .faq-question[aria-expanded="true"] .faq-icon::after {
             transform:
                 translate(-50%, -50%)
                 rotate(0deg);
@@ -1218,121 +1284,98 @@
 
             grid-template-rows: 0fr;
 
-            transition:
-                grid-template-rows .3s ease;
+            transition: grid-template-rows .35s ease;
+        }
+
+        .faq-answer-inner {
+            overflow: hidden;
+
+            color: #858585;
+
+            font-size: 15px;
+            line-height: 1.8;
+        }
+
+        .faq-answer-inner p {
+            margin: 0;
+            padding: 0 50px 25px 0;
         }
 
         .faq-item.open .faq-answer {
             grid-template-rows: 1fr;
         }
 
-        .faq-answer-inner {
-            overflow: hidden;
+        /* --------------------------------
+           CTA
+        -------------------------------- */
+
+        .cta-section {
+            padding: 100px 0 120px;
         }
 
-        .faq-answer-inner p {
-            max-width: 720px;
-
-            margin: 0;
-
-            padding:
-                0
-                50px
-                24px
-                0;
-
-            color: #81817e;
-
-            font-size: 14px;
-
-            line-height: 1.8;
-        }
-
-
-        /* =========================================================
-           FINAL CTA
-        ========================================================= */
-
-        .final-section {
-            padding: 60px 0 120px;
-        }
-
-        .final-box {
+        .cta-box {
             position: relative;
 
-            padding:
-                clamp(35px, 6vw, 65px);
-
-            border: 1px solid var(--border);
-
-            background:
-                linear-gradient(
-                    120deg,
-                    #101010,
-                    #0d0d0d
-                );
-
             overflow: hidden;
-        }
 
-        .final-box::after {
-            content: "";
+            padding: clamp(35px, 7vw, 75px);
 
-            position: absolute;
-
-            right: -100px;
-            top: -150px;
-
-            width: 400px;
-            height: 400px;
-
-            border-radius: 50%;
+            border: 1px solid var(--line);
 
             background:
                 radial-gradient(
-                    circle,
-                    rgba(150,0,12,.11),
-                    transparent 68%
-                );
-
-            pointer-events: none;
+                    circle at 90% 30%,
+                    rgba(150,0,10,.13),
+                    transparent 40%
+                ),
+                #0d0d0d;
         }
 
-        .final-label {
-            position: relative;
-            z-index: 1;
+        .cta-box::before {
+            content: "31 / 10 / 26";
 
-            margin-bottom: 12px;
+            position: absolute;
 
-            color: #686865;
+            right: 35px;
+            top: 27px;
+
+            color: rgba(255,255,255,.05);
 
             font-family: "Oswald", sans-serif;
+            font-size: clamp(35px, 6vw, 75px);
+            font-weight: 600;
 
-            font-size: 10px;
+            letter-spacing: .05em;
+        }
+
+        .cta-label {
+            position: relative;
+            z-index: 2;
+
+            margin-bottom: 14px;
+
+            color: #6e6e6e;
+
+            font-family: "Oswald", sans-serif;
+            font-size: 11px;
             font-weight: 600;
 
             letter-spacing: .25em;
-
             text-transform: uppercase;
         }
 
-        .final-title {
+        .cta-title {
             position: relative;
-            z-index: 1;
+            z-index: 2;
+
+            max-width: 700px;
 
             margin: 0;
 
             color: white;
 
             font-family: "Oswald", sans-serif;
-
-            font-size:
-                clamp(
-                    40px,
-                    6vw,
-                    68px
-                );
-
+            font-size: clamp(38px, 6vw, 70px);
             font-weight: 600;
 
             line-height: .98;
@@ -1340,88 +1383,91 @@
             text-transform: uppercase;
         }
 
-        .final-text {
+        .cta-text {
             position: relative;
-            z-index: 1;
+            z-index: 2;
 
-            max-width: 620px;
+            max-width: 600px;
 
-            margin: 20px 0 28px;
+            margin: 20px 0 30px;
 
-            color: #81817e;
+            color: #888;
 
             font-size: 15px;
-
-            line-height: 1.75;
+            line-height: 1.7;
         }
 
-        .final-button {
+        .cta-button {
             position: relative;
-            z-index: 1;
+            z-index: 2;
 
             display: inline-flex;
             align-items: center;
             justify-content: center;
+            gap: 20px;
 
-            min-height: 50px;
+            min-height: 53px;
 
-            padding: 0 25px;
+            padding: 0 27px;
 
-            border: 1px solid var(--red);
+            border: 1px solid rgba(255,255,255,.18);
 
             background: var(--red);
 
             color: white;
 
             font-family: "Oswald", sans-serif;
-
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 600;
 
-            letter-spacing: .17em;
-
+            letter-spacing: .16em;
             text-transform: uppercase;
 
             transition:
                 background .2s ease,
-                border-color .2s ease,
-                transform .2s ease;
+                transform .2s ease,
+                border-color .2s ease;
         }
 
-        .final-button:hover {
-            background: var(--red-hover);
-            border-color: var(--red-hover);
+        .cta-button span {
+            font-size: 18px;
+            transition: transform .2s ease;
+        }
 
+        .cta-button:hover {
+            background: var(--red-bright);
+            border-color: var(--red-bright);
             transform: translateY(-2px);
         }
 
+        .cta-button:hover span {
+            transform: translateX(4px);
+        }
 
-        /* =========================================================
+        /* --------------------------------
            FOOTER
-        ========================================================= */
+        -------------------------------- */
 
         footer {
-            border-top: 1px solid var(--border);
-
-            background: #070707;
+            border-top: 1px solid var(--line);
 
             padding:
                 65px
                 0
                 calc(
-                    35px +
+                    40px +
                     env(safe-area-inset-bottom)
                 );
+
+            background: #060606;
         }
 
-        .footer-main {
+        .footer-top {
             display: grid;
 
-            grid-template-columns:
-                minmax(0, 1fr)
-                auto;
+            grid-template-columns: 1fr auto;
 
-            gap: 70px;
+            gap: 60px;
 
             align-items: start;
         }
@@ -1429,19 +1475,18 @@
         .footer-logo {
             width: 145px;
 
-            margin-bottom: 20px;
-
             opacity: .85;
+
+            margin-bottom: 20px;
         }
 
         .footer-description {
-            max-width: 470px;
+            max-width: 450px;
 
-            color: #646461;
+            color: #666;
 
             font-size: 13px;
-
-            line-height: 1.75;
+            line-height: 1.7;
         }
 
         .footer-contact {
@@ -1451,20 +1496,18 @@
         .footer-contact-label {
             margin-bottom: 7px;
 
-            color: #50504e;
+            color: #555;
 
             font-family: "Oswald", sans-serif;
-
-            font-size: 9px;
+            font-size: 10px;
             font-weight: 600;
 
-            letter-spacing: .24em;
-
+            letter-spacing: .22em;
             text-transform: uppercase;
         }
 
         .footer-email {
-            color: #92928f;
+            color: #aaa;
 
             font-size: 13px;
 
@@ -1478,99 +1521,104 @@
         }
 
         /*
-           Bewerbung:
-           NUR HIER.
-           Klein und eindeutig.
+           Bewerbung jetzt NUR HIER.
+           Dezent und klar als Option für
+           Live-Erschrecker gekennzeichnet.
         */
 
-        .application-info {
-            display: flex;
+        .footer-application {
+            margin-top: 45px;
 
+            padding-top: 24px;
+
+            border-top: 1px solid var(--line-soft);
+
+            display: flex;
             align-items: center;
             justify-content: space-between;
 
-            gap: 30px;
-
-            margin-top: 45px;
-            padding-top: 24px;
-
-            border-top: 1px solid var(--border-light);
+            gap: 25px;
         }
 
-        .application-copy {
+        .footer-application-copy {
             min-width: 0;
         }
 
-        .application-label {
+        .footer-application-label {
             margin-bottom: 4px;
 
-            color: #555552;
+            color: #5b5b5b;
 
             font-family: "Oswald", sans-serif;
-
             font-size: 9px;
             font-weight: 600;
 
             letter-spacing: .22em;
-
             text-transform: uppercase;
         }
 
-        .application-text {
-            color: #70706d;
+        .footer-application-text {
+            color: #777;
 
             font-size: 12px;
         }
 
-        .application-link {
-            flex-shrink: 0;
+        .footer-application-link {
+            flex: 0 0 auto;
 
-            color: #858582;
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+
+            color: #8d8d8d;
 
             font-family: "Oswald", sans-serif;
-
             font-size: 10px;
             font-weight: 600;
 
-            letter-spacing: .14em;
-
+            letter-spacing: .15em;
             text-transform: uppercase;
 
             transition: color .2s ease;
         }
 
-        .application-link:hover {
+        .footer-application-link:hover {
             color: white;
         }
 
         .footer-bottom {
             display: flex;
-
             align-items: center;
             justify-content: space-between;
 
+            gap: 25px;
+
+            margin-top: 55px;
+            padding-top: 22px;
+
+            border-top: 1px solid var(--line-soft);
+
+            color: #454545;
+
+            font-size: 11px;
+        }
+
+        .footer-links {
+            display: flex;
             gap: 20px;
 
-            margin-top: 50px;
-            padding-top: 20px;
-
-            border-top: 1px solid var(--border-light);
-
-            color: #444441;
-
-            font-size: 10px;
+            flex-wrap: wrap;
         }
 
         .footer-links button {
             padding: 0;
 
             border: 0;
+            background: none;
 
-            background: transparent;
+            color: #666;
 
-            color: #666663;
-
-            font-size: 10px;
+            font-size: 11px;
 
             cursor: pointer;
 
@@ -1581,17 +1629,15 @@
             color: white;
         }
 
-
-        /* =========================================================
+        /* --------------------------------
            MODAL
-        ========================================================= */
+        -------------------------------- */
 
         .modal {
             position: fixed;
-
             inset: 0;
 
-            z-index: 5000;
+            z-index: 10000;
 
             display: grid;
             place-items: center;
@@ -1604,20 +1650,23 @@
                     env(safe-area-inset-bottom)
                 );
 
-            background: rgba(0,0,0,.78);
+            background: rgba(0,0,0,.82);
 
-            visibility: hidden;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+
             opacity: 0;
+            visibility: hidden;
             pointer-events: none;
 
             transition:
-                opacity .2s ease,
-                visibility .2s ease;
+                opacity .25s ease,
+                visibility .25s ease;
         }
 
         .modal.open {
-            visibility: visible;
             opacity: 1;
+            visibility: visible;
             pointer-events: auto;
         }
 
@@ -1625,51 +1674,52 @@
             position: relative;
 
             width: min(760px, 100%);
-
-            max-height: 88svh;
+            max-height: min(760px, 88svh);
 
             overflow-y: auto;
 
-            padding:
-                clamp(30px, 5vw, 55px);
+            padding: clamp(28px, 5vw, 55px);
 
-            border: 1px solid var(--border);
+            border: 1px solid var(--line);
 
-            background: #111;
+            background:
+                linear-gradient(
+                    145deg,
+                    #151515,
+                    #090909
+                );
 
-            box-shadow:
-                0 30px 100px rgba(0,0,0,.65);
+            box-shadow: 0 35px 100px rgba(0,0,0,.7);
 
-            transform: translateY(10px);
+            transform: translateY(15px) scale(.98);
 
-            transition:
-                transform .25s ease;
+            transition: transform .3s ease;
         }
 
         .modal.open .modal-content {
-            transform: translateY(0);
+            transform: translateY(0) scale(1);
         }
 
         .modal-close {
             position: absolute;
 
-            top: 16px;
-            right: 16px;
+            top: 18px;
+            right: 18px;
 
             width: 40px;
             height: 40px;
 
-            border: 1px solid var(--border);
+            border: 1px solid var(--line);
             border-radius: 50%;
 
             background: transparent;
 
             color: #aaa;
 
+            cursor: pointer;
+
             font-size: 23px;
             line-height: 1;
-
-            cursor: pointer;
 
             transition:
                 color .2s ease,
@@ -1678,53 +1728,44 @@
 
         .modal-close:hover {
             color: white;
-
-            border-color:
-                rgba(255,255,255,.25);
+            border-color: rgba(255,255,255,.25);
         }
 
         .modal-label {
             margin-bottom: 12px;
 
-            color: var(--red-hover);
+            color: var(--red-bright);
 
             font-family: "Oswald", sans-serif;
-
-            font-size: 9px;
+            font-size: 10px;
             font-weight: 600;
 
             letter-spacing: .25em;
-
             text-transform: uppercase;
         }
 
-        .modal-title {
+        .modal h2 {
             margin: 0 0 28px;
 
             color: white;
 
             font-family: "Oswald", sans-serif;
-
-            font-size:
-                clamp(
-                    36px,
-                    6vw,
-                    55px
-                );
-
+            font-size: clamp(34px, 6vw, 55px);
             font-weight: 600;
 
             line-height: 1;
-
             text-transform: uppercase;
         }
 
         .modal-body {
-            color: #858582;
+            color: #888;
 
             font-size: 14px;
-
             line-height: 1.8;
+        }
+
+        .modal-body strong {
+            color: #ddd;
         }
 
         .modal-body p {
@@ -1735,16 +1776,11 @@
             margin-bottom: 0;
         }
 
-        .modal-body strong {
-            color: #ddd;
-        }
-
-
-        /* =========================================================
+        /* --------------------------------
            BACK TO TOP
-        ========================================================= */
+        -------------------------------- */
 
-        .back-top {
+        .back-to-top {
             position: fixed;
 
             right: 22px;
@@ -1754,15 +1790,15 @@
                     env(safe-area-inset-bottom)
                 );
 
-            z-index: 800;
+            z-index: 900;
 
-            width: 42px;
-            height: 42px;
+            width: 43px;
+            height: 43px;
 
-            border: 1px solid var(--border);
+            border: 1px solid var(--line);
             border-radius: 50%;
 
-            background: #111;
+            background: rgba(12,12,12,.88);
 
             color: #aaa;
 
@@ -1771,230 +1807,130 @@
             opacity: 0;
             visibility: hidden;
 
-            transform: translateY(8px);
+            transform: translateY(10px);
 
             transition:
-                opacity .2s ease,
-                visibility .2s ease,
-                transform .2s ease,
+                opacity .25s ease,
+                visibility .25s ease,
+                transform .25s ease,
                 color .2s ease;
         }
 
-        .back-top.visible {
+        .back-to-top.visible {
             opacity: 1;
             visibility: visible;
-
             transform: translateY(0);
         }
 
-        .back-top:hover {
+        .back-to-top:hover {
             color: white;
         }
-        /* =========================================================
-           MOTION SYSTEM
-           Bewegungen laufen primär über opacity/transform und
-           bleiben dadurch auf Desktop und Mobile leichtgewichtig.
-        ========================================================= */
 
-        @keyframes heroGlow {
-            0%, 100% {
-                opacity: .55;
-                transform: translate(-50%, -50%) scale(1);
-            }
-
-            50% {
-                opacity: .82;
-                transform: translate(-50%, -50%) scale(1.045);
-            }
-        }
-
-        @keyframes heroLogoFloat {
-            0%, 100% {
-                transform: translate3d(0, 0, 0);
-            }
-
-            50% {
-                transform: translate3d(0, -5px, 0);
-            }
-        }
-
-        @keyframes buttonShine {
-            0% {
-                transform: translateX(-130%) skewX(-18deg);
-            }
-
-            100% {
-                transform: translateX(230%) skewX(-18deg);
-            }
-        }
-
-        .hero::before {
-            animation: heroGlow 7s ease-in-out infinite;
-            will-change: transform, opacity;
-        }
-
-        .hero-logo {
-            animation: heroLogoFloat 6s ease-in-out infinite;
-            will-change: transform;
-        }
-
-        .final-button {
-            overflow: hidden;
-            isolation: isolate;
-        }
-
-        .final-button::after {
-            content: "";
-            position: absolute;
-            inset: -40% auto -40% -35%;
-            width: 24%;
-            background: rgba(255,255,255,.16);
-            transform: translateX(-130%) skewX(-18deg);
-            pointer-events: none;
-        }
-
-        .final-button:hover::after,
-        .final-button:focus-visible::after {
-            animation: buttonShine .7s ease-out;
-        }
-
-        .reveal {
-            opacity: 1;
-            transform: none;
-        }
+        /* --------------------------------
+           REVEAL ANIMATIONS
+        -------------------------------- */
 
         .js .reveal {
             opacity: 0;
-            transform: translate3d(0, 22px, 0);
+            transform: translateY(22px);
+
             transition:
-                opacity .65s cubic-bezier(.22, 1, .36, 1),
-                transform .65s cubic-bezier(.22, 1, .36, 1);
-            will-change: opacity, transform;
+                opacity .75s ease,
+                transform .75s ease;
         }
 
         .js .reveal.visible {
             opacity: 1;
-            transform: translate3d(0, 0, 0);
-            will-change: auto;
+            transform: translateY(0);
         }
 
-        .js .delay-1 { transition-delay: .08s; }
-        .js .delay-2 { transition-delay: .16s; }
-        .js .delay-3 { transition-delay: .24s; }
-
-        .menu-button,
-        .desktop-nav a,
-        .mobile-menu-panel a,
-        .experience-card,
-        .faq-question,
-        .modal-close,
-        .back-top {
-            -webkit-backface-visibility: hidden;
-            backface-visibility: hidden;
+        .js .delay-1 {
+            transition-delay: .08s;
         }
 
-        .menu-button {
-            transition:
-                transform .2s ease,
-                border-color .2s ease,
-                background-color .2s ease;
+        .js .delay-2 {
+            transition-delay: .16s;
         }
 
-        .menu-button:hover,
-        .menu-button:focus-visible {
-            transform: scale(1.04);
-            border-color: rgba(255,255,255,.24);
-            background: rgba(255,255,255,.035);
+        .js .delay-3 {
+            transition-delay: .24s;
         }
 
-        .experience-card {
-            transform: translate3d(0, 0, 0);
+        /* --------------------------------
+           AMBIENT EMBERS
+        -------------------------------- */
+
+        .embers {
+            position: fixed;
+            inset: 0;
+
+            z-index: 0;
+
+            overflow: hidden;
+
+            pointer-events: none;
         }
 
-        .experience-card:hover {
-            transform: translate3d(0, -5px, 0);
+        .ember {
+            position: absolute;
+
+            width: 2px;
+            height: 2px;
+
+            border-radius: 50%;
+
+            background: rgba(210,12,24,.55);
+
+            box-shadow:
+                0 0 8px rgba(210,12,24,.4);
+
+            animation:
+                emberFloat
+                var(--duration)
+                linear
+                infinite;
+
+            animation-delay: var(--delay);
+
+            opacity: 0;
         }
 
-        .mobile-menu-panel a {
-            transition:
-                color .2s ease,
-                padding-left .2s ease,
-                background-color .2s ease;
-        }
+        @keyframes emberFloat {
+            0% {
+                transform:
+                    translate3d(0, 105vh, 0)
+                    scale(.5);
 
-        .mobile-menu-panel a:hover,
-        .mobile-menu-panel a:focus-visible {
-            padding-left: 7px;
-            color: white;
-        }
-
-        .faq-question {
-            transition: color .2s ease;
-        }
-
-        .faq-question:hover {
-            color: #f5f5f5;
-        }
-
-        @media (max-width: 800px) {
-            .hero-logo {
-                animation-duration: 7s;
+                opacity: 0;
             }
 
-            .experience-card:hover {
-                transform: none;
+            10% {
+                opacity: .65;
             }
 
-            .mobile-menu.open .mobile-menu-panel a {
-                animation: mobileMenuItemIn .38s cubic-bezier(.22, 1, .36, 1) both;
+            90% {
+                opacity: .25;
             }
 
-            .mobile-menu.open .mobile-menu-panel a:nth-of-type(1) { animation-delay: .03s; }
-            .mobile-menu.open .mobile-menu-panel a:nth-of-type(2) { animation-delay: .07s; }
-            .mobile-menu.open .mobile-menu-panel a:nth-of-type(3) { animation-delay: .11s; }
-            .mobile-menu.open .mobile-menu-panel a:nth-of-type(4) { animation-delay: .15s; }
-
-            @keyframes mobileMenuItemIn {
-                from {
-                    opacity: 0;
-                    transform: translate3d(0, 7px, 0);
-                }
-
-                to {
-                    opacity: 1;
-                    transform: translate3d(0, 0, 0);
-                }
+            100% {
+                transform:
+                    translate3d(
+                        var(--drift),
+                        -10vh,
+                        0
+                    )
+                    scale(1);
+                opacity: 0;
             }
         }
 
-        @media (prefers-reduced-motion: reduce) {
-            .hero::before,
-            .hero-logo,
-            .mobile-menu.open .mobile-menu-panel a {
-                animation: none !important;
-            }
-        }
-
-
-
-
-        /* =========================================================
-           TABLET
-        ========================================================= */
+        /* --------------------------------
+           RESPONSIVE
+        -------------------------------- */
 
         @media (max-width: 1050px) {
-
-            .hero-grid {
-                grid-template-columns:
-                    minmax(0, 1fr)
-                    minmax(280px, .7fr);
-
-                gap: 50px;
-            }
-
             .experience-grid {
-                grid-template-columns:
-                    repeat(3, 1fr);
+                grid-template-columns: repeat(3, 1fr);
             }
 
             .experience-card:nth-child(3) {
@@ -2002,52 +1938,48 @@
             }
 
             .experience-card:nth-child(4) {
-                border-right: 1px solid var(--border);
+                border-right: 1px solid var(--line);
             }
 
             .event-layout {
-                gap: 55px;
+                gap: 50px;
             }
-
-            .event-row {
-                grid-template-columns: 140px minmax(0,1fr);
-            }
-
         }
 
-
-        /* =========================================================
-           MOBILE / TABLET
-        ========================================================= */
-
         @media (max-width: 800px) {
-
             :root {
                 --header-height: 66px;
             }
 
-            .container {
-                width:
-                    min(
-                        calc(100% - 34px),
-                        var(--max-width)
-                    );
+            .header-inner {
+                width: min(
+                    calc(100% - 32px),
+                    var(--max-width)
+                );
+            }
+
+            .brand img {
+                width: 110px;
             }
 
             .desktop-nav {
                 display: none;
             }
 
-            .menu-button {
+            .mobile-menu-button {
                 display: flex;
             }
 
-            .header-logo {
-                width: 112px;
+            .container {
+                width: min(
+                    calc(100% - 32px),
+                    var(--max-width)
+                );
             }
 
-
-            /* HERO */
+            .section {
+                padding: 85px 0;
+            }
 
             .hero {
                 min-height: auto;
@@ -2056,57 +1988,54 @@
                     calc(
                         var(--header-height) +
                         env(safe-area-inset-top) +
-                        58px
+                        60px
                     )
                     0
                     75px;
             }
 
-            .hero-topline {
+            .hero-meta {
                 margin-bottom: 35px;
 
                 font-size: 10px;
-
                 letter-spacing: .17em;
             }
 
-            .hero-grid {
-                grid-template-columns: 1fr;
-
-                gap: 45px;
+            .hero-logo-wrap {
+                margin-bottom: 43px;
             }
 
-            .hero-logo-frame {
-                padding: 24px 14px;
+            .hero-logo-wrap::before {
+                left: -8px;
+            }
+
+            .hero-logo-wrap::after {
+                right: -8px;
             }
 
             .hero-title {
-                font-size:
-                    clamp(
-                        27px,
-                        7vw,
-                        38px
-                    );
+                font-size: clamp(26px, 7vw, 34px);
             }
 
             .hero-description {
                 font-size: 15px;
-
                 line-height: 1.75;
             }
 
-            .hero-event-card {
-                margin-top: 28px;
+            .hero-bottom {
+                margin-top: 48px;
 
-                padding-top: 22px;
+                grid-template-columns: 1fr;
+                gap: 25px;
             }
 
-            .countdown-section {
-                margin-top: 50px;
+            .countdown {
+                max-width: none;
             }
 
-
-            /* QUICK INFO */
+            .hero-scroll {
+                display: none;
+            }
 
             .quick-info {
                 padding-bottom: 75px;
@@ -2118,7 +2047,7 @@
 
             .quick-item,
             .quick-item:first-child {
-                padding: 21px 15px;
+                padding: 22px 16px;
             }
 
             .quick-item:nth-child(2) {
@@ -2127,31 +2056,8 @@
 
             .quick-item:nth-child(3),
             .quick-item:nth-child(4) {
-                border-top: 1px solid var(--border);
+                border-top: 1px solid var(--line);
             }
-
-
-            /* GENERAL */
-
-            .section {
-                padding: 85px 0;
-            }
-
-            .section-title {
-                font-size:
-                    clamp(
-                        42px,
-                        11vw,
-                        62px
-                    );
-            }
-
-            .section-text {
-                font-size: 15px;
-            }
-
-
-            /* EXPERIENCE */
 
             .experience-grid {
                 grid-template-columns: repeat(2, 1fr);
@@ -2164,11 +2070,8 @@
             }
 
             .experience-card:nth-child(3) {
-                border-right: 1px solid var(--border);
+                border-right: 1px solid var(--line);
             }
-
-
-            /* EVENT */
 
             .event-layout {
                 grid-template-columns: 1fr;
@@ -2179,44 +2082,44 @@
             }
 
             .event-date {
-                padding: 25px 0;
+                position: static;
             }
 
             .event-row {
-                grid-template-columns:
-                    minmax(110px, .55fr)
-                    minmax(0, 1.45fr);
+                grid-template-columns: 1fr;
 
-                min-height: 78px;
+                gap: 8px;
 
-                gap: 20px;
+                padding: 21px 0;
             }
 
-            .event-value {
-                font-size: 22px;
+            .event-row-value {
+                font-size: 23px;
             }
 
-
-            /* FAQ */
+            .event-row-value.small {
+                font-size: 16px;
+            }
 
             .faq-list {
                 margin-top: 45px;
             }
 
-            .faq-question-text {
-                font-size: 18px;
+            .faq-question {
+                padding: 21px 0;
             }
 
             .faq-answer-inner p {
                 padding-right: 0;
+                padding-bottom: 22px;
             }
 
+            .cta-section {
+                padding: 70px 0 85px;
+            }
 
-            /* FOOTER */
-
-            .footer-main {
+            .footer-top {
                 grid-template-columns: 1fr;
-
                 gap: 35px;
             }
 
@@ -2224,84 +2127,66 @@
                 text-align: left;
             }
 
-            .application-info {
+            .footer-application {
                 align-items: flex-start;
-
                 flex-direction: column;
-
-                gap: 15px;
             }
 
             .footer-bottom {
                 align-items: flex-start;
-
                 flex-direction: column;
             }
-
         }
 
-
-        /* =========================================================
-           SMALL MOBILE
-        ========================================================= */
-
         @media (max-width: 520px) {
+            .section-heading {
+                font-size: 42px;
+            }
 
-            .container {
-                width:
-                    calc(100% - 30px);
+            .section-intro {
+                font-size: 15px;
+                line-height: 1.7;
             }
 
             .hero {
                 padding-bottom: 60px;
             }
 
-            .hero-logo-frame {
-                padding: 20px 8px;
+            .hero-meta {
+                align-items: flex-start;
+            }
+
+            .hero-meta::before {
+                width: 25px;
+                margin-top: 7px;
+            }
+
+            .hero-logo-wrap {
+                margin-left: 5px;
+                margin-right: 5px;
             }
 
             .hero-title {
-                font-size: 27px;
+                font-size: 25px;
+                line-height: 1.3;
             }
 
             .hero-description {
                 font-size: 14px;
             }
 
-            .hero-event-card {
-                grid-template-columns: 1fr;
-
-                gap: 16px;
-            }
-
-
-            /* COUNTDOWN */
-
             .countdown-item {
-                padding:
-                    17px 7px;
+                padding: 17px 8px;
             }
 
-            .countdown-number {
+            .countdown-value {
                 font-size: 27px;
             }
 
             .countdown-label {
-                font-size: 7px;
-
-                letter-spacing: .12em;
+                font-size: 8px;
+                letter-spacing: .13em;
             }
-
-            .countdown-header {
-                align-items: flex-start;
-
-                flex-direction: column;
-
-                gap: 5px;
-            }
-
-
-            /* QUICK INFO */
 
             .quick-grid {
                 grid-template-columns: 1fr;
@@ -2312,19 +2197,15 @@
             .quick-item:nth-child(2),
             .quick-item:nth-child(3),
             .quick-item:nth-child(4) {
-                padding: 19px 0;
+                padding: 20px 0;
 
                 border-right: 0;
-
-                border-top: 1px solid var(--border);
+                border-top: 1px solid var(--line);
             }
 
             .quick-item:first-child {
                 border-top: 0;
             }
-
-
-            /* EXPERIENCE */
 
             .experience-grid {
                 grid-template-columns: 1fr;
@@ -2337,87 +2218,49 @@
             }
 
             .experience-card {
-                padding: 27px 21px 31px;
+                padding: 27px 22px 31px;
             }
 
             .experience-number {
-                margin-bottom: 34px;
+                margin-bottom: 35px;
             }
 
-
-            /* EVENT */
-
-            .event-layout {
-                margin-top: 40px;
+            .event-date-big {
+                font-size: 59px;
             }
 
-            .event-date-number {
-                font-size: 60px;
+            .event-row-label {
+                font-size: 10px;
+                letter-spacing: .2em;
             }
 
-            .event-row {
-                grid-template-columns: 1fr;
-
-                gap: 6px;
-
-                padding: 20px 0;
-            }
-
-            .event-label {
-                font-size: 9px;
-
-                letter-spacing: .19em;
-            }
-
-            .event-value {
+            .event-row-value {
                 font-size: 22px;
             }
 
-            .event-value.small {
-                font-size: 15px;
+            .cta-box {
+                padding: 31px 23px;
             }
 
-
-            /* FAQ */
-
-            .faq-question {
-                padding: 21px 0;
+            .cta-box::before {
+                right: 18px;
+                top: 20px;
             }
 
-            .faq-question-text {
-                font-size: 17px;
-            }
-
-
-            /* FINAL */
-
-            .final-section {
-                padding:
-                    55px 0
-                    80px;
-            }
-
-            .final-box {
-                padding: 30px 22px;
-            }
-
-            .final-title {
+            .cta-title {
                 font-size: 43px;
             }
 
-            .final-button {
+            .cta-button {
                 width: 100%;
             }
 
-
-            /* MODAL */
-
             .modal {
                 padding:
-                    14px
-                    14px
+                    15px
+                    15px
                     calc(
-                        14px +
+                        15px +
                         env(safe-area-inset-bottom)
                     );
             }
@@ -2425,140 +2268,20 @@
             .modal-content {
                 max-height: 90svh;
 
-                padding:
-                    28px 21px;
+                padding: 27px 21px;
             }
 
             .modal-close {
-                top: 11px;
-                right: 11px;
+                top: 12px;
+                right: 12px;
             }
 
-
-            /* BACK TO TOP */
-
-            .back-top {
+            .back-to-top {
                 right: 14px;
             }
-
         }
-
-
-
-        /* =========================================================
-           CINEMATIC INTRO / SCROLL REVEAL
-        ========================================================= */
-
-        .intro-screen {
-            position: fixed;
-            inset: 0;
-            z-index: 5000;
-            display: grid;
-            place-items: center;
-            background: #000;
-            opacity: 1;
-            visibility: visible;
-            pointer-events: auto;
-            transform: translateZ(0);
-            will-change: opacity, visibility;
-            transition: opacity .08s linear, visibility 0s linear 0s;
-        }
-
-        .intro-screen.is-hidden {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-            transition: opacity .55s cubic-bezier(.22, 1, .36, 1), visibility 0s linear .55s;
-        }
-
-        .intro-logo-wrap {
-            position: relative;
-            width: min(390px, 62vw);
-            display: grid;
-            place-items: center;
-            transform: translate3d(0, 0, 0) scale(1);
-            opacity: 1;
-            will-change: transform, opacity;
-        }
-
-        .intro-logo-wrap::before {
-            content: "";
-            position: absolute;
-            width: 150%;
-            aspect-ratio: 1;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(160,0,14,.14), transparent 62%);
-            filter: blur(12px);
-            pointer-events: none;
-        }
-
-        .intro-logo {
-            position: relative;
-            z-index: 1;
-            width: 100%;
-            height: auto;
-            filter: drop-shadow(0 18px 40px rgba(0,0,0,.75));
-            user-select: none;
-        }
-
-        .intro-hint {
-            position: absolute;
-            left: 50%;
-            bottom: max(32px, env(safe-area-inset-bottom));
-            transform: translateX(-50%);
-            color: rgba(255,255,255,.42);
-            font-family: "Oswald", sans-serif;
-            font-size: 9px;
-            font-weight: 600;
-            letter-spacing: .28em;
-            text-transform: uppercase;
-            white-space: nowrap;
-            transition: opacity .25s ease;
-        }
-
-        .intro-hint::after {
-            content: "↓";
-            display: block;
-            margin-top: 7px;
-            text-align: center;
-            font-size: 15px;
-            animation: introArrow 1.7s ease-in-out infinite;
-        }
-
-        @keyframes introArrow {
-            0%, 100% { transform: translateY(0); opacity: .35; }
-            50% { transform: translateY(5px); opacity: .9; }
-        }
-
-        .intro-screen.is-hidden .intro-hint {
-            opacity: 0;
-        }
-
-        body.intro-active {
-            overflow-x: hidden;
-        }
-
-        body.intro-active .header {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .hero-inner {
-            will-change: transform, opacity;
-        }
-
-        @media (max-width: 700px) {
-            .intro-logo-wrap {
-                width: min(300px, 68vw);
-            }
-        }
-
-        /* =========================================================
-           REDUCED MOTION
-        ========================================================= */
 
         @media (prefers-reduced-motion: reduce) {
-
             html {
                 scroll-behavior: auto;
             }
@@ -2576,120 +2299,79 @@
                 transform: none;
             }
 
-            .intro-screen {
-                transition: none;
+            .embers {
+                display: none;
             }
-
-            .intro-hint::after {
-                animation: none;
-            }
-
-            .hero-inner {
-                transform: none !important;
-                opacity: 1 !important;
-            }
-
         }
-
     </style>
 </head>
 
+<body>
 
+    <div class="scroll-progress" id="scrollProgress"></div>
 
-<body class="intro-active">
+    <div class="embers" id="embers" aria-hidden="true"></div>
 
-    <!-- =========================================================
-         CINEMATIC INTRO
-    ========================================================= -->
-
-    <div class="intro-screen" id="introScreen" aria-hidden="true">
-        <div class="intro-logo-wrap" id="introLogoWrap">
-            <img
-                class="intro-logo"
-                src="https://i.imgur.com/Cl27hzM.png"
-                alt="Schattenschreck"
-                width="390"
-                fetchpriority="high"
-                decoding="async"
-            >
-        </div>
-
-        <div class="intro-hint">Scrollen zum Eintreten</div>
-    </div>
-
-    <!-- =========================================================
-         BODY
-    ========================================================= -->
-
-    <!-- =========================================================
+    <!-- ==========================================
          HEADER
-    ========================================================= -->
+    =========================================== -->
 
-    <header class="header" id="header">
+    <header class="site-header" id="siteHeader">
 
-        <div class="container header-inner">
+        <div class="header-inner">
 
             <a
                 href="#top"
-                class="logo-link"
+                class="brand"
                 aria-label="Schattenschreck Startseite"
             >
-
                 <img
-                    class="header-logo"
                     src="https://i.imgur.com/Cl27hzM.png"
-                    alt="Schattenschreck"
-                    width="130"
-                    decoding="async"
+                    alt="Schattenschreck Horror"
+                    width="128"
+                    height="auto"
+                    loading="eager"
                 >
-
             </a>
-
 
             <nav
                 class="desktop-nav"
                 aria-label="Hauptnavigation"
             >
+                <a href="#event">Event</a>
+                <a href="#erlebnis">Erlebnis</a>
+                <a href="#faq">FAQ</a>
 
-                <a href="#erlebnis">
-                    Erlebnis
-                </a>
-
-                <a href="#event">
-                    Event
-                </a>
-
-                <a href="#faq">
-                    FAQ
-                </a>
-
+                <!--
+                    BEWERBUNG ABSICHTLICH NICHT MEHR
+                    ALS NORMALER HEADER-BUTTON.
+                    Der Link befindet sich nur noch
+                    ganz unten im Footer.
+                -->
             </nav>
 
-
             <button
-                class="menu-button"
-                id="menuButton"
+                class="mobile-menu-button"
+                id="mobileMenuButton"
                 type="button"
                 aria-label="Menü öffnen"
                 aria-expanded="false"
+                aria-controls="mobileMenu"
             >
-
-                <span class="menu-icon" aria-hidden="true">
+                <span class="hamburger" aria-hidden="true">
                     <span></span>
                     <span></span>
                     <span></span>
                 </span>
-
             </button>
 
         </div>
-
     </header>
 
 
-    <!-- =========================================================
-         MOBILE MENU
-    ========================================================= -->
+    <!-- ==========================================
+         MOBILE NAVIGATION
+    =========================================== -->
 
     <div
         class="mobile-menu"
@@ -2698,8 +2380,8 @@
     >
 
         <div
-            class="mobile-menu-background"
-            id="mobileMenuBackground"
+            class="mobile-menu-backdrop"
+            id="mobileMenuBackdrop"
         ></div>
 
         <nav
@@ -2711,212 +2393,147 @@
                 Navigation
             </div>
 
-            <a href="#top">
-                Startseite
-            </a>
-
-            <a href="#erlebnis">
-                Erlebnis
-            </a>
-
-            <a href="#event">
-                Event
-            </a>
-
-            <a href="#faq">
-                FAQ
-            </a>
+            <a href="#top">Startseite</a>
+            <a href="#event">Event</a>
+            <a href="#erlebnis">Erlebnis</a>
+            <a href="#faq">FAQ</a>
 
         </nav>
-
     </div>
 
 
-    <!-- =========================================================
-         MAIN
-    ========================================================= -->
-
     <main id="top">
 
-
-        <!-- =====================================================
+        <!-- ==========================================
              HERO
-        ===================================================== -->
+        =========================================== -->
 
         <section class="hero">
 
             <div class="container hero-inner">
 
-                <div class="hero-topline reveal">
+                <div class="hero-meta reveal">
                     31. Oktober 2026 · Wardersee
                 </div>
 
+                <div class="hero-logo-wrap reveal delay-1">
 
-                <div class="hero-grid">
-
-                    <div class="hero-logo-area reveal">
-
-                        <div class="hero-logo-frame">
-
-                            <img
-                                class="hero-logo"
-                                src="https://i.imgur.com/Cl27hzM.png"
-                                alt="Schattenschreck Horror"
-                                decoding="async"
-                                fetchpriority="high"
-                            >
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="hero-info reveal delay-1">
-
-                        <h1 class="hero-title">
-                            Eine Nacht, die du nicht einfach vergessen wirst.
-                        </h1>
-
-                        <p class="hero-description">
-                            Schattenschreck ist unser privates
-                            Horror-Event am 31. Oktober 2026.
-                            Eine inszenierte Welt aus Atmosphäre,
-                            Geschichte, Aufgaben und
-                            Live-Erschreckern.
-                        </p>
-
-
-                        <div class="hero-event-card">
-
-                            <div>
-
-                                <div class="hero-event-label">
-                                    Datum
-                                </div>
-
-                                <div class="hero-event-value">
-                                    Samstag, 31.10.2026
-                                </div>
-
-                            </div>
-
-
-                            <div>
-
-                                <div class="hero-event-label">
-                                    Beginn
-                                </div>
-
-                                <div class="hero-event-value">
-                                    18:00 Uhr
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </div>
+                    <img
+                        class="hero-logo"
+                        src="https://i.imgur.com/Cl27hzM.png"
+                        alt="Schattenschreck Horror"
+                        width="720"
+                        height="auto"
+                        decoding="async"
+                    >
 
                 </div>
 
+                <div class="hero-copy">
 
-                <!-- COUNTDOWN -->
+                    <h1 class="hero-title reveal delay-2">
+                        Eine Nacht, die du nicht einfach vergessen wirst.
+                    </h1>
 
-                <div class="countdown-section reveal">
+                    <p class="hero-description reveal delay-3">
+                        Schattenschreck ist unser privates Horror-Event
+                        am 31. Oktober 2026. Eine inszenierte Welt aus
+                        Atmosphäre, Geschichte, Aufgaben und
+                        Live-Erschreckern.
+                    </p>
 
-                    <div class="countdown-header">
+                </div>
 
-                        <div class="countdown-title">
-                            Countdown
+                <div class="hero-bottom reveal">
+
+                    <div>
+
+                        <div
+                            class="countdown"
+                            aria-label="Countdown bis zum Event"
+                        >
+
+                            <div class="countdown-item">
+                                <span
+                                    class="countdown-value"
+                                    id="days"
+                                    aria-live="polite"
+                                >
+                                    00
+                                </span>
+
+                                <span class="countdown-label">
+                                    Tage
+                                </span>
+                            </div>
+
+                            <div class="countdown-item">
+                                <span
+                                    class="countdown-value"
+                                    id="hours"
+                                    aria-live="polite"
+                                >
+                                    00
+                                </span>
+
+                                <span class="countdown-label">
+                                    Stunden
+                                </span>
+                            </div>
+
+                            <div class="countdown-item">
+                                <span
+                                    class="countdown-value"
+                                    id="minutes"
+                                    aria-live="polite"
+                                >
+                                    00
+                                </span>
+
+                                <span class="countdown-label">
+                                    Minuten
+                                </span>
+                            </div>
+
+                            <div class="countdown-item">
+                                <span
+                                    class="countdown-value"
+                                    id="seconds"
+                                    aria-live="polite"
+                                >
+                                    00
+                                </span>
+
+                                <span class="countdown-label">
+                                    Sekunden
+                                </span>
+                            </div>
+
                         </div>
 
                         <div
-                            class="countdown-date"
-                            id="countdownStatus"
+                            class="countdown-note"
+                            id="countdownNote"
                         >
-                            Bis zum 31. Oktober 2026
+                            Beginn: 31.10.2026 · 18:00 Uhr
                         </div>
 
                     </div>
 
-
-                    <div class="countdown">
-
-                        <div class="countdown-item">
-
-                            <span
-                                class="countdown-number"
-                                id="days"
-                            >
-                                00
-                            </span>
-
-                            <span class="countdown-label">
-                                Tage
-                            </span>
-
-                        </div>
-
-
-                        <div class="countdown-item">
-
-                            <span
-                                class="countdown-number"
-                                id="hours"
-                            >
-                                00
-                            </span>
-
-                            <span class="countdown-label">
-                                Stunden
-                            </span>
-
-                        </div>
-
-
-                        <div class="countdown-item">
-
-                            <span
-                                class="countdown-number"
-                                id="minutes"
-                            >
-                                00
-                            </span>
-
-                            <span class="countdown-label">
-                                Minuten
-                            </span>
-
-                        </div>
-
-
-                        <div class="countdown-item">
-
-                            <span
-                                class="countdown-number"
-                                id="seconds"
-                            >
-                                00
-                            </span>
-
-                            <span class="countdown-label">
-                                Sekunden
-                            </span>
-
-                        </div>
-
+                    <div class="hero-scroll" aria-hidden="true">
+                        <span></span>
+                        Scroll
                     </div>
 
                 </div>
 
             </div>
-
         </section>
 
 
-        <!-- =====================================================
-             QUICK INFORMATION
-        ===================================================== -->
+        <!-- ==========================================
+             QUICK INFO
+        =========================================== -->
 
         <section class="quick-info">
 
@@ -2936,7 +2553,6 @@
 
                     </div>
 
-
                     <div class="quick-item">
 
                         <div class="quick-label">
@@ -2949,19 +2565,17 @@
 
                     </div>
 
-
                     <div class="quick-item">
 
                         <div class="quick-label">
-                            Einlass
+                            Letzter Einlass
                         </div>
 
                         <div class="quick-value">
-                            18:00 – 20:00 Uhr
+                            20:00 Uhr
                         </div>
 
                     </div>
-
 
                     <div class="quick-item">
 
@@ -2978,13 +2592,12 @@
                 </div>
 
             </div>
-
         </section>
 
 
-        <!-- =====================================================
+        <!-- ==========================================
              ERLEBNIS
-        ===================================================== -->
+        =========================================== -->
 
         <section
             class="section"
@@ -2997,15 +2610,15 @@
                     Das Erlebnis
                 </div>
 
-                <h2 class="section-title reveal delay-1">
+                <h2 class="section-heading reveal delay-1">
                     Mehr als nur<br>
                     Erschrecken.
                 </h2>
 
-                <p class="section-text reveal delay-2">
-                    Schattenschreck verbindet Atmosphäre,
-                    Geschichte, Aufgaben und Live-Erschrecker
-                    zu einem gemeinsamen Halloween-Erlebnis.
+                <p class="section-intro reveal delay-2">
+                    Schattenschreck verbindet Atmosphäre, Geschichte,
+                    Aufgaben und Live-Erschrecker zu einem gemeinsamen
+                    Halloween-Erlebnis.
                 </p>
 
 
@@ -3022,10 +2635,9 @@
                         </h3>
 
                         <p>
-                            Dunkle Kulissen, Licht, Geräusche
-                            und eine Umgebung, die dich direkt
-                            in die Welt von Schattenschreck
-                            versetzt.
+                            Dunkle Kulissen, Licht, Geräusche und
+                            eine Umgebung, die dich direkt in die
+                            Welt von Schattenschreck versetzt.
                         </p>
 
                     </article>
@@ -3042,9 +2654,8 @@
                         </h3>
 
                         <p>
-                            Live-Erschrecker sorgen für
-                            Begegnungen, die du nicht einfach
-                            planen kannst.
+                            Live-Erschrecker sorgen für Begegnungen,
+                            die du nicht einfach planen kannst.
                         </p>
 
                     </article>
@@ -3062,8 +2673,8 @@
 
                         <p>
                             Das Event ist mehr als einzelne
-                            Schreckmomente und erzählt seine
-                            eigene kleine Geschichte.
+                            Schreckmomente und erzählt seine eigene
+                            kleine Geschichte.
                         </p>
 
                     </article>
@@ -3080,9 +2691,9 @@
                         </h3>
 
                         <p>
-                            Entdecke die Umgebung und stelle
-                            dich verschiedenen Aufgaben
-                            innerhalb des Erlebnisses.
+                            Entdecke die Umgebung und stelle dich
+                            verschiedenen Aufgaben innerhalb des
+                            Erlebnisses.
                         </p>
 
                     </article>
@@ -3099,9 +2710,9 @@
                         </h3>
 
                         <p>
-                            Der Zugang ist barrierefrei und
-                            das Event ist darauf ausgelegt,
-                            gemeinsam erlebt zu werden.
+                            Der Zugang ist barrierefrei und das
+                            Event ist darauf ausgelegt, gemeinsam
+                            erlebt zu werden.
                         </p>
 
                     </article>
@@ -3109,13 +2720,12 @@
                 </div>
 
             </div>
-
         </section>
 
 
-        <!-- =====================================================
-             EVENT
-        ===================================================== -->
+        <!-- ==========================================
+             EVENT DETAILS
+        =========================================== -->
 
         <section
             class="section"
@@ -3128,42 +2738,40 @@
                     Eventinformationen
                 </div>
 
-                <h2 class="section-title reveal delay-1">
+                <h2 class="section-heading reveal delay-1">
                     Wann &amp;<br>
                     wo?
                 </h2>
-
 
                 <div class="event-layout">
 
                     <div class="event-date reveal">
 
-                        <div class="event-date-label">
+                        <div class="event-date-small">
                             Samstag
                         </div>
 
-                        <div class="event-date-number">
+                        <div class="event-date-big">
                             31.<br>
                             OKT.
                         </div>
 
-                        <div class="event-place">
+                        <div class="event-location">
                             Wardersee · Deutschland
                         </div>
 
                     </div>
 
 
-                    <div class="event-table reveal delay-1">
-
+                    <div class="event-details reveal delay-1">
 
                         <div class="event-row">
 
-                            <div class="event-label">
+                            <div class="event-row-label">
                                 Start
                             </div>
 
-                            <div class="event-value">
+                            <div class="event-row-value">
                                 18:00 Uhr
                             </div>
 
@@ -3172,11 +2780,11 @@
 
                         <div class="event-row">
 
-                            <div class="event-label">
+                            <div class="event-row-label">
                                 Einlass
                             </div>
 
-                            <div class="event-value">
+                            <div class="event-row-value">
                                 18:00 – 20:00 Uhr
                             </div>
 
@@ -3185,11 +2793,11 @@
 
                         <div class="event-row">
 
-                            <div class="event-label">
+                            <div class="event-row-label">
                                 Eintritt
                             </div>
 
-                            <div class="event-value">
+                            <div class="event-row-value">
                                 Kostenlos
                             </div>
 
@@ -3198,11 +2806,11 @@
 
                         <div class="event-row">
 
-                            <div class="event-label">
+                            <div class="event-row-label">
                                 Zugang
                             </div>
 
-                            <div class="event-value">
+                            <div class="event-row-value">
                                 Barrierefrei
                             </div>
 
@@ -3211,29 +2819,27 @@
 
                         <div class="event-row">
 
-                            <div class="event-label">
+                            <div class="event-row-label">
                                 Veranstalter
                             </div>
 
-                            <div class="event-value">
+                            <div class="event-row-value">
                                 GOGOS Gruppe
                             </div>
 
                         </div>
-
 
                     </div>
 
                 </div>
 
             </div>
-
         </section>
 
 
-        <!-- =====================================================
+        <!-- ==========================================
              FAQ
-        ===================================================== -->
+        =========================================== -->
 
         <section
             class="section"
@@ -3243,24 +2849,22 @@
             <div class="container">
 
                 <div class="section-label reveal">
-                    Fragen &amp; Antworten
+                    Häufige Fragen
                 </div>
 
-                <h2 class="section-title reveal delay-1">
+                <h2 class="section-heading reveal delay-1">
                     Vor deinem<br>
                     Besuch.
                 </h2>
 
-                <p class="section-text reveal delay-2">
-                    Die wichtigsten Informationen zu deinem
-                    Besuch findest du hier.
+                <p class="section-intro reveal delay-2">
+                    Die wichtigsten Informationen zum Ablauf,
+                    Einlass und Event findest du hier.
                 </p>
 
 
                 <div class="faq-list">
 
-
-                    <!-- FAQ 1 -->
 
                     <div class="faq-item reveal">
 
@@ -3268,6 +2872,7 @@
                             class="faq-question"
                             type="button"
                             aria-expanded="false"
+                            aria-controls="faq-answer-1"
                         >
 
                             <span class="faq-question-text">
@@ -3275,22 +2880,25 @@
                             </span>
 
                             <span
-                                class="faq-plus"
+                                class="faq-icon"
                                 aria-hidden="true"
                             ></span>
 
                         </button>
 
-                        <div class="faq-answer">
+                        <div
+                            class="faq-answer"
+                            id="faq-answer-1"
+                            aria-hidden="true"
+                        >
 
                             <div class="faq-answer-inner">
 
                                 <p>
-                                    Schattenschreck ist ein
-                                    inszeniertes Horror-Erlebnis.
-                                    Dich erwarten Atmosphäre,
-                                    Geschichte, Aufgaben und
-                                    Live-Erschrecker.
+                                    Schattenschreck ist ein inszeniertes
+                                    Horror-Erlebnis. Dich erwarten
+                                    Atmosphäre, Geschichte, Aufgaben
+                                    und Live-Erschrecker.
                                 </p>
 
                             </div>
@@ -3300,14 +2908,13 @@
                     </div>
 
 
-                    <!-- FAQ 2 -->
-
                     <div class="faq-item reveal">
 
                         <button
                             class="faq-question"
                             type="button"
                             aria-expanded="false"
+                            aria-controls="faq-answer-2"
                         >
 
                             <span class="faq-question-text">
@@ -3315,20 +2922,23 @@
                             </span>
 
                             <span
-                                class="faq-plus"
+                                class="faq-icon"
                                 aria-hidden="true"
                             ></span>
 
                         </button>
 
-                        <div class="faq-answer">
+                        <div
+                            class="faq-answer"
+                            id="faq-answer-2"
+                            aria-hidden="true"
+                        >
 
                             <div class="faq-answer-inner">
 
                                 <p>
-                                    Der Einlass beginnt um
-                                    18:00 Uhr. Der letzte
-                                    Einlass ist um 20:00 Uhr.
+                                    Der Einlass beginnt um 18:00 Uhr.
+                                    Der letzte Einlass ist um 20:00 Uhr.
                                 </p>
 
                             </div>
@@ -3338,14 +2948,13 @@
                     </div>
 
 
-                    <!-- FAQ 3 -->
-
                     <div class="faq-item reveal">
 
                         <button
                             class="faq-question"
                             type="button"
                             aria-expanded="false"
+                            aria-controls="faq-answer-3"
                         >
 
                             <span class="faq-question-text">
@@ -3353,20 +2962,23 @@
                             </span>
 
                             <span
-                                class="faq-plus"
+                                class="faq-icon"
                                 aria-hidden="true"
                             ></span>
 
                         </button>
 
-                        <div class="faq-answer">
+                        <div
+                            class="faq-answer"
+                            id="faq-answer-3"
+                            aria-hidden="true"
+                        >
 
                             <div class="faq-answer-inner">
 
                                 <p>
                                     Nein. Der Eintritt zum
-                                    Schattenschreck-Event
-                                    ist kostenlos.
+                                    Schattenschreck-Event ist kostenlos.
                                 </p>
 
                             </div>
@@ -3376,14 +2988,13 @@
                     </div>
 
 
-                    <!-- FAQ 4 -->
-
                     <div class="faq-item reveal">
 
                         <button
                             class="faq-question"
                             type="button"
                             aria-expanded="false"
+                            aria-controls="faq-answer-4"
                         >
 
                             <span class="faq-question-text">
@@ -3391,19 +3002,23 @@
                             </span>
 
                             <span
-                                class="faq-plus"
+                                class="faq-icon"
                                 aria-hidden="true"
                             ></span>
 
                         </button>
 
-                        <div class="faq-answer">
+                        <div
+                            class="faq-answer"
+                            id="faq-answer-4"
+                            aria-hidden="true"
+                        >
 
                             <div class="faq-answer-inner">
 
                                 <p>
-                                    Ja. Der Zugang zum Event
-                                    ist barrierefrei.
+                                    Ja. Der Zugang zum Event ist
+                                    barrierefrei.
                                 </p>
 
                             </div>
@@ -3413,14 +3028,13 @@
                     </div>
 
 
-                    <!-- FAQ 5 -->
-
                     <div class="faq-item reveal">
 
                         <button
                             class="faq-question"
                             type="button"
                             aria-expanded="false"
+                            aria-controls="faq-answer-5"
                         >
 
                             <span class="faq-question-text">
@@ -3428,23 +3042,26 @@
                             </span>
 
                             <span
-                                class="faq-plus"
+                                class="faq-icon"
                                 aria-hidden="true"
                             ></span>
 
                         </button>
 
-                        <div class="faq-answer">
+                        <div
+                            class="faq-answer"
+                            id="faq-answer-5"
+                            aria-hidden="true"
+                        >
 
                             <div class="faq-answer-inner">
 
                                 <p>
-                                    Ja. Für Personen, die selbst
-                                    als Live-Erschrecker mitwirken
-                                    möchten, gibt es eine separate
-                                    Bewerbung. Den Bewerbungslink
-                                    findest du ausschließlich
-                                    ganz unten auf dieser Website.
+                                    Ja. Für Personen, die selbst als
+                                    Live-Erschrecker mitwirken möchten,
+                                    gibt es eine separate Bewerbung.
+                                    Den entsprechenden Link findest du
+                                    ausschließlich am Ende der Website.
                                 </p>
 
                             </div>
@@ -3454,14 +3071,13 @@
                     </div>
 
 
-                    <!-- FAQ 6 -->
-
                     <div class="faq-item reveal">
 
                         <button
                             class="faq-question"
                             type="button"
                             aria-expanded="false"
+                            aria-controls="faq-answer-6"
                         >
 
                             <span class="faq-question-text">
@@ -3469,19 +3085,23 @@
                             </span>
 
                             <span
-                                class="faq-plus"
+                                class="faq-icon"
                                 aria-hidden="true"
                             ></span>
 
                         </button>
 
-                        <div class="faq-answer">
+                        <div
+                            class="faq-answer"
+                            id="faq-answer-6"
+                            aria-hidden="true"
+                        >
 
                             <div class="faq-answer-inner">
 
                                 <p>
-                                    Bei Fragen kannst du dich
-                                    per E-Mail an
+                                    Bei Fragen kannst du dich per
+                                    E-Mail an
                                     gogosofficialgroup@gmail.com
                                     wenden.
                                 </p>
@@ -3496,59 +3116,58 @@
                 </div>
 
             </div>
-
         </section>
 
 
-        <!-- =====================================================
-             FINAL CTA
-        ===================================================== -->
+        <!-- ==========================================
+             BESUCHER CTA
+        =========================================== -->
 
-        <section class="final-section">
+        <section class="cta-section">
 
             <div class="container">
 
-                <div class="final-box reveal">
+                <div class="cta-box reveal">
 
-                    <div class="final-label">
-                        31. Oktober 2026
+                    <div class="cta-label">
+                        Dein Halloween
                     </div>
 
-                    <h2 class="final-title">
-                        Wir sehen<br>
-                        uns in Wardersee.
+                    <h2 class="cta-title">
+                        Bist du bereit?
                     </h2>
 
-                    <p class="final-text">
+                    <p class="cta-text">
                         Merke dir den 31. Oktober 2026 vor und
-                        komm ab 18:00 Uhr zum Schattenschreck.
+                        komm ab 18:00 Uhr zum Schattenschreck
+                        nach Wardersee.
                     </p>
 
                     <a
-                        class="final-button"
+                        class="cta-button"
                         href="#event"
                     >
                         Eventinformationen
+                        <span aria-hidden="true">→</span>
                     </a>
 
                 </div>
 
             </div>
-
         </section>
 
     </main>
 
 
-    <!-- =========================================================
+    <!-- ==========================================
          FOOTER
-    ========================================================= -->
+    =========================================== -->
 
     <footer>
 
         <div class="container">
 
-            <div class="footer-main">
+            <div class="footer-top">
 
                 <div>
 
@@ -3556,14 +3175,15 @@
                         class="footer-logo"
                         src="https://i.imgur.com/CAD6jqP.png"
                         alt="GOGOS Gruppe"
+                        width="145"
+                        height="auto"
                         loading="lazy"
-                        decoding="async"
                     >
 
                     <div class="footer-description">
                         Schattenschreck ist ein privates
-                        Horror-Event der GOGOS Gruppe
-                        am 31. Oktober 2026 in Wardersee.
+                        Horror-Event der GOGOS Gruppe am
+                        31. Oktober 2026 in Wardersee.
                     </div>
 
                 </div>
@@ -3588,31 +3208,34 @@
 
 
             <!--
-                BEWERBUNG ABSICHTLICH NUR HIER.
+                BEWERBUNG NUR NOCH HIER.
+                Kein Button im Header.
+                Kein Button im Hero.
+                Kein großer CTA.
             -->
 
-            <div class="application-info">
+            <div class="footer-application">
 
-                <div class="application-copy">
+                <div class="footer-application-copy">
 
-                    <div class="application-label">
-                        Für diejenigen, die mitmachen möchten
+                    <div class="footer-application-label">
+                        Du möchtest mitmachen?
                     </div>
 
-                    <div class="application-text">
+                    <div class="footer-application-text">
                         Bewerbung ausschließlich für Live-Erschrecker.
                     </div>
 
                 </div>
 
-
                 <a
-                    class="application-link"
+                    class="footer-application-link"
                     href="https://docs.google.com/forms/d/e/1FAIpQLSd1jpwdN4MAMib7BjutnEdS7nMr-MxyooshVK8fpC9cV7wmfA/viewform"
                     target="_blank"
                     rel="noopener noreferrer"
                 >
-                    Bewerbung öffnen ↗
+                    Bewerbung für Live-Erschrecker
+                    <span aria-hidden="true">↗</span>
                 </a>
 
             </div>
@@ -3642,9 +3265,9 @@
     </footer>
 
 
-    <!-- =========================================================
-         IMPRESSUM
-    ========================================================= -->
+    <!-- ==========================================
+         IMPRESSUM MODAL
+    =========================================== -->
 
     <div
         class="modal"
@@ -3655,7 +3278,10 @@
         aria-labelledby="impressumTitle"
     >
 
-        <div class="modal-content">
+        <div
+            class="modal-content"
+            role="document"
+        >
 
             <button
                 class="modal-close"
@@ -3666,33 +3292,25 @@
                 ×
             </button>
 
-
             <div class="modal-label">
                 Rechtliche Informationen
             </div>
 
-
-            <h2
-                class="modal-title"
-                id="impressumTitle"
-            >
+            <h2 id="impressumTitle">
                 Impressum
             </h2>
-
 
             <div class="modal-body">
 
                 <p>
-                    <strong>
-                        GOGOS Gruppe © 2026
-                    </strong>
+                    <strong>GOGOS Gruppe © 2026</strong>
                 </p>
 
                 <p>
-                    Dieses Event ist ein privates Event
-                    ohne kommerziellen Zweck. Die GOGOS
-                    Gruppe ist keine eingetragene Vereinigung
-                    und keine geschäftliche Organisation.
+                    Dieses Event ist ein privates Event ohne
+                    kommerziellen Zweck. Die GOGOS Gruppe ist
+                    keine eingetragene Vereinigung und keine
+                    geschäftliche Organisation.
                 </p>
 
                 <p>
@@ -3718,8 +3336,8 @@
                 <p>
                     <strong>Anschrift:</strong><br>
                     Lindenstraße XX, Rohlstorf,
-                    23821 Deutschland
-                    <br><br>
+                    23821 Deutschland<br><br>
+
                     Karl-Marx-Straße 23, Pößneck,
                     07381 Deutschland
                 </p>
@@ -3730,18 +3348,17 @@
                 </p>
 
                 <p>
-                    Die Inhalte dieser Website dienen
-                    ausschließlich privaten Zwecken.
-                    Eine Haftung für externe Inhalte und
-                    verlinkte Seiten wird im Rahmen der
-                    gesetzlichen Möglichkeiten ausgeschlossen.
+                    Die Inhalte dieser Website dienen ausschließlich
+                    privaten Zwecken. Eine Haftung für externe Inhalte
+                    und verlinkte Seiten wird im Rahmen der gesetzlichen
+                    Möglichkeiten ausgeschlossen.
                 </p>
 
                 <p>
                     Inhalte, Texte, Gestaltung und verwendete
-                    Materialien dieser Website dürfen nicht
-                    ohne Zustimmung übernommen oder
-                    anderweitig verwendet werden.
+                    Materialien dieser Website dürfen nicht ohne
+                    Zustimmung übernommen oder anderweitig verwendet
+                    werden.
                 </p>
 
             </div>
@@ -3751,13 +3368,13 @@
     </div>
 
 
-    <!-- =========================================================
+    <!-- ==========================================
          BACK TO TOP
-    ========================================================= -->
+    =========================================== -->
 
     <button
-        class="back-top"
-        id="backTop"
+        class="back-to-top"
+        id="backToTop"
         type="button"
         aria-label="Zurück nach oben"
     >
@@ -3765,180 +3382,109 @@
     </button>
 
 
-    <!-- =========================================================
-         JAVASCRIPT
-    ========================================================= -->
-
     <script>
+        /* ==========================================
+           BASIC JS STATE
+        =========================================== */
 
         document.documentElement.classList.add("js");
 
-        const reduceMotion =
-            window.matchMedia(
-                "(prefers-reduced-motion: reduce)"
-            ).matches;
+
+        /* ==========================================
+           HEADER / SCROLL
+        =========================================== */
+
+        const siteHeader =
+            document.getElementById("siteHeader");
+
+        const scrollProgress =
+            document.getElementById("scrollProgress");
+
+        const backToTop =
+            document.getElementById("backToTop");
 
 
+        function updateScrollUI() {
 
-        /* =====================================================
-           CINEMATIC INTRO / SCROLL REVEAL
-        ===================================================== */
+            const scrollTop =
+                window.scrollY || document.documentElement.scrollTop;
 
-        const introScreen =
-            document.getElementById("introScreen");
+            const documentHeight =
+                document.documentElement.scrollHeight -
+                window.innerHeight;
 
-        const introLogoWrap =
-            document.getElementById("introLogoWrap");
+            const progress =
+                documentHeight > 0
+                    ? (scrollTop / documentHeight) * 100
+                    : 0;
 
-        const heroInner =
-            document.querySelector(".hero-inner");
+            document.documentElement.style.setProperty(
+                "--scroll-progress",
+                progress + "%"
+            );
 
-        const introRevealDistance = 220;
-
-        function updateIntro() {
-
-            const y = Math.max(0, window.scrollY || 0);
-            const progress = Math.min(1, y / introRevealDistance);
-            const eased = 1 - Math.pow(1 - progress, 2.2);
-
-            introScreen.style.opacity = String(1 - eased);
-
-            introLogoWrap.style.transform =
-                `translate3d(0, ${-eased * 18}px, 0) scale(${1 + eased * .045})`;
-
-            introLogoWrap.style.opacity = String(1 - eased * .18);
-
-            if (progress >= 0.98) {
-                introScreen.classList.add("is-hidden");
-                document.body.classList.remove("intro-active");
-            } else {
-                introScreen.classList.remove("is-hidden");
-                document.body.classList.add("intro-active");
-            }
-
-            if (heroInner && !reduceMotion) {
-                const heroY = Math.min(y, 360);
-                heroInner.style.transform =
-                    `translate3d(0, ${heroY * -.055}px, 0)`;
-                heroInner.style.opacity =
-                    String(1 - Math.min(.16, heroY / 2250));
-            }
-        }
-
-        updateIntro();
-
-
-        /* =====================================================
-           HEADER
-        ===================================================== */
-
-        const header =
-            document.getElementById("header");
-
-        const backTop =
-            document.getElementById("backTop");
-
-
-        let scrollTicking = false;
-
-        function updateScroll() {
-
-            const y = window.scrollY || 0;
-
-            header.classList.toggle(
+            siteHeader.classList.toggle(
                 "scrolled",
-                y > 20
+                scrollTop > 15
             );
 
-            backTop.classList.toggle(
+            backToTop.classList.toggle(
                 "visible",
-                y > 600
+                scrollTop > 600
             );
-
-            scrollTicking = false;
         }
 
-        function requestScrollUpdate() {
-
-            if (scrollTicking) {
-                return;
-            }
-
-            scrollTicking = true;
-            requestAnimationFrame(() => {
-                updateScroll();
-                updateIntro();
-            });
-        }
 
         window.addEventListener(
             "scroll",
-            requestScrollUpdate,
+            updateScrollUI,
             { passive: true }
         );
 
-        updateScroll();
+        updateScrollUI();
 
-backTop.addEventListener(
+
+        backToTop.addEventListener(
             "click",
             () => {
-
                 window.scrollTo({
                     top: 0,
                     behavior: "smooth"
                 });
-
             }
         );
 
 
-        /* =====================================================
-           IN-PAGE NAVIGATION
-        ===================================================== */
-
-        document.querySelectorAll('a[href^="#"]').forEach(link => {
-
-            link.addEventListener("click", event => {
-
-                const id = link.getAttribute("href");
-
-                if (!id || id === "#") {
-                    return;
-                }
-
-                const target = document.querySelector(id);
-
-                if (!target) {
-                    return;
-                }
-
-                event.preventDefault();
-
-                target.scrollIntoView({
-                    behavior: reduceMotion ? "auto" : "smooth",
-                    block: "start"
-                });
-            });
-        });
-
-
-        /* =====================================================
+        /* ==========================================
            MOBILE MENU
-        ===================================================== */
+        =========================================== */
 
-        const menuButton =
-            document.getElementById("menuButton");
+        const mobileMenuButton =
+            document.getElementById("mobileMenuButton");
 
         const mobileMenu =
             document.getElementById("mobileMenu");
 
-        const mobileMenuBackground =
-            document.getElementById(
-                "mobileMenuBackground"
-            );
+        const mobileMenuBackdrop =
+            document.getElementById("mobileMenuBackdrop");
 
 
-        function openMenu() {
+        function setBodyLock() {
+
+            const menuOpen =
+                mobileMenu.classList.contains("open");
+
+            const modalOpen =
+                impressumModal.classList.contains("open");
+
+            document.body.style.overflow =
+                menuOpen || modalOpen
+                    ? "hidden"
+                    : "";
+        }
+
+
+        function openMobileMenu() {
 
             mobileMenu.classList.add("open");
 
@@ -3947,25 +3493,23 @@ backTop.addEventListener(
                 "false"
             );
 
-            menuButton.classList.add("open");
+            mobileMenuButton.classList.add("open");
 
-            menuButton.setAttribute(
+            mobileMenuButton.setAttribute(
                 "aria-expanded",
                 "true"
             );
 
-            menuButton.setAttribute(
+            mobileMenuButton.setAttribute(
                 "aria-label",
                 "Menü schließen"
             );
 
-            document.body.classList.add(
-                "menu-open"
-            );
+            setBodyLock();
         }
 
 
-        function closeMenu() {
+        function closeMobileMenu() {
 
             mobileMenu.classList.remove("open");
 
@@ -3974,100 +3518,86 @@ backTop.addEventListener(
                 "true"
             );
 
-            menuButton.classList.remove("open");
+            mobileMenuButton.classList.remove("open");
 
-            menuButton.setAttribute(
+            mobileMenuButton.setAttribute(
                 "aria-expanded",
                 "false"
             );
 
-            menuButton.setAttribute(
+            mobileMenuButton.setAttribute(
                 "aria-label",
                 "Menü öffnen"
             );
 
-            document.body.classList.remove(
-                "menu-open"
-            );
+            setBodyLock();
         }
 
 
-        menuButton.addEventListener(
+        mobileMenuButton.addEventListener(
             "click",
             () => {
 
                 if (
-                    mobileMenu.classList.contains(
-                        "open"
-                    )
+                    mobileMenu.classList.contains("open")
                 ) {
-                    closeMenu();
+                    closeMobileMenu();
                 } else {
-                    openMenu();
+                    openMobileMenu();
                 }
 
             }
         );
 
 
-        mobileMenuBackground.addEventListener(
+        mobileMenuBackdrop.addEventListener(
             "click",
-            closeMenu
+            closeMobileMenu
         );
 
 
         document
-            .querySelectorAll(
-                ".mobile-menu-panel a"
-            )
+            .querySelectorAll(".mobile-menu-panel a")
             .forEach(link => {
 
                 link.addEventListener(
                     "click",
-                    closeMenu
+                    closeMobileMenu
                 );
 
             });
 
 
-        /* =====================================================
+        /* ==========================================
            COUNTDOWN
-        ===================================================== */
+           Deutschland:
+           31.10.2026 ist MEZ / UTC+1.
+        =========================================== */
 
-        /*
-           31.10.2026 um 18:00 Uhr deutscher Zeit.
-           Am 31. Oktober gilt in Deutschland MEZ (UTC+1).
-        */
-
-        const eventTime =
+        const eventDate =
             new Date(
                 "2026-10-31T18:00:00+01:00"
             ).getTime();
 
 
-        const days =
+        const daysEl =
             document.getElementById("days");
 
-        const hours =
+        const hoursEl =
             document.getElementById("hours");
 
-        const minutes =
+        const minutesEl =
             document.getElementById("minutes");
 
-        const seconds =
+        const secondsEl =
             document.getElementById("seconds");
 
-        const countdownStatus =
-            document.getElementById(
-                "countdownStatus"
-            );
+        const countdownNote =
+            document.getElementById("countdownNote");
 
 
-        function formatNumber(value) {
-
-            return String(value)
-                .padStart(2, "0");
-
+        function pad(number) {
+            return String(number).padStart(2, "0");
         }
 
 
@@ -4077,17 +3607,17 @@ backTop.addEventListener(
                 Date.now();
 
             const difference =
-                eventTime - now;
+                eventDate - now;
 
 
             if (difference <= 0) {
 
-                days.textContent = "00";
-                hours.textContent = "00";
-                minutes.textContent = "00";
-                seconds.textContent = "00";
+                daysEl.textContent = "00";
+                hoursEl.textContent = "00";
+                minutesEl.textContent = "00";
+                secondsEl.textContent = "00";
 
-                countdownStatus.textContent =
+                countdownNote.textContent =
                     "Schattenschreck hat begonnen.";
 
                 return false;
@@ -4099,40 +3629,36 @@ backTop.addEventListener(
                     difference / 1000
                 );
 
-
-            const d =
+            const days =
                 Math.floor(
                     totalSeconds / 86400
                 );
 
-
-            const h =
+            const hours =
                 Math.floor(
                     (totalSeconds % 86400) / 3600
                 );
 
-
-            const m =
+            const minutes =
                 Math.floor(
                     (totalSeconds % 3600) / 60
                 );
 
-
-            const s =
+            const seconds =
                 totalSeconds % 60;
 
 
-            days.textContent =
-                formatNumber(d);
+            daysEl.textContent =
+                pad(days);
 
-            hours.textContent =
-                formatNumber(h);
+            hoursEl.textContent =
+                pad(hours);
 
-            minutes.textContent =
-                formatNumber(m);
+            minutesEl.textContent =
+                pad(minutes);
 
-            seconds.textContent =
-                formatNumber(s);
+            secondsEl.textContent =
+                pad(seconds);
 
 
             return true;
@@ -4143,11 +3669,14 @@ backTop.addEventListener(
 
 
         const countdownInterval =
-            window.setInterval(
+            setInterval(
                 () => {
 
-                    if (!updateCountdown()) {
-                        window.clearInterval(
+                    const active =
+                        updateCountdown();
+
+                    if (!active) {
+                        clearInterval(
                             countdownInterval
                         );
                     }
@@ -4157,36 +3686,35 @@ backTop.addEventListener(
             );
 
 
-        /* =====================================================
+        /* ==========================================
            FAQ
-        ===================================================== */
+        =========================================== */
 
         const faqItems =
-            document.querySelectorAll(
-                ".faq-item"
-            );
+            document.querySelectorAll(".faq-item");
 
 
         faqItems.forEach(item => {
 
             const button =
-                item.querySelector(
-                    ".faq-question"
-                );
+                item.querySelector(".faq-question");
+
+            const answer =
+                item.querySelector(".faq-answer");
 
 
             button.addEventListener(
                 "click",
                 () => {
 
-                    const wasOpen =
-                        item.classList.contains(
-                            "open"
-                        );
+                    const isOpen =
+                        item.classList.contains("open");
 
 
-                    faqItems.forEach(
-                        otherItem => {
+                    /* Alle anderen schließen */
+                    faqItems.forEach(otherItem => {
+
+                        if (otherItem !== item) {
 
                             otherItem.classList.remove(
                                 "open"
@@ -4197,24 +3725,51 @@ backTop.addEventListener(
                                     ".faq-question"
                                 );
 
+                            const otherAnswer =
+                                otherItem.querySelector(
+                                    ".faq-answer"
+                                );
+
                             otherButton.setAttribute(
                                 "aria-expanded",
                                 "false"
                             );
 
+                            otherAnswer.setAttribute(
+                                "aria-hidden",
+                                "true"
+                            );
                         }
-                    );
+
+                    });
 
 
-                    if (!wasOpen) {
+                    if (isOpen) {
 
-                        item.classList.add(
-                            "open"
+                        item.classList.remove("open");
+
+                        button.setAttribute(
+                            "aria-expanded",
+                            "false"
                         );
+
+                        answer.setAttribute(
+                            "aria-hidden",
+                            "true"
+                        );
+
+                    } else {
+
+                        item.classList.add("open");
 
                         button.setAttribute(
                             "aria-expanded",
                             "true"
+                        );
+
+                        answer.setAttribute(
+                            "aria-hidden",
+                            "false"
                         );
 
                     }
@@ -4225,77 +3780,133 @@ backTop.addEventListener(
         });
 
 
-        /* =====================================================
-           SCROLL REVEAL
-        ===================================================== */
+        /* ==========================================
+           REVEAL ON SCROLL
+        =========================================== */
 
         const revealElements =
-            document.querySelectorAll(
-                ".reveal"
-            );
+            document.querySelectorAll(".reveal");
 
-if (
-            reduceMotion ||
+
+        const reducedMotion =
+            window.matchMedia(
+                "(prefers-reduced-motion: reduce)"
+            ).matches;
+
+
+        if (
+            reducedMotion ||
             !("IntersectionObserver" in window)
         ) {
 
             revealElements.forEach(
-                element => {
-                    element.classList.add(
-                        "visible"
-                    );
-                }
+                element =>
+                    element.classList.add("visible")
             );
 
         } else {
 
-            const revealObserver =
+            const observer =
                 new IntersectionObserver(
                     entries => {
 
-                        entries.forEach(
-                            entry => {
+                        entries.forEach(entry => {
 
-                                if (
-                                    entry.isIntersecting
-                                ) {
+                            if (entry.isIntersecting) {
 
-                                    entry.target.classList.add(
-                                        "visible"
-                                    );
+                                entry.target.classList.add(
+                                    "visible"
+                                );
 
-                                    revealObserver.unobserve(
-                                        entry.target
-                                    );
-
-                                }
+                                observer.unobserve(
+                                    entry.target
+                                );
 
                             }
-                        );
+
+                        });
 
                     },
                     {
-                        threshold: .08,
-                        rootMargin:
-                            "0px 0px -25px 0px"
+                        threshold: .12,
+                        rootMargin: "0px 0px -30px 0px"
                     }
                 );
 
 
             revealElements.forEach(
-                element => {
-                    revealObserver.observe(
-                        element
-                    );
-                }
+                element =>
+                    observer.observe(element)
             );
 
         }
 
 
-        /* =====================================================
+        /* ==========================================
+           AMBIENT EMBERS
+        =========================================== */
+
+        const embers =
+            document.getElementById("embers");
+
+
+        if (!reducedMotion) {
+
+            const emberCount = 18;
+
+            for (
+                let i = 0;
+                i < emberCount;
+                i++
+            ) {
+
+                const ember =
+                    document.createElement("span");
+
+                ember.className = "ember";
+
+                const left =
+                    Math.random() * 100;
+
+                const duration =
+                    10 + Math.random() * 14;
+
+                const delay =
+                    Math.random() * -20;
+
+                const drift =
+                    (-80 + Math.random() * 160) + "px";
+
+
+                ember.style.left =
+                    left + "%";
+
+                ember.style.setProperty(
+                    "--duration",
+                    duration + "s"
+                );
+
+                ember.style.setProperty(
+                    "--delay",
+                    delay + "s"
+                );
+
+                ember.style.setProperty(
+                    "--drift",
+                    drift
+                );
+
+
+                embers.appendChild(ember);
+
+            }
+
+        }
+
+
+        /* ==========================================
            IMPRESSUM MODAL
-        ===================================================== */
+        =========================================== */
 
         const impressumButton =
             document.getElementById(
@@ -4313,12 +3924,12 @@ if (
             );
 
 
-        let lastFocusedElement = null;
+        let previousFocusedElement = null;
 
 
         function openModal() {
 
-            lastFocusedElement =
+            previousFocusedElement =
                 document.activeElement;
 
             impressumModal.classList.add(
@@ -4330,14 +3941,10 @@ if (
                 "false"
             );
 
-            document.body.classList.add(
-                "modal-open"
-            );
+            setBodyLock();
 
-            setTimeout(
-                () => {
-                    modalClose.focus();
-                },
+            window.setTimeout(
+                () => modalClose.focus(),
                 50
             );
         }
@@ -4354,19 +3961,14 @@ if (
                 "true"
             );
 
-            document.body.classList.remove(
-                "modal-open"
-            );
+            setBodyLock();
 
 
             if (
-                lastFocusedElement &&
-                typeof lastFocusedElement.focus ===
-                    "function"
+                previousFocusedElement &&
+                typeof previousFocusedElement.focus === "function"
             ) {
-
-                lastFocusedElement.focus();
-
+                previousFocusedElement.focus();
             }
 
         }
@@ -4389,21 +3991,18 @@ if (
             event => {
 
                 if (
-                    event.target ===
-                    impressumModal
+                    event.target === impressumModal
                 ) {
-
                     closeModal();
-
                 }
 
             }
         );
 
 
-        /* =====================================================
-           ESC
-        ===================================================== */
+        /* ==========================================
+           ESCAPE KEY
+        =========================================== */
 
         document.addEventListener(
             "keydown",
@@ -4415,24 +4014,71 @@ if (
 
 
                 if (
-                    impressumModal.classList.contains(
-                        "open"
-                    )
+                    impressumModal.classList.contains("open")
                 ) {
-
                     closeModal();
-
                     return;
                 }
 
 
                 if (
-                    mobileMenu.classList.contains(
-                        "open"
-                    )
+                    mobileMenu.classList.contains("open")
+                ) {
+                    closeMobileMenu();
+                }
+
+            }
+        );
+
+
+        /* ==========================================
+           MODAL FOCUS TRAP
+        =========================================== */
+
+        impressumModal.addEventListener(
+            "keydown",
+            event => {
+
+                if (event.key !== "Tab") {
+                    return;
+                }
+
+
+                const focusable =
+                    impressumModal.querySelectorAll(
+                        'button, a[href], input, textarea, select, [tabindex]:not([tabindex="-1"])'
+                    );
+
+
+                if (!focusable.length) {
+                    return;
+                }
+
+
+                const first =
+                    focusable[0];
+
+                const last =
+                    focusable[
+                        focusable.length - 1
+                    ];
+
+
+                if (
+                    event.shiftKey &&
+                    document.activeElement === first
                 ) {
 
-                    closeMenu();
+                    event.preventDefault();
+                    last.focus();
+
+                } else if (
+                    !event.shiftKey &&
+                    document.activeElement === last
+                ) {
+
+                    event.preventDefault();
+                    first.focus();
 
                 }
 
@@ -4440,9 +4086,59 @@ if (
         );
 
 
-        /* =====================================================
-           MOBILE SAFETY
-        ===================================================== */
+        /* ==========================================
+           SMOOTH ANCHOR OFFSET
+        =========================================== */
+
+        document
+            .querySelectorAll('a[href^="#"]')
+            .forEach(anchor => {
+
+                anchor.addEventListener(
+                    "click",
+                    event => {
+
+                        const id =
+                            anchor.getAttribute(
+                                "href"
+                            );
+
+                        if (
+                            !id ||
+                            id === "#"
+                        ) {
+                            return;
+                        }
+
+
+                        const target =
+                            document.querySelector(id);
+
+                        if (!target) {
+                            return;
+                        }
+
+
+                        event.preventDefault();
+
+
+                        target.scrollIntoView({
+                            behavior:
+                                reducedMotion
+                                    ? "auto"
+                                    : "smooth",
+                            block: "start"
+                        });
+
+                    }
+                );
+
+            });
+
+
+        /* ==========================================
+           RESIZE SAFETY
+        =========================================== */
 
         window.addEventListener(
             "resize",
@@ -4450,13 +4146,9 @@ if (
 
                 if (
                     window.innerWidth > 800 &&
-                    mobileMenu.classList.contains(
-                        "open"
-                    )
+                    mobileMenu.classList.contains("open")
                 ) {
-
-                    closeMenu();
-
+                    closeMobileMenu();
                 }
 
             },
