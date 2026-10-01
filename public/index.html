@@ -911,6 +911,8 @@
         ========================================================= */
 
         .experience-grid {
+            content-visibility: auto;
+            contain-intrinsic-size: 0 520px;
             display: grid;
 
             grid-template-columns:
@@ -1114,6 +1116,8 @@
         ========================================================= */
 
         .faq-list {
+            content-visibility: auto;
+            contain-intrinsic-size: 0 700px;
             max-width: 900px;
 
             margin-top: 60px;
@@ -1786,11 +1790,73 @@
         .back-top:hover {
             color: white;
         }
-
-
         /* =========================================================
-           SIMPLE REVEAL
+           MOTION SYSTEM
+           Bewegungen laufen primär über opacity/transform und
+           bleiben dadurch auf Desktop und Mobile leichtgewichtig.
         ========================================================= */
+
+        @keyframes heroGlow {
+            0%, 100% {
+                opacity: .55;
+                transform: translate(-50%, -50%) scale(1);
+            }
+
+            50% {
+                opacity: .82;
+                transform: translate(-50%, -50%) scale(1.045);
+            }
+        }
+
+        @keyframes heroLogoFloat {
+            0%, 100% {
+                transform: translate3d(0, 0, 0);
+            }
+
+            50% {
+                transform: translate3d(0, -5px, 0);
+            }
+        }
+
+        @keyframes buttonShine {
+            0% {
+                transform: translateX(-130%) skewX(-18deg);
+            }
+
+            100% {
+                transform: translateX(230%) skewX(-18deg);
+            }
+        }
+
+        .hero::before {
+            animation: heroGlow 7s ease-in-out infinite;
+            will-change: transform, opacity;
+        }
+
+        .hero-logo {
+            animation: heroLogoFloat 6s ease-in-out infinite;
+            will-change: transform;
+        }
+
+        .final-button {
+            overflow: hidden;
+            isolation: isolate;
+        }
+
+        .final-button::after {
+            content: "";
+            position: absolute;
+            inset: -40% auto -40% -35%;
+            width: 24%;
+            background: rgba(255,255,255,.16);
+            transform: translateX(-130%) skewX(-18deg);
+            pointer-events: none;
+        }
+
+        .final-button:hover::after,
+        .final-button:focus-visible::after {
+            animation: buttonShine .7s ease-out;
+        }
 
         .reveal {
             opacity: 1;
@@ -1799,30 +1865,117 @@
 
         .js .reveal {
             opacity: 0;
-
-            transform: translateY(14px);
-
+            transform: translate3d(0, 22px, 0);
             transition:
-                opacity .55s ease,
-                transform .55s ease;
+                opacity .65s cubic-bezier(.22, 1, .36, 1),
+                transform .65s cubic-bezier(.22, 1, .36, 1);
+            will-change: opacity, transform;
         }
 
         .js .reveal.visible {
             opacity: 1;
-            transform: translateY(0);
+            transform: translate3d(0, 0, 0);
+            will-change: auto;
         }
 
-        .js .delay-1 {
-            transition-delay: .06s;
+        .js .delay-1 { transition-delay: .08s; }
+        .js .delay-2 { transition-delay: .16s; }
+        .js .delay-3 { transition-delay: .24s; }
+
+        .menu-button,
+        .desktop-nav a,
+        .mobile-menu-panel a,
+        .experience-card,
+        .faq-question,
+        .modal-close,
+        .back-top {
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
         }
 
-        .js .delay-2 {
-            transition-delay: .12s;
+        .menu-button {
+            transition:
+                transform .2s ease,
+                border-color .2s ease,
+                background-color .2s ease;
         }
 
-        .js .delay-3 {
-            transition-delay: .18s;
+        .menu-button:hover,
+        .menu-button:focus-visible {
+            transform: scale(1.04);
+            border-color: rgba(255,255,255,.24);
+            background: rgba(255,255,255,.035);
         }
+
+        .experience-card {
+            transform: translate3d(0, 0, 0);
+        }
+
+        .experience-card:hover {
+            transform: translate3d(0, -5px, 0);
+        }
+
+        .mobile-menu-panel a {
+            transition:
+                color .2s ease,
+                padding-left .2s ease,
+                background-color .2s ease;
+        }
+
+        .mobile-menu-panel a:hover,
+        .mobile-menu-panel a:focus-visible {
+            padding-left: 7px;
+            color: white;
+        }
+
+        .faq-question {
+            transition: color .2s ease;
+        }
+
+        .faq-question:hover {
+            color: #f5f5f5;
+        }
+
+        @media (max-width: 800px) {
+            .hero-logo {
+                animation-duration: 7s;
+            }
+
+            .experience-card:hover {
+                transform: none;
+            }
+
+            .mobile-menu.open .mobile-menu-panel a {
+                animation: mobileMenuItemIn .38s cubic-bezier(.22, 1, .36, 1) both;
+            }
+
+            .mobile-menu.open .mobile-menu-panel a:nth-of-type(1) { animation-delay: .03s; }
+            .mobile-menu.open .mobile-menu-panel a:nth-of-type(2) { animation-delay: .07s; }
+            .mobile-menu.open .mobile-menu-panel a:nth-of-type(3) { animation-delay: .11s; }
+            .mobile-menu.open .mobile-menu-panel a:nth-of-type(4) { animation-delay: .15s; }
+
+            @keyframes mobileMenuItemIn {
+                from {
+                    opacity: 0;
+                    transform: translate3d(0, 7px, 0);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translate3d(0, 0, 0);
+                }
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .hero::before,
+            .hero-logo,
+            .mobile-menu.open .mobile-menu-panel a {
+                animation: none !important;
+            }
+        }
+
+
 
 
         /* =========================================================
@@ -2340,6 +2493,8 @@
                     class="header-logo"
                     src="https://i.imgur.com/Cl27hzM.png"
                     alt="Schattenschreck"
+                    width="130"
+                    decoding="async"
                 >
 
             </a>
@@ -2461,6 +2616,8 @@
                                 class="hero-logo"
                                 src="https://i.imgur.com/Cl27hzM.png"
                                 alt="Schattenschreck Horror"
+                                decoding="async"
+                                fetchpriority="high"
                             >
 
                         </div>
@@ -3253,6 +3410,8 @@
                         class="footer-logo"
                         src="https://i.imgur.com/CAD6jqP.png"
                         alt="GOGOS Gruppe"
+                        loading="lazy"
+                        decoding="async"
                     >
 
                     <div class="footer-description">
@@ -3468,6 +3627,12 @@
 
         document.documentElement.classList.add("js");
 
+        const reduceMotion =
+            window.matchMedia(
+                "(prefers-reduced-motion: reduce)"
+            ).matches;
+
+
 
         /* =====================================================
            HEADER
@@ -3480,10 +3645,11 @@
             document.getElementById("backTop");
 
 
+        let scrollTicking = false;
+
         function updateScroll() {
 
-            const y =
-                window.scrollY || 0;
+            const y = window.scrollY || 0;
 
             header.classList.toggle(
                 "scrolled",
@@ -3494,19 +3660,29 @@
                 "visible",
                 y > 600
             );
+
+            scrollTicking = false;
         }
 
+        function requestScrollUpdate() {
+
+            if (scrollTicking) {
+                return;
+            }
+
+            scrollTicking = true;
+            requestAnimationFrame(updateScroll);
+        }
 
         window.addEventListener(
             "scroll",
-            updateScroll,
+            requestScrollUpdate,
             { passive: true }
         );
 
         updateScroll();
 
-
-        backTop.addEventListener(
+backTop.addEventListener(
             "click",
             () => {
 
@@ -3517,6 +3693,36 @@
 
             }
         );
+
+
+        /* =====================================================
+           IN-PAGE NAVIGATION
+        ===================================================== */
+
+        document.querySelectorAll('a[href^="#"]').forEach(link => {
+
+            link.addEventListener("click", event => {
+
+                const id = link.getAttribute("href");
+
+                if (!id || id === "#") {
+                    return;
+                }
+
+                const target = document.querySelector(id);
+
+                if (!target) {
+                    return;
+                }
+
+                event.preventDefault();
+
+                target.scrollIntoView({
+                    behavior: reduceMotion ? "auto" : "smooth",
+                    block: "start"
+                });
+            });
+        });
 
 
         /* =====================================================
@@ -3740,13 +3946,11 @@
 
 
         const countdownInterval =
-            setInterval(
+            window.setInterval(
                 () => {
 
-                    if (
-                        !updateCountdown()
-                    ) {
-                        clearInterval(
+                    if (!updateCountdown()) {
+                        window.clearInterval(
                             countdownInterval
                         );
                     }
@@ -3833,14 +4037,7 @@
                 ".reveal"
             );
 
-
-        const reduceMotion =
-            window.matchMedia(
-                "(prefers-reduced-motion: reduce)"
-            ).matches;
-
-
-        if (
+if (
             reduceMotion ||
             !("IntersectionObserver" in window)
         ) {
