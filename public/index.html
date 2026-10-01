@@ -1834,17 +1834,35 @@
 
         .js .reveal {
             opacity: 0;
-            transform: translate3d(0, 22px, 0);
+            transform: translate3d(0, 34px, 0) scale(.985);
+            filter: blur(3px);
             transition:
-                opacity .65s cubic-bezier(.22, 1, .36, 1),
-                transform .65s cubic-bezier(.22, 1, .36, 1);
-            will-change: opacity, transform;
+                opacity .72s cubic-bezier(.22, 1, .36, 1),
+                transform .72s cubic-bezier(.22, 1, .36, 1),
+                filter .72s cubic-bezier(.22, 1, .36, 1);
+            will-change: opacity, transform, filter;
         }
 
         .js .reveal.visible {
             opacity: 1;
-            transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0) scale(1);
+            filter: blur(0);
             will-change: auto;
+        }
+
+        /* Ruhige Staffelung für Karten: wirkt beim Scrollen wie ein
+           zusammenhängender Flow statt wie viele einzelne Animationen. */
+        .js .experience-card:nth-child(2) { transition-delay: .07s; }
+        .js .experience-card:nth-child(3) { transition-delay: .14s; }
+        .js .experience-card:nth-child(4) { transition-delay: .21s; }
+        .js .experience-card:nth-child(5) { transition-delay: .28s; }
+
+        @media (max-width: 800px) {
+            .js .reveal {
+                transform: translate3d(0, 24px, 0) scale(.99);
+                filter: blur(2px);
+                transition-duration: .6s;
+            }
         }
 
         .js .delay-1 { transition-delay: .08s; }
@@ -2543,6 +2561,7 @@
             .js .reveal {
                 opacity: 1;
                 transform: none;
+                filter: none;
             }
 
             .intro-screen {
@@ -3845,7 +3864,14 @@
             scrollTicking = true;
             requestAnimationFrame(() => {
                 updateScroll();
-                updateIntro();
+
+                // Sobald das Intro einmal abgeschlossen ist, muss beim
+                // weiteren Scrollen keine Intro-Animation mehr berechnet werden.
+                if (!introCompleted) {
+                    updateIntro();
+                }
+
+                scrollTicking = false;
             });
         }
 
