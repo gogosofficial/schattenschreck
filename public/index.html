@@ -30,7 +30,6 @@
         rel="stylesheet"
     >
 
-
     <style>
 
         /* =========================================================
@@ -50,6 +49,8 @@
 
             --red: #b20812;
             --red-hover: #d00d19;
+
+            --whatsapp: #25d366;
 
             --border: rgba(255,255,255,.10);
             --border-light: rgba(255,255,255,.065);
@@ -490,8 +491,7 @@
 
             transition:
                 color .2s ease,
-                padding-left .2s ease,
-                background-color .2s ease;
+                padding-left .2s ease;
         }
 
 
@@ -890,6 +890,286 @@
             font-weight: 600;
 
             overflow-wrap: anywhere;
+        }
+
+
+        /* =========================================================
+           WHATSAPP UPDATES
+        ========================================================= */
+
+        .whatsapp-section {
+            padding: 0 0 120px;
+        }
+
+
+        .whatsapp-card {
+            position: relative;
+
+            display: grid;
+
+            grid-template-columns:
+                minmax(0, 1fr)
+                auto;
+
+            align-items: center;
+
+            gap: 45px;
+
+            padding:
+                clamp(28px, 5vw, 48px);
+
+            border: 1px solid var(--border);
+
+            background:
+                linear-gradient(
+                    120deg,
+                    #101010,
+                    #0c0c0c
+                );
+
+            overflow: hidden;
+
+            isolation: isolate;
+
+            transition:
+                border-color .3s ease,
+                transform .3s ease,
+                box-shadow .3s ease;
+        }
+
+
+        .whatsapp-card::before {
+            content: "";
+
+            position: absolute;
+
+            left: -90px;
+            top: 50%;
+
+            width: 260px;
+            height: 260px;
+
+            transform:
+                translateY(-50%);
+
+            border-radius: 50%;
+
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(37,211,102,.075),
+                    transparent 68%
+                );
+
+            pointer-events: none;
+
+            z-index: -1;
+        }
+
+
+        .whatsapp-card::after {
+            content: "";
+
+            position: absolute;
+
+            right: -120px;
+            bottom: -170px;
+
+            width: 360px;
+            height: 360px;
+
+            border-radius: 50%;
+
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(150,0,12,.10),
+                    transparent 68%
+                );
+
+            pointer-events: none;
+
+            z-index: -1;
+        }
+
+
+        .whatsapp-card:hover {
+            border-color:
+                rgba(37,211,102,.22);
+
+            transform:
+                translateY(-2px);
+
+            box-shadow:
+                0 20px 60px rgba(0,0,0,.22);
+        }
+
+
+        .whatsapp-label {
+            display: flex;
+            align-items: center;
+
+            gap: 11px;
+
+            margin-bottom: 13px;
+
+            color: #686865;
+
+            font-family: "Oswald", sans-serif;
+
+            font-size: 10px;
+            font-weight: 600;
+
+            letter-spacing: .25em;
+
+            text-transform: uppercase;
+        }
+
+
+        .whatsapp-label::before {
+            content: "";
+
+            width: 27px;
+            height: 1px;
+
+            background:
+                var(--whatsapp);
+        }
+
+
+        .whatsapp-title {
+            margin: 0;
+
+            color: white;
+
+            font-family: "Oswald", sans-serif;
+
+            font-size:
+                clamp(
+                    34px,
+                    5vw,
+                    54px
+                );
+
+            font-weight: 600;
+
+            line-height: .98;
+
+            letter-spacing: -.01em;
+
+            text-transform: uppercase;
+        }
+
+
+        .whatsapp-text {
+            max-width: 650px;
+
+            margin: 17px 0 0;
+
+            color: #81817e;
+
+            font-size: 14px;
+
+            line-height: 1.75;
+        }
+
+
+        .whatsapp-button {
+            position: relative;
+
+            display: inline-flex;
+
+            align-items: center;
+            justify-content: center;
+
+            min-height: 50px;
+
+            padding: 0 23px;
+
+            border: 1px solid
+                rgba(37,211,102,.45);
+
+            background:
+                rgba(37,211,102,.055);
+
+            color: #d9d9d6;
+
+            font-family: "Oswald", sans-serif;
+
+            font-size: 11px;
+            font-weight: 600;
+
+            letter-spacing: .16em;
+
+            text-transform: uppercase;
+
+            white-space: nowrap;
+
+            overflow: hidden;
+
+            transition:
+                color .2s ease,
+                background .2s ease,
+                border-color .2s ease,
+                transform .2s ease,
+                box-shadow .2s ease;
+        }
+
+
+        .whatsapp-button::before {
+            content: "";
+
+            position: absolute;
+
+            inset: 0;
+
+            background:
+                linear-gradient(
+                    110deg,
+                    transparent 20%,
+                    rgba(255,255,255,.10) 50%,
+                    transparent 80%
+                );
+
+            transform:
+                translateX(-120%);
+
+            transition:
+                transform .65s
+                cubic-bezier(.22,1,.36,1);
+
+            pointer-events: none;
+        }
+
+
+        .whatsapp-button:hover::before,
+        .whatsapp-button:focus-visible::before {
+            transform:
+                translateX(120%);
+        }
+
+
+        .whatsapp-button:hover {
+            color: white;
+
+            background:
+                rgba(37,211,102,.10);
+
+            border-color:
+                rgba(37,211,102,.7);
+
+            transform:
+                translate3d(0,-2px,0);
+
+            box-shadow:
+                0 10px 30px
+                rgba(37,211,102,.07);
+        }
+
+
+        .whatsapp-button:active {
+            transform:
+                translate3d(0,0,0);
         }
 
 
@@ -2332,6 +2612,25 @@
             }
 
 
+            /* WHATSAPP */
+
+            .whatsapp-section {
+                padding-bottom: 85px;
+            }
+
+
+            .whatsapp-card {
+                grid-template-columns: 1fr;
+
+                gap: 28px;
+            }
+
+
+            .whatsapp-button {
+                width: 100%;
+            }
+
+
             .section {
                 padding:
                     85px 0;
@@ -2374,11 +2673,6 @@
 
             .experience-card:hover {
                 transform: none;
-            }
-
-
-            .event-layout {
-                grid-template-columns: 1fr;
             }
 
 
@@ -2558,6 +2852,24 @@
             }
 
 
+            /* WHATSAPP SMALL MOBILE */
+
+            .whatsapp-card {
+                padding:
+                    28px 22px;
+            }
+
+
+            .whatsapp-title {
+                font-size: 40px;
+            }
+
+
+            .whatsapp-text {
+                font-size: 14px;
+            }
+
+
             .experience-grid {
                 grid-template-columns: 1fr;
             }
@@ -2578,11 +2890,6 @@
 
             .experience-number {
                 margin-bottom: 34px;
-            }
-
-
-            .event-date-number {
-                font-size: 60px;
             }
 
 
@@ -3116,6 +3423,56 @@
 
 
         <!-- =====================================================
+             WHATSAPP UPDATES
+        ===================================================== -->
+
+        <section class="whatsapp-section">
+
+            <div class="container">
+
+                <div class="whatsapp-card reveal">
+
+                    <div>
+
+                        <div class="whatsapp-label">
+                            Offizielle Updates
+                        </div>
+
+
+                        <h2 class="whatsapp-title">
+                            Nichts<br>
+                            verpassen.
+                        </h2>
+
+
+                        <p class="whatsapp-text">
+                            Folge unserem offiziellen WhatsApp-Kanal
+                            für Updates rund um den Schattenschreck-Garten,
+                            Neuigkeiten zum Event und wichtige Informationen
+                            direkt auf dein Handy.
+                        </p>
+
+                    </div>
+
+
+                    <a
+                        class="whatsapp-button"
+                        href="https://whatsapp.com/channel/0029Vag7yzzATRSkigXng513"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="Offiziellen Schattenschreck WhatsApp-Kanal öffnen"
+                    >
+                        Kanal öffnen ↗
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
              ERLEBNIS
         ===================================================== -->
 
@@ -3278,8 +3635,6 @@
 
                 <div class="faq-list">
 
-                    <!-- FAQ 1 -->
-
                     <div class="faq-item reveal">
 
                         <button
@@ -3319,8 +3674,6 @@
                     </div>
 
 
-                    <!-- FAQ 2 -->
-
                     <div class="faq-item reveal">
 
                         <button
@@ -3357,8 +3710,6 @@
 
                     </div>
 
-
-                    <!-- FAQ 3 -->
 
                     <div class="faq-item reveal">
 
@@ -3397,8 +3748,6 @@
                     </div>
 
 
-                    <!-- FAQ 4 -->
-
                     <div class="faq-item reveal">
 
                         <button
@@ -3434,8 +3783,6 @@
 
                     </div>
 
-
-                    <!-- FAQ 5 -->
 
                     <div class="faq-item reveal">
 
@@ -3476,8 +3823,6 @@
 
                     </div>
 
-
-                    <!-- FAQ 6 -->
 
                     <div class="faq-item reveal">
 
@@ -4765,4 +5110,3 @@
 
 </body>
 </html>
-
