@@ -550,38 +550,7 @@
 
         .hero-logo-frame {
             position: relative;
-
             padding: 34px;
-
-            border-top: 1px solid var(--border);
-            border-bottom: 1px solid var(--border);
-        }
-
-        .hero-logo-frame::before,
-        .hero-logo-frame::after {
-            content: "";
-
-            position: absolute;
-
-            width: 18px;
-            height: 18px;
-
-            border-color: rgba(255,255,255,.16);
-            border-style: solid;
-        }
-
-        .hero-logo-frame::before {
-            left: 0;
-            top: 0;
-
-            border-width: 1px 0 0 1px;
-        }
-
-        .hero-logo-frame::after {
-            right: 0;
-            bottom: 0;
-
-            border-width: 0 1px 1px 0;
         }
 
         .hero-logo {
@@ -3794,26 +3763,35 @@
             document.querySelector(".hero-inner");
 
         const introRevealDistance = 220;
+        let introCompleted = false;
 
         function updateIntro() {
 
             const y = Math.max(0, window.scrollY || 0);
-            const progress = Math.min(1, y / introRevealDistance);
-            const eased = 1 - Math.pow(1 - progress, 2.2);
 
-            introScreen.style.opacity = String(1 - eased);
+            if (!introCompleted) {
+                const progress = Math.min(1, y / introRevealDistance);
+                const eased = 1 - Math.pow(1 - progress, 2.2);
 
-            introLogoWrap.style.transform =
-                `translate3d(0, ${-eased * 18}px, 0) scale(${1 + eased * .045})`;
+                introScreen.style.opacity = String(1 - eased);
 
-            introLogoWrap.style.opacity = String(1 - eased * .18);
+                introLogoWrap.style.transform =
+                    `translate3d(0, ${-eased * 18}px, 0) scale(${1 + eased * .045})`;
 
-            if (progress >= 0.98) {
+                introLogoWrap.style.opacity = String(1 - eased * .18);
+
+                if (progress >= 0.98) {
+                    introCompleted = true;
+                    introScreen.classList.add("is-hidden");
+                    document.body.classList.remove("intro-active");
+                } else {
+                    introScreen.classList.remove("is-hidden");
+                    document.body.classList.add("intro-active");
+                }
+            } else {
+                // Intro wurde bereits einmal abgespielt und bleibt dauerhaft geschlossen.
                 introScreen.classList.add("is-hidden");
                 document.body.classList.remove("intro-active");
-            } else {
-                introScreen.classList.remove("is-hidden");
-                document.body.classList.add("intro-active");
             }
 
             if (heroInner && !reduceMotion) {
