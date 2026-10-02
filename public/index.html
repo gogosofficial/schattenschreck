@@ -51,6 +51,14 @@
             --header-height: 74px;
 
             --radius: 3px;
+
+            /*
+             * Wird vom Intro gesteuert.
+             * Dadurch kann das Intro weich reagieren,
+             * ohne dass andere Scroll-Animationen damit
+             * kollidieren.
+             */
+            --intro-progress: 0;
         }
 
         * {
@@ -60,13 +68,22 @@
         html {
             margin: 0;
             padding: 0;
+
             background: var(--bg);
+
             scroll-behavior: smooth;
+
+            /*
+             * Verhindert kleine horizontale Bewegungen
+             * durch transformierte Elemente.
+             */
+            overflow-x: clip;
         }
 
         body {
             margin: 0;
             padding: 0;
+
             min-width: 320px;
 
             background:
@@ -78,18 +95,41 @@
                 var(--bg);
 
             color: var(--text);
-            font-family: "DM Sans", Arial, sans-serif;
+
+            font-family:
+                "DM Sans",
+                Arial,
+                sans-serif;
+
             line-height: 1.6;
+
             overflow-x: hidden;
 
             -webkit-font-smoothing: antialiased;
             text-rendering: optimizeLegibility;
             -webkit-tap-highlight-color: transparent;
+
+            /*
+             * Stabileres Verhalten auf modernen Mobilgeräten.
+             */
+            min-height: 100%;
         }
 
         body.modal-open,
         body.menu-open {
             overflow: hidden;
+        }
+
+        /*
+         * Während das Intro aktiv ist, darf der eigentliche
+         * Seiteninhalt weiter scrollen.
+         *
+         * Wichtig:
+         * NICHT overflow:hidden setzen, da sonst das Intro
+         * nicht durch Scrollen verlassen werden könnte.
+         */
+        body.intro-active {
+            overflow-x: hidden;
         }
 
         ::selection {
@@ -117,15 +157,19 @@
         }
 
         :focus-visible {
-            outline: 2px solid var(--red-hover);
+            outline:
+                2px solid
+                var(--red-hover);
+
             outline-offset: 4px;
         }
 
         .container {
-            width: min(
-                calc(100% - 64px),
-                var(--max-width)
-            );
+            width:
+                min(
+                    calc(100% - 64px),
+                    var(--max-width)
+                );
 
             margin: 0 auto;
         }
@@ -145,35 +189,58 @@
 
         .header {
             position: fixed;
+
             top: 0;
             left: 0;
             right: 0;
+
             z-index: 1000;
 
-            padding-top: env(safe-area-inset-top);
+            padding-top:
+                env(safe-area-inset-top);
 
-            background: rgba(9,9,9,.92);
-            border-bottom: 1px solid transparent;
+            background:
+                rgba(9,9,9,.92);
+
+            border-bottom:
+                1px solid transparent;
 
             transition:
                 background .25s ease,
                 border-color .25s ease,
                 box-shadow .25s ease,
-                opacity .25s ease;
+                opacity .35s ease,
+                transform .35s ease;
+
+            will-change:
+                background,
+                transform,
+                opacity;
         }
 
         .header.scrolled {
-            background: rgba(9,9,9,.97);
-            border-bottom-color: var(--border);
+            background:
+                rgba(9,9,9,.97);
+
+            border-bottom-color:
+                var(--border);
 
             box-shadow:
-                0 10px 35px rgba(0,0,0,.25);
+                0 10px 35px
+                rgba(0,0,0,.25);
+        }
+
+        body.intro-active .header {
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(-8px);
         }
 
         .header-inner {
             height: var(--header-height);
 
             display: flex;
+
             align-items: center;
             justify-content: space-between;
 
@@ -182,18 +249,27 @@
 
         .logo-link {
             display: flex;
+
             align-items: center;
+
             flex-shrink: 0;
         }
 
         .header-logo {
             width: 130px;
             height: auto;
+
+            /*
+             * Kleine Rendering-Stabilisierung.
+             */
+            transform: translateZ(0);
         }
 
         .desktop-nav {
             display: flex;
+
             align-items: center;
+
             gap: 34px;
         }
 
@@ -205,13 +281,16 @@
             color: #898987;
 
             font-family: "Oswald", sans-serif;
+
             font-size: 12px;
             font-weight: 600;
 
             letter-spacing: .18em;
+
             text-transform: uppercase;
 
-            transition: color .2s ease;
+            transition:
+                color .2s ease;
         }
 
         .desktop-nav a::after {
@@ -227,7 +306,9 @@
 
             background: var(--red-hover);
 
-            transition: width .2s ease;
+            transition:
+                width .25s
+                cubic-bezier(.22,1,.36,1);
         }
 
         .desktop-nav a:hover {
@@ -250,10 +331,14 @@
 
             padding: 0;
 
-            border: 1px solid var(--border);
+            border:
+                1px solid
+                var(--border);
+
             border-radius: 50%;
 
             background: transparent;
+
             color: white;
 
             cursor: pointer;
@@ -273,6 +358,10 @@
 
             background:
                 rgba(255,255,255,.035);
+        }
+
+        .menu-button:active {
+            transform: scale(.96);
         }
 
         .menu-icon {
@@ -334,6 +423,7 @@
             z-index: 999;
 
             visibility: hidden;
+
             pointer-events: none;
         }
 
@@ -347,11 +437,16 @@
 
             inset: 0;
 
-            background: rgba(0,0,0,.72);
+            background:
+                rgba(0,0,0,.72);
 
             opacity: 0;
 
-            transition: opacity .25s ease;
+            transition:
+                opacity .3s ease;
+
+            backdrop-filter:
+                blur(2px);
         }
 
         .mobile-menu.open .mobile-menu-background {
@@ -370,31 +465,52 @@
             left: 14px;
             right: 14px;
 
+            max-height:
+                calc(
+                    100svh -
+                    var(--header-height) -
+                    30px
+                );
+
+            overflow-y: auto;
+
             padding: 15px 20px;
 
             background: #111;
 
-            border: 1px solid var(--border);
+            border:
+                1px solid
+                var(--border);
 
             box-shadow:
-                0 25px 70px rgba(0,0,0,.5);
+                0 25px 70px
+                rgba(0,0,0,.5);
 
-            transform: translateY(-10px);
+            transform:
+                translateY(-14px)
+                scale(.985);
 
             opacity: 0;
 
             transition:
-                transform .25s ease,
+                transform .35s
+                cubic-bezier(.22,1,.36,1),
+
                 opacity .25s ease;
         }
 
         .mobile-menu.open .mobile-menu-panel {
-            transform: translateY(0);
+            transform:
+                translateY(0)
+                scale(1);
+
             opacity: 1;
         }
 
         .mobile-menu-label {
-            padding: 8px 0 12px;
+            padding:
+                8px 0
+                12px;
 
             color: #555;
 
@@ -413,7 +529,9 @@
 
             padding: 15px 0;
 
-            border-top: 1px solid var(--border-light);
+            border-top:
+                1px solid
+                var(--border-light);
 
             color: #ddd;
 
@@ -456,9 +574,16 @@
                 100px;
 
             display: flex;
+
             align-items: center;
 
             overflow: hidden;
+
+            /*
+             * Verhindert, dass transformierte Glow-Elemente
+             * die Seite verbreitern.
+             */
+            isolation: isolate;
         }
 
         .hero::before {
@@ -492,17 +617,30 @@
             will-change:
                 transform,
                 opacity;
+
+            z-index: -1;
         }
 
         .hero-inner {
             position: relative;
+
             z-index: 2;
 
-            will-change: transform, opacity;
+            will-change:
+                transform,
+                opacity;
+
+            /*
+             * Parallax wird erst nach dem Intro
+             * per JS aktiviert.
+             */
+            transform:
+                translate3d(0,0,0);
         }
 
         .hero-topline {
             display: flex;
+
             align-items: center;
 
             gap: 14px;
@@ -530,6 +668,8 @@
             flex-shrink: 0;
 
             background: var(--red);
+
+            transform-origin: left center;
         }
 
         .hero-grid {
@@ -556,7 +696,11 @@
         }
 
         .hero-logo {
-            width: min(720px, 100%);
+            width:
+                min(
+                    720px,
+                    100%
+                );
 
             margin: 0 auto;
 
@@ -567,13 +711,18 @@
                 );
 
             animation:
-                heroLogoFloat 6s ease-in-out infinite;
+                heroLogoFloat 6s
+                ease-in-out infinite;
 
             will-change: transform;
+
+            transform:
+                translateZ(0);
         }
 
         .hero-title {
-            margin: 0 0 22px;
+            margin:
+                0 0 22px;
 
             color: white;
 
@@ -606,11 +755,14 @@
 
             padding-top: 26px;
 
-            border-top: 1px solid var(--border);
+            border-top:
+                1px solid
+                var(--border);
 
             display: grid;
 
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns:
+                1fr 1fr;
 
             gap: 20px;
         }
@@ -646,11 +798,14 @@
 
             padding-top: 28px;
 
-            border-top: 1px solid var(--border);
+            border-top:
+                1px solid
+                var(--border);
         }
 
         .countdown-header {
             display: flex;
+
             align-items: center;
             justify-content: space-between;
 
@@ -676,6 +831,8 @@
             color: #555;
 
             font-size: 11px;
+
+            text-align: right;
         }
 
         .countdown {
@@ -684,16 +841,27 @@
             grid-template-columns:
                 repeat(4, minmax(0, 1fr));
 
+            width: 100%;
             max-width: 720px;
 
-            border-top: 1px solid var(--border);
-            border-bottom: 1px solid var(--border);
+            border-top:
+                1px solid
+                var(--border);
+
+            border-bottom:
+                1px solid
+                var(--border);
         }
 
         .countdown-item {
-            padding: 20px 16px;
+            min-width: 0;
 
-            border-right: 1px solid var(--border);
+            padding:
+                20px 16px;
+
+            border-right:
+                1px solid
+                var(--border);
 
             text-align: center;
         }
@@ -720,7 +888,10 @@
 
             line-height: 1;
 
-            font-variant-numeric: tabular-nums;
+            font-variant-numeric:
+                tabular-nums;
+
+            min-width: 0;
         }
 
         .countdown-label {
@@ -745,7 +916,8 @@
         ========================================================= */
 
         .quick-info {
-            padding: 0 0 110px;
+            padding:
+                0 0 110px;
         }
 
         .quick-grid {
@@ -754,16 +926,24 @@
             grid-template-columns:
                 repeat(4, 1fr);
 
-            border-top: 1px solid var(--border);
-            border-bottom: 1px solid var(--border);
+            border-top:
+                1px solid
+                var(--border);
+
+            border-bottom:
+                1px solid
+                var(--border);
         }
 
         .quick-item {
             min-width: 0;
 
-            padding: 27px 24px;
+            padding:
+                27px 24px;
 
-            border-right: 1px solid var(--border);
+            border-right:
+                1px solid
+                var(--border);
         }
 
         .quick-item:first-child {
@@ -803,7 +983,8 @@
         ========================================================= */
 
         .whatsapp-section {
-            padding: 0 0 120px;
+            padding:
+                0 0 120px;
         }
 
         .whatsapp-card {
@@ -820,9 +1001,15 @@
             gap: 45px;
 
             padding:
-                clamp(28px, 5vw, 48px);
+                clamp(
+                    28px,
+                    5vw,
+                    48px
+                );
 
-            border: 1px solid var(--border);
+            border:
+                1px solid
+                var(--border);
 
             background:
                 linear-gradient(
@@ -837,7 +1024,8 @@
 
             transition:
                 border-color .3s ease,
-                transform .3s ease,
+                transform .3s
+                cubic-bezier(.22,1,.36,1),
                 box-shadow .3s ease;
         }
 
@@ -867,6 +1055,10 @@
             pointer-events: none;
 
             z-index: -1;
+
+            animation:
+                softPulse 6s
+                ease-in-out infinite;
         }
 
         .whatsapp-card::after {
@@ -902,11 +1094,13 @@
                 translateY(-2px);
 
             box-shadow:
-                0 20px 60px rgba(0,0,0,.22);
+                0 20px 60px
+                rgba(0,0,0,.22);
         }
 
         .whatsapp-label {
             display: flex;
+
             align-items: center;
 
             gap: 11px;
@@ -961,7 +1155,8 @@
         .whatsapp-text {
             max-width: 650px;
 
-            margin: 17px 0 0;
+            margin:
+                17px 0 0;
 
             color: #81817e;
 
@@ -980,9 +1175,11 @@
 
             min-height: 50px;
 
-            padding: 0 23px;
+            padding:
+                0 23px;
 
-            border: 1px solid
+            border:
+                1px solid
                 rgba(37,211,102,.45);
 
             background:
@@ -1069,11 +1266,13 @@
         ========================================================= */
 
         .section {
-            padding: 120px 0;
+            padding:
+                120px 0;
         }
 
         .section-label {
             display: flex;
+
             align-items: center;
 
             gap: 12px;
@@ -1098,7 +1297,8 @@
             width: 30px;
             height: 1px;
 
-            background: var(--red);
+            background:
+                var(--red);
 
             flex-shrink: 0;
         }
@@ -1131,7 +1331,8 @@
         .section-text {
             max-width: 680px;
 
-            margin: 22px 0 0;
+            margin:
+                22px 0 0;
 
             color: #858582;
 
@@ -1145,10 +1346,14 @@
         ========================================================= */
 
         .experience-grid {
-            content-visibility: auto;
-
-            contain-intrinsic-size: 0 520px;
-
+            /*
+             * content-visibility wurde bewusst entfernt.
+             *
+             * In Verbindung mit IntersectionObserver und
+             * Reveal-Animationen kann es je nach Browser/
+             * Google-Sites-Umgebung zu verspätetem Rendering
+             * kommen.
+             */
             display: grid;
 
             grid-template-columns:
@@ -1156,23 +1361,35 @@
 
             margin-top: 65px;
 
-            border-top: 1px solid var(--border);
-            border-left: 1px solid var(--border);
+            border-top:
+                1px solid
+                var(--border);
+
+            border-left:
+                1px solid
+                var(--border);
         }
 
         .experience-card {
             min-width: 0;
 
-            padding: 32px 25px 35px;
+            padding:
+                32px 25px 35px;
 
-            border-right: 1px solid var(--border);
-            border-bottom: 1px solid var(--border);
+            border-right:
+                1px solid
+                var(--border);
+
+            border-bottom:
+                1px solid
+                var(--border);
 
             background: transparent;
 
             transition:
-                background .25s ease,
-                transform .25s ease;
+                background .3s ease,
+                transform .3s
+                cubic-bezier(.22,1,.36,1);
         }
 
         .experience-card:hover {
@@ -1199,7 +1416,8 @@
         }
 
         .experience-card h3 {
-            margin: 0 0 12px;
+            margin:
+                0 0 12px;
 
             color: #f1f1ee;
 
@@ -1228,25 +1446,29 @@
         ========================================================= */
 
         .faq-list {
-            content-visibility: auto;
-
-            contain-intrinsic-size: 0 700px;
-
+            /*
+             * Ebenfalls bewusst ohne content-visibility.
+             */
             max-width: 900px;
 
             margin-top: 60px;
 
-            border-top: 1px solid var(--border);
+            border-top:
+                1px solid
+                var(--border);
         }
 
         .faq-item {
-            border-bottom: 1px solid var(--border);
+            border-bottom:
+                1px solid
+                var(--border);
         }
 
         .faq-question {
             width: 100%;
 
-            padding: 24px 0;
+            padding:
+                24px 0;
 
             display: grid;
 
@@ -1268,7 +1490,8 @@
 
             cursor: pointer;
 
-            transition: color .2s ease;
+            transition:
+                color .2s ease;
         }
 
         .faq-question:hover {
@@ -1294,7 +1517,9 @@
             width: 25px;
             height: 25px;
 
-            border: 1px solid #3f3f3d;
+            border:
+                1px solid
+                #3f3f3d;
 
             border-radius: 50%;
         }
@@ -1323,12 +1548,14 @@
                 rotate(90deg);
 
             transition:
-                transform .2s ease;
+                transform .3s
+                cubic-bezier(.22,1,.36,1);
         }
 
         .faq-question[aria-expanded="true"]
         .faq-plus {
-            border-color: var(--red);
+            border-color:
+                var(--red);
         }
 
         .faq-question[aria-expanded="true"]
@@ -1344,7 +1571,8 @@
             grid-template-rows: 0fr;
 
             transition:
-                grid-template-rows .3s ease;
+                grid-template-rows .35s
+                cubic-bezier(.22,1,.36,1);
         }
 
         .faq-item.open .faq-answer {
@@ -1387,9 +1615,15 @@
             position: relative;
 
             padding:
-                clamp(35px,6vw,65px);
+                clamp(
+                    35px,
+                    6vw,
+                    65px
+                );
 
-            border: 1px solid var(--border);
+            border:
+                1px solid
+                var(--border);
 
             background:
                 linear-gradient(
@@ -1422,6 +1656,10 @@
                 );
 
             pointer-events: none;
+
+            animation:
+                softPulse 7s
+                ease-in-out infinite;
         }
 
         .final-label {
@@ -1475,7 +1713,8 @@
 
             max-width: 620px;
 
-            margin: 20px 0 28px;
+            margin:
+                20px 0 28px;
 
             color: #81817e;
 
@@ -1496,11 +1735,15 @@
 
             min-height: 50px;
 
-            padding: 0 25px;
+            padding:
+                0 25px;
 
-            border: 1px solid var(--red);
+            border:
+                1px solid
+                var(--red);
 
-            background: var(--red);
+            background:
+                var(--red);
 
             color: white;
 
@@ -1517,7 +1760,8 @@
 
             isolation: isolate;
 
-            transform: translateZ(0);
+            transform:
+                translateZ(0);
 
             transition:
                 background .2s ease,
@@ -1557,7 +1801,8 @@
         }
 
         .final-button:hover {
-            background: var(--red-hover);
+            background:
+                var(--red-hover);
 
             border-color:
                 var(--red-hover);
@@ -1566,14 +1811,22 @@
                 translate3d(0,-2px,0);
         }
 
+        .final-button:active {
+            transform:
+                translate3d(0,0,0);
+        }
+
         /* =========================================================
            FOOTER
         ========================================================= */
 
         footer {
-            border-top: 1px solid var(--border);
+            border-top:
+                1px solid
+                var(--border);
 
-            background: #070707;
+            background:
+                #070707;
 
             padding:
                 65px 0
@@ -1659,7 +1912,8 @@
             padding-top: 24px;
 
             border-top:
-                1px solid var(--border-light);
+                1px solid
+                var(--border-light);
         }
 
         .application-copy {
@@ -1721,7 +1975,8 @@
             padding-top: 20px;
 
             border-top:
-                1px solid var(--border-light);
+                1px solid
+                var(--border-light);
 
             color: #444441;
 
@@ -1782,8 +2037,8 @@
             pointer-events: none;
 
             transition:
-                opacity .2s ease,
-                visibility .2s ease;
+                opacity .25s ease,
+                visibility .25s ease;
         }
 
         .modal.open {
@@ -1797,34 +2052,51 @@
         .modal-content {
             position: relative;
 
-            width: min(760px,100%);
+            width:
+                min(
+                    760px,
+                    100%
+                );
 
-            max-height: 88svh;
+            max-height:
+                88svh;
 
             overflow-y: auto;
 
+            overscroll-behavior:
+                contain;
+
             padding:
-                clamp(30px,5vw,55px);
+                clamp(
+                    30px,
+                    5vw,
+                    55px
+                );
 
             border:
-                1px solid var(--border);
+                1px solid
+                var(--border);
 
-            background: #111;
+            background:
+                #111;
 
             box-shadow:
                 0 30px 100px
                 rgba(0,0,0,.65);
 
             transform:
-                translateY(10px);
+                translateY(14px)
+                scale(.985);
 
             transition:
-                transform .25s ease;
+                transform .35s
+                cubic-bezier(.22,1,.36,1);
         }
 
         .modal.open .modal-content {
             transform:
-                translateY(0);
+                translateY(0)
+                scale(1);
         }
 
         .modal-close {
@@ -1837,7 +2109,8 @@
             height: 40px;
 
             border:
-                1px solid var(--border);
+                1px solid
+                var(--border);
 
             border-radius: 50%;
 
@@ -1853,7 +2126,8 @@
 
             transition:
                 color .2s ease,
-                border-color .2s ease;
+                border-color .2s ease,
+                transform .2s ease;
         }
 
         .modal-close:hover {
@@ -1861,12 +2135,16 @@
 
             border-color:
                 rgba(255,255,255,.25);
+
+            transform:
+                rotate(90deg);
         }
 
         .modal-label {
             margin-bottom: 12px;
 
-            color: var(--red-hover);
+            color:
+                var(--red-hover);
 
             font-family: "Oswald", sans-serif;
 
@@ -1880,7 +2158,8 @@
         }
 
         .modal-title {
-            margin: 0 0 28px;
+            margin:
+                0 0 28px;
 
             color: white;
 
@@ -1942,11 +2221,13 @@
             height: 42px;
 
             border:
-                1px solid var(--border);
+                1px solid
+                var(--border);
 
             border-radius: 50%;
 
-            background: #111;
+            background:
+                #111;
 
             color: #aaa;
 
@@ -1960,10 +2241,12 @@
                 translateY(8px);
 
             transition:
-                opacity .2s ease,
-                visibility .2s ease,
-                transform .2s ease,
-                color .2s ease;
+                opacity .25s ease,
+                visibility .25s ease,
+                transform .25s
+                cubic-bezier(.22,1,.36,1),
+                color .2s ease,
+                background .2s ease;
         }
 
         .back-top.visible {
@@ -1977,6 +2260,14 @@
 
         .back-top:hover {
             color: white;
+
+            background:
+                #161616;
+        }
+
+        .back-top:active {
+            transform:
+                translateY(1px);
         }
 
         /* =========================================================
@@ -2015,6 +2306,26 @@
             }
         }
 
+        @keyframes softPulse {
+
+            0%,100% {
+                opacity: .72;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.04);
+            }
+        }
+
+        /*
+         * Nur normale Seiten-Reveal-Elemente.
+         *
+         * Hero-Elemente werden weiter unten vom JS
+         * gesondert behandelt, damit sie nicht beim
+         * ersten Laden kurz unsichtbar bleiben.
+         */
         .js .reveal {
             opacity: 0;
 
@@ -2022,10 +2333,10 @@
                 translate3d(0,30px,0);
 
             transition:
-                opacity .65s
+                opacity .7s
                 cubic-bezier(.22,1,.36,1),
 
-                transform .65s
+                transform .7s
                 cubic-bezier(.22,1,.36,1);
         }
 
@@ -2053,8 +2364,72 @@
         .modal-close,
         .back-top {
             -webkit-backface-visibility: hidden;
-
             backface-visibility: hidden;
+        }
+
+        /* =========================================================
+           HERO INITIAL ANIMATION
+        ========================================================= */
+
+        .js .hero-topline,
+        .js .hero-logo-area,
+        .js .hero-info,
+        .js .countdown-section {
+            opacity: 1;
+            transform: none;
+        }
+
+        /*
+         * Nach dem Intro bekommt der Hero eine sehr kurze,
+         * dezente Einblendung.
+         */
+        body.intro-finished .hero-topline {
+            animation:
+                heroContentIn .7s
+                .05s
+                both
+                cubic-bezier(.22,1,.36,1);
+        }
+
+        body.intro-finished .hero-logo-area {
+            animation:
+                heroContentIn .8s
+                .10s
+                both
+                cubic-bezier(.22,1,.36,1);
+        }
+
+        body.intro-finished .hero-info {
+            animation:
+                heroContentIn .8s
+                .18s
+                both
+                cubic-bezier(.22,1,.36,1);
+        }
+
+        body.intro-finished .countdown-section {
+            animation:
+                heroContentIn .8s
+                .25s
+                both
+                cubic-bezier(.22,1,.36,1);
+        }
+
+        @keyframes heroContentIn {
+
+            from {
+                opacity: 0;
+
+                transform:
+                    translate3d(0,18px,0);
+            }
+
+            to {
+                opacity: 1;
+
+                transform:
+                    translate3d(0,0,0);
+            }
         }
 
         /* =========================================================
@@ -2064,7 +2439,13 @@
         .intro-screen {
             position: fixed;
 
+            /*
+             * 100svh ist auf modernen Handys stabiler als
+             * ausschließlich 100vh.
+             */
             inset: 0;
+
+            min-height: 100svh;
 
             z-index: 6000;
 
@@ -2072,7 +2453,8 @@
 
             place-items: center;
 
-            background: #000;
+            background:
+                #000;
 
             opacity: 1;
 
@@ -2080,17 +2462,111 @@
 
             pointer-events: auto;
 
-            transform: translateZ(0);
+            transform:
+                translateZ(0);
+
+            overflow: hidden;
+
+            isolation: isolate;
 
             will-change:
                 opacity,
                 visibility;
 
             transition:
-                opacity .55s
+                opacity .7s
                 cubic-bezier(.22,1,.36,1),
 
                 visibility 0s linear 0s;
+        }
+
+        /*
+         * Dunkler roter Lichtkern.
+         */
+        .intro-screen::before {
+            content: "";
+
+            position: absolute;
+
+            left: 50%;
+            top: 50%;
+
+            width:
+                min(
+                    110vw,
+                    1100px
+                );
+
+            aspect-ratio: 1;
+
+            transform:
+                translate(-50%,-50%)
+                scale(.72);
+
+            border-radius: 50%;
+
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(145,0,12,.15) 0%,
+                    rgba(100,0,8,.075) 24%,
+                    transparent 67%
+                );
+
+            filter:
+                blur(10px);
+
+            opacity: .8;
+
+            pointer-events: none;
+
+            z-index: -3;
+
+            animation:
+                introAtmosphere 5.5s
+                ease-in-out infinite;
+        }
+
+        /*
+         * Schwarze Vignette für einen filmischeren Eindruck.
+         */
+        .intro-screen::after {
+            content: "";
+
+            position: absolute;
+
+            inset: 0;
+
+            pointer-events: none;
+
+            z-index: -1;
+
+            background:
+                radial-gradient(
+                    ellipse at center,
+                    transparent 30%,
+                    rgba(0,0,0,.25) 62%,
+                    rgba(0,0,0,.78) 100%
+                );
+
+            opacity: .95;
+        }
+
+        /*
+         * Dezente Scanlines.
+         * Sehr schwach, damit es nicht billig/glitchig wirkt.
+         */
+        .intro-screen {
+            background-color: #000;
+
+            background-image:
+                repeating-linear-gradient(
+                    0deg,
+                    rgba(255,255,255,.012) 0,
+                    rgba(255,255,255,.012) 1px,
+                    transparent 1px,
+                    transparent 4px
+                );
         }
 
         .intro-screen.is-hidden {
@@ -2101,10 +2577,21 @@
             pointer-events: none;
 
             transition:
-                opacity .55s
+                opacity .7s
                 cubic-bezier(.22,1,.36,1),
 
-                visibility 0s linear .55s;
+                visibility 0s linear .7s;
+        }
+
+        /*
+         * Nach dem Exit bleibt das Intro unsichtbar.
+         *
+         * Wichtig:
+         * Diese Klasse wird NICHT beim Zurückscrollen
+         * entfernt.
+         */
+        .intro-screen.intro-dismissed {
+            pointer-events: none;
         }
 
         .intro-logo-wrap {
@@ -2129,6 +2616,15 @@
             will-change:
                 transform,
                 opacity;
+
+            /*
+             * Sehr leichter Glow hinter dem Logo.
+             */
+            filter:
+                drop-shadow(
+                    0 0 22px
+                    rgba(150,0,12,.08)
+                );
         }
 
         .intro-logo-wrap::before {
@@ -2145,11 +2641,42 @@
             background:
                 radial-gradient(
                     circle,
-                    rgba(160,0,14,.14),
+                    rgba(160,0,14,.16),
                     transparent 62%
                 );
 
-            filter: blur(12px);
+            filter:
+                blur(12px);
+
+            pointer-events: none;
+
+            animation:
+                introLogoGlow 3.8s
+                ease-in-out infinite;
+        }
+
+        .intro-logo-wrap::after {
+            content: "";
+
+            position: absolute;
+
+            inset:
+                -25%;
+
+            border-radius: 50%;
+
+            border:
+                1px solid
+                rgba(255,255,255,.025);
+
+            transform:
+                scale(.85);
+
+            opacity: .5;
+
+            animation:
+                introRing 5s
+                ease-out infinite;
 
             pointer-events: none;
         }
@@ -2170,6 +2697,15 @@
                 );
 
             user-select: none;
+
+            /*
+             * Verhindert Text-/Bildauswahl und kleine
+             * Rendering-Artefakte während der Animation.
+             */
+            transform:
+                translateZ(0);
+
+            backface-visibility: hidden;
         }
 
         .intro-hint {
@@ -2180,7 +2716,10 @@
             bottom:
                 max(
                     32px,
-                    env(safe-area-inset-bottom)
+                    calc(
+                        env(safe-area-inset-bottom) +
+                        18px
+                    )
                 );
 
             transform:
@@ -2189,7 +2728,9 @@
             color:
                 rgba(255,255,255,.42);
 
-            font-family: "Oswald", sans-serif;
+            font-family:
+                "Oswald",
+                sans-serif;
 
             font-size: 9px;
 
@@ -2201,8 +2742,12 @@
 
             white-space: nowrap;
 
+            text-align: center;
+
             transition:
-                opacity .25s ease;
+                opacity .3s ease,
+                transform .3s
+                cubic-bezier(.22,1,.36,1);
         }
 
         .intro-hint::after {
@@ -2238,20 +2783,62 @@
             }
         }
 
+        @keyframes introAtmosphere {
+
+            0%,100% {
+                opacity: .62;
+
+                transform:
+                    translate(-50%,-50%)
+                    scale(.72);
+            }
+
+            50% {
+                opacity: 1;
+
+                transform:
+                    translate(-50%,-50%)
+                    scale(.9);
+            }
+        }
+
+        @keyframes introLogoGlow {
+
+            0%,100% {
+                opacity: .48;
+                transform: scale(.92);
+            }
+
+            50% {
+                opacity: .9;
+                transform: scale(1.03);
+            }
+        }
+
+        @keyframes introRing {
+
+            0% {
+                opacity: 0;
+                transform: scale(.78);
+            }
+
+            25% {
+                opacity: .4;
+            }
+
+            100% {
+                opacity: 0;
+                transform: scale(1.12);
+            }
+        }
+
         .intro-screen.is-hidden
         .intro-hint {
             opacity: 0;
-        }
 
-        body.intro-active {
-            overflow-x: hidden;
-        }
-
-        body.intro-active
-        .header {
-            opacity: 0;
-
-            pointer-events: none;
+            transform:
+                translateX(-50%)
+                translateY(8px);
         }
 
         /* =========================================================
@@ -2279,7 +2866,8 @@
 
             .experience-card:nth-child(4) {
                 border-right:
-                    1px solid var(--border);
+                    1px solid
+                    var(--border);
             }
         }
 
@@ -2392,7 +2980,8 @@
             .quick-item:nth-child(3),
             .quick-item:nth-child(4) {
                 border-top:
-                    1px solid var(--border);
+                    1px solid
+                    var(--border);
             }
 
             .whatsapp-section {
@@ -2440,9 +3029,13 @@
 
             .experience-card:nth-child(3) {
                 border-right:
-                    1px solid var(--border);
+                    1px solid
+                    var(--border);
             }
 
+            /*
+             * Auf Touch-Geräten kein Hover-Lifting.
+             */
             .experience-card:hover {
                 transform: none;
             }
@@ -2477,6 +3070,14 @@
                         300px,
                         68vw
                     );
+            }
+
+            /*
+             * Intro auf kleinen Displays etwas kompakter.
+             */
+            .intro-hint {
+                font-size: 8px;
+                letter-spacing: .22em;
             }
 
             .mobile-menu.open
@@ -2583,6 +3184,10 @@
                 gap: 5px;
             }
 
+            .countdown-date {
+                text-align: left;
+            }
+
             .quick-grid {
                 grid-template-columns: 1fr;
             }
@@ -2598,7 +3203,8 @@
                 border-right: 0;
 
                 border-top:
-                    1px solid var(--border);
+                    1px solid
+                    var(--border);
             }
 
             .quick-item:first-child {
@@ -2680,7 +3286,8 @@
             }
 
             .modal-content {
-                max-height: 90svh;
+                max-height:
+                    90svh;
 
                 padding:
                     28px 21px;
@@ -2693,6 +3300,48 @@
 
             .back-top {
                 right: 14px;
+            }
+        }
+
+        /* =========================================================
+           EXTRA SMALL / VERY NARROW DEVICES
+        ========================================================= */
+
+        @media (max-width:360px) {
+
+            .container {
+                width:
+                    calc(100% - 24px);
+            }
+
+            .header-logo {
+                width: 100px;
+            }
+
+            .menu-button {
+                width: 40px;
+                height: 40px;
+            }
+
+            .hero-topline {
+                font-size: 9px;
+                letter-spacing: .12em;
+            }
+
+            .countdown-number {
+                font-size: 24px;
+            }
+
+            .countdown-label {
+                font-size: 6px;
+            }
+
+            .intro-logo-wrap {
+                width: 72vw;
+            }
+
+            .intro-hint {
+                letter-spacing: .16em;
             }
         }
 
@@ -2717,6 +3366,8 @@
 
                 transition-duration:
                     .01ms !important;
+
+                scroll-behavior: auto !important;
             }
 
             .js .reveal {
@@ -2823,7 +3474,6 @@
                     FAQ
                 </a>
 
-                <!-- NEU: MITMACHEN -->
                 <a
                     href="https://tally.so/r/VL2y6M"
                     target="_blank"
@@ -2893,7 +3543,6 @@
                 FAQ
             </a>
 
-            <!-- NEU: MITMACHEN UNTER FAQ -->
             <a
                 href="https://tally.so/r/VL2y6M"
                 target="_blank"
@@ -2916,13 +3565,13 @@
 
             <div class="container hero-inner">
 
-                <div class="hero-topline reveal">
+                <div class="hero-topline">
                     31. Oktober 2026 · Wardersee
                 </div>
 
                 <div class="hero-grid">
 
-                    <div class="hero-logo-area reveal">
+                    <div class="hero-logo-area">
 
                         <div class="hero-logo-frame">
 
@@ -2938,7 +3587,7 @@
 
                     </div>
 
-                    <div class="hero-info reveal delay-1">
+                    <div class="hero-info">
 
                         <h1 class="hero-title">
                             Eine Nacht, die du nicht einfach vergessen wirst.
@@ -2983,7 +3632,7 @@
 
                 </div>
 
-                <div class="countdown-section reveal">
+                <div class="countdown-section">
 
                     <div class="countdown-header">
 
@@ -3003,6 +3652,7 @@
                     <div class="countdown">
 
                         <div class="countdown-item">
+
                             <span
                                 class="countdown-number"
                                 id="days"
@@ -3013,9 +3663,11 @@
                             <span class="countdown-label">
                                 Tage
                             </span>
+
                         </div>
 
                         <div class="countdown-item">
+
                             <span
                                 class="countdown-number"
                                 id="hours"
@@ -3026,9 +3678,11 @@
                             <span class="countdown-label">
                                 Stunden
                             </span>
+
                         </div>
 
                         <div class="countdown-item">
+
                             <span
                                 class="countdown-number"
                                 id="minutes"
@@ -3039,9 +3693,11 @@
                             <span class="countdown-label">
                                 Minuten
                             </span>
+
                         </div>
 
                         <div class="countdown-item">
+
                             <span
                                 class="countdown-number"
                                 id="seconds"
@@ -3052,6 +3708,7 @@
                             <span class="countdown-label">
                                 Sekunden
                             </span>
+
                         </div>
 
                     </div>
@@ -3069,6 +3726,7 @@
                 <div class="quick-grid reveal">
 
                     <div class="quick-item">
+
                         <div class="quick-label">
                             Datum
                         </div>
@@ -3076,9 +3734,11 @@
                         <div class="quick-value">
                             Samstag, 31. Oktober 2026
                         </div>
+
                     </div>
 
                     <div class="quick-item">
+
                         <div class="quick-label">
                             Start
                         </div>
@@ -3086,9 +3746,11 @@
                         <div class="quick-value">
                             18:00 Uhr
                         </div>
+
                     </div>
 
                     <div class="quick-item">
+
                         <div class="quick-label">
                             Einlass
                         </div>
@@ -3096,9 +3758,11 @@
                         <div class="quick-value">
                             18:00 – 20:00 Uhr
                         </div>
+
                     </div>
 
                     <div class="quick-item">
+
                         <div class="quick-label">
                             Eintritt
                         </div>
@@ -3106,6 +3770,7 @@
                         <div class="quick-value">
                             Kostenlos
                         </div>
+
                     </div>
 
                 </div>
@@ -3181,6 +3846,7 @@
                 <div class="experience-grid">
 
                     <article class="experience-card reveal">
+
                         <span class="experience-number">
                             01 / 05
                         </span>
@@ -3195,9 +3861,11 @@
                             in die Welt von Schattenschreck
                             versetzt.
                         </p>
+
                     </article>
 
                     <article class="experience-card reveal delay-1">
+
                         <span class="experience-number">
                             02 / 05
                         </span>
@@ -3211,9 +3879,11 @@
                             Begegnungen, die du nicht einfach
                             planen kannst.
                         </p>
+
                     </article>
 
                     <article class="experience-card reveal delay-2">
+
                         <span class="experience-number">
                             03 / 05
                         </span>
@@ -3227,9 +3897,11 @@
                             Schreckmomente und erzählt seine
                             eigene kleine Geschichte.
                         </p>
+
                     </article>
 
                     <article class="experience-card reveal delay-3">
+
                         <span class="experience-number">
                             04 / 05
                         </span>
@@ -3243,9 +3915,11 @@
                             dich verschiedenen Aufgaben
                             innerhalb des Erlebnisses.
                         </p>
+
                     </article>
 
                     <article class="experience-card reveal">
+
                         <span class="experience-number">
                             05 / 05
                         </span>
@@ -3259,6 +3933,7 @@
                             das Event ist darauf ausgelegt,
                             gemeinsam erlebt zu werden.
                         </p>
+
                     </article>
 
                 </div>
@@ -3813,16 +4488,153 @@
                 "mobileMenuBackground"
             );
 
-        const introRevealDistance = 220;
+        /*
+         * ========================================================
+         * INTRO
+         * ========================================================
+         *
+         * WICHTIG:
+         *
+         * introCompleted bleibt für den kompletten
+         * Seitenaufruf true.
+         *
+         * Es gibt KEIN localStorage.
+         *
+         * Ergebnis:
+         *
+         * F5 / Reload -> Intro wieder da
+         *
+         * Scroll hoch/runter -> Intro bleibt weg
+         */
+
+        const introRevealDistance = 8;
 
         let introCompleted = false;
+        let introExitStarted = false;
 
-        function updateIntro() {
+        let introExitAnimationFrame = null;
+
+        function finishIntroImmediately() {
+
+            if (introCompleted) {
+                return;
+            }
+
+            introCompleted = true;
+
+            introExitStarted = true;
+
+            document.body.classList.remove(
+                "intro-active"
+            );
+
+            document.body.classList.add(
+                "intro-finished"
+            );
+
+            introScreen.classList.add(
+                "is-hidden",
+                "intro-dismissed"
+            );
+
+            introScreen.style.opacity = "0";
+
+            introLogoWrap.style.transform =
+                "translate3d(0,-18px,0) scale(1.045)";
+
+            introLogoWrap.style.opacity = "0";
+
+            /*
+             * Danach werden Inline-Werte nicht wieder
+             * zurückgesetzt.
+             *
+             * Dadurch kann das Intro beim Zurückscrollen
+             * NICHT erneut erscheinen.
+             */
+        }
+
+        function animateIntroExit() {
 
             if (
                 introCompleted ||
-                reduceMotion
+                introExitStarted
             ) {
+                return;
+            }
+
+            introExitStarted = true;
+
+            const start =
+                performance.now();
+
+            const duration =
+                reduceMotion
+                    ? 1
+                    : 720;
+
+            function frame(now) {
+
+                if (introCompleted) {
+                    return;
+                }
+
+                const raw =
+                    Math.min(
+                        1,
+                        (now - start) /
+                        duration
+                    );
+
+                /*
+                 * Sehr weiches Ease-Out.
+                 */
+                const eased =
+                    1 -
+                    Math.pow(
+                        1 - raw,
+                        3
+                    );
+
+                introScreen.style.opacity =
+                    String(
+                        1 - eased
+                    );
+
+                introLogoWrap.style.transform =
+                    `translate3d(0, ${-eased * 24}px, 0) scale(${1 + eased * .065})`;
+
+                introLogoWrap.style.opacity =
+                    String(
+                        1 - eased * .2
+                    );
+
+                if (raw < 1) {
+
+                    introExitAnimationFrame =
+                        requestAnimationFrame(
+                            frame
+                        );
+
+                    return;
+                }
+
+                finishIntroImmediately();
+            }
+
+            introExitAnimationFrame =
+                requestAnimationFrame(
+                    frame
+                );
+        }
+
+        function updateIntro() {
+
+            /*
+             * Sobald das Intro abgeschlossen wurde,
+             * darf diese Funktion NIEMALS versuchen,
+             * es wieder einzublenden.
+             */
+            if (introCompleted) {
                 return;
             }
 
@@ -3832,68 +4644,58 @@
                     window.scrollY || 0
                 );
 
-            const progress =
-                Math.min(
-                    1,
-                    y / introRevealDistance
-                );
+            /*
+             * Bereits ein bewusstes Herunterscrollen
+             * löst den Intro-Exit aus.
+             *
+             * Dadurch kann man danach wieder bis ganz
+             * nach oben scrollen, ohne dass das Intro
+             * wieder auftaucht.
+             */
+            if (
+                y > introRevealDistance
+            ) {
 
-            const eased =
-                1 -
-                Math.pow(
-                    1 - progress,
-                    2.2
-                );
+                animateIntroExit();
 
-            introScreen.style.opacity =
-                String(
-                    1 - eased
-                );
-
-            introLogoWrap.style.transform =
-                `translate3d(0, ${-eased * 18}px, 0) scale(${1 + eased * .045})`;
-
-            introLogoWrap.style.opacity =
-                String(
-                    1 - eased * .18
-                );
-
-            if (progress >= .98) {
-
-                introCompleted = true;
-
-                introScreen.classList.add(
-                    "is-hidden"
-                );
-
-                document.body.classList.remove(
-                    "intro-active"
-                );
-
-                introScreen.style.opacity = "";
-                introLogoWrap.style.transform = "";
-                introLogoWrap.style.opacity = "";
             }
         }
 
+        /*
+         * Reduced Motion:
+         * Intro wird nicht animiert, sondern sofort
+         * korrekt abgeschlossen.
+         */
         if (reduceMotion) {
 
-            introCompleted = true;
+            finishIntroImmediately();
 
-            introScreen.classList.add(
-                "is-hidden"
-            );
-
-            document.body.classList.remove(
-                "intro-active"
-            );
         }
+
+        /*
+         * Erster Scroll-Check.
+         */
+        updateIntro();
+
+        /*
+         * ========================================================
+         * HERO PARALLAX
+         * ========================================================
+         *
+         * Der Hero bewegt sich NICHT während des Intros.
+         * Dadurch gibt es keinen Kampf zwischen:
+         *
+         * Intro-Animation
+         * +
+         * Hero-Parallax
+         */
 
         function updateHeroParallax() {
 
             if (
                 !heroInner ||
-                reduceMotion
+                reduceMotion ||
+                !introCompleted
             ) {
                 return;
             }
@@ -3917,11 +4719,20 @@
         }
 
         function handleScrollEffects() {
+
             updateIntro();
+
             updateHeroParallax();
         }
 
-        handleScrollEffects();
+        /*
+         * ========================================================
+         * SCROLL ENGINE
+         * ========================================================
+         *
+         * requestAnimationFrame verhindert unnötig viele
+         * Style-Updates während schnellem Scrollen.
+         */
 
         let scrollTicking = false;
 
@@ -3952,6 +4763,7 @@
             requestAnimationFrame(() => {
 
                 updateScroll();
+
                 handleScrollEffects();
 
                 scrollTicking = false;
@@ -3967,7 +4779,65 @@
             }
         );
 
+        /*
+         * Touch/Trackpad:
+         * Ein minimaler Downward-Scroll wird ebenfalls
+         * zuverlässig erkannt.
+         */
+        window.addEventListener(
+            "wheel",
+            event => {
+
+                if (
+                    introCompleted ||
+                    event.deltaY <= 0
+                ) {
+                    return;
+                }
+
+                animateIntroExit();
+
+            },
+            {
+                passive: true
+            }
+        );
+
+        window.addEventListener(
+            "touchmove",
+            event => {
+
+                if (
+                    introCompleted ||
+                    !event.touches.length
+                ) {
+                    return;
+                }
+
+                /*
+                 * Wenn die Seite tatsächlich nach unten
+                 * bewegt wird, übernimmt der normale
+                 * Scroll-Listener.
+                 */
+                if (
+                    window.scrollY > 0
+                ) {
+                    animateIntroExit();
+                }
+
+            },
+            {
+                passive: true
+            }
+        );
+
         updateScroll();
+
+        /*
+         * ========================================================
+         * BACK TO TOP
+         * ========================================================
+         */
 
         backTop.addEventListener(
             "click",
@@ -3986,6 +4856,12 @@
 
             }
         );
+
+        /*
+         * ========================================================
+         * ANCHOR SCROLL
+         * ========================================================
+         */
 
         document
             .querySelectorAll(
@@ -4020,6 +4896,20 @@
 
                         event.preventDefault();
 
+                        /*
+                         * Wenn der Nutzer über die Navigation
+                         * springt, muss das Intro ebenfalls
+                         * verschwinden.
+                         */
+                        if (
+                            !introCompleted &&
+                            id !== "#top"
+                        ) {
+
+                            finishIntroImmediately();
+
+                        }
+
                         target.scrollIntoView({
 
                             behavior:
@@ -4035,6 +4925,12 @@
                 );
 
             });
+
+        /*
+         * ========================================================
+         * MOBILE MENU
+         * ========================================================
+         */
 
         function openMenu() {
 
@@ -4110,6 +5006,14 @@
 
                 } else {
 
+                    /*
+                     * Menü kann nicht sinnvoll über dem
+                     * Intro benutzt werden.
+                     */
+                    if (!introCompleted) {
+                        finishIntroImmediately();
+                    }
+
                     openMenu();
 
                 }
@@ -4135,7 +5039,9 @@
                         if (
                             link.target === "_blank"
                         ) {
+
                             closeMenu();
+
                             return;
                         }
 
@@ -4146,6 +5052,18 @@
 
             });
 
+        /*
+         * ========================================================
+         * COUNTDOWN
+         * ========================================================
+         */
+
+        /*
+         * 31.10.2026 um 18:00 deutsche Zeit.
+         *
+         * Am 31.10.2026 gilt in Deutschland UTC+1,
+         * da die Sommerzeit bereits am 25.10.2026 endet.
+         */
         const eventTime =
             new Date(
                 "2026-10-31T18:00:00+01:00"
@@ -4263,6 +5181,12 @@
                 1000
             );
 
+        /*
+         * ========================================================
+         * FAQ
+         * ========================================================
+         */
+
         const faqItems =
             document.querySelectorAll(
                 ".faq-item"
@@ -4322,6 +5246,12 @@
 
         });
 
+        /*
+         * ========================================================
+         * REVEAL ANIMATIONS
+         * ========================================================
+         */
+
         const revealElements =
             document.querySelectorAll(
                 ".reveal"
@@ -4373,10 +5303,10 @@
 
                     },
                     {
-                        threshold: .08,
+                        threshold: .05,
 
                         rootMargin:
-                            "0px 0px -25px 0px"
+                            "0px 0px -40px 0px"
                     }
                 );
 
@@ -4391,6 +5321,12 @@
             );
 
         }
+
+        /*
+         * ========================================================
+         * IMPRESSUM MODAL
+         * ========================================================
+         */
 
         const impressumButton =
             document.getElementById(
@@ -4489,6 +5425,12 @@
             }
         );
 
+        /*
+         * ========================================================
+         * ESCAPE
+         * ========================================================
+         */
+
         document.addEventListener(
             "keydown",
             event => {
@@ -4524,10 +5466,22 @@
             }
         );
 
+        /*
+         * ========================================================
+         * RESIZE
+         * ========================================================
+         */
+
+        let resizeTimer = null;
+
         window.addEventListener(
             "resize",
             () => {
 
+                /*
+                 * Mobile-Menü schließen, sobald wieder
+                 * Desktop-Breite erreicht wird.
+                 */
                 if (
                     window.innerWidth > 800 &&
                     mobileMenu.classList.contains(
@@ -4539,9 +5493,72 @@
 
                 }
 
+                /*
+                 * Parallax direkt neu berechnen,
+                 * damit nach Rotation/Resize kein
+                 * sichtbarer Versatz bleibt.
+                 */
+                if (
+                    resizeTimer !== null
+                ) {
+
+                    window.clearTimeout(
+                        resizeTimer
+                    );
+
+                }
+
+                resizeTimer =
+                    window.setTimeout(
+                        () => {
+
+                            updateScroll();
+
+                            if (
+                                introCompleted
+                            ) {
+
+                                updateHeroParallax();
+
+                            }
+
+                        },
+                        80
+                    );
+
             },
             {
                 passive: true
+            }
+        );
+
+        /*
+         * ========================================================
+         * VISIBILITY / TAB WECHSEL
+         * ========================================================
+         *
+         * Verhindert unnötige Animationen, wenn der Tab
+         * im Hintergrund liegt.
+         */
+
+        document.addEventListener(
+            "visibilitychange",
+            () => {
+
+                if (
+                    document.hidden &&
+                    introExitAnimationFrame
+                ) {
+
+                    cancelAnimationFrame(
+                        introExitAnimationFrame
+                    );
+
+                    introExitAnimationFrame =
+                        null;
+
+                }
+
             }
         );
 
