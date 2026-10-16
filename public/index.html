@@ -1492,6 +1492,32 @@
             font-size: 13px;
         }
 
+        .footer-credit {
+            color: var(--muted-subtle);
+            font-size: 13px;
+        }
+
+        .footer-credit-heart {
+            display: inline-block;
+            color: var(--red-hover);
+            margin: 0 2px;
+        }
+
+        .footer-credit-link {
+            color: var(--text);
+            font-weight: 600;
+            text-decoration: underline;
+            text-decoration-color: rgba(255, 255, 255, 0.25);
+            text-underline-offset: 4px;
+            transition: color 0.2s ease, text-decoration-color 0.2s ease;
+        }
+
+        .footer-credit-link:hover,
+        .footer-credit-link:focus-visible {
+            color: var(--white);
+            text-decoration-color: var(--red-hover);
+        }
+
         .footer-links {
             display: flex;
             align-items: center;
@@ -2931,6 +2957,10 @@
             <div class="footer-bottom">
                 <div>
                     © 2026 GOGOS Gruppe
+                </div>
+
+                <div class="footer-credit">
+                    Mit <span class="footer-credit-heart" aria-hidden="true">♥</span> gebaut von <a href="https://siteforge.pages.dev" target="_blank" rel="noopener noreferrer" class="footer-credit-link">SiteForge</a>
                 </div>
 
                 <div class="footer-links">
