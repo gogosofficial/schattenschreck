@@ -21,7 +21,66 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&family=Oswald:wght@500;600&display=swap" rel="stylesheet">
 
+    <!-- Frühe, synchrone Zustandsvorbereitung vor dem ersten Paint (verhindert Aufblitzen & Layoutsprünge) -->
+    <script>
+        (function () {
+            try {
+                var docEl = document.documentElement;
+                docEl.classList.add("js-enabled");
+
+                var SESSION_KEY = "schattenschreck_intro_seen_2026";
+                var FORCE_DEV_INTRO = false;
+
+                var reduceMotion = false;
+                if (window.matchMedia) {
+                    reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+                }
+
+                var hasHash = Boolean(window.location.hash && window.location.hash !== "#");
+                var navEntries = (window.performance && window.performance.getEntriesByType)
+                    ? window.performance.getEntriesByType("navigation")
+                    : [];
+                var navType = (navEntries && navEntries[0]) ? navEntries[0].type : "";
+                var isReloadOrBackForward = (navType === "reload" || navType === "back_forward");
+
+                var hasSeenIntro = false;
+                if (!FORCE_DEV_INTRO) {
+                    try {
+                        hasSeenIntro = window.sessionStorage.getItem(SESSION_KEY) === "1";
+                    } catch (_) {
+                        hasSeenIntro = false;
+                    }
+                }
+
+                if (!reduceMotion && !hasHash && !hasSeenIntro && !isReloadOrBackForward) {
+                    docEl.classList.add("intro-pending");
+                }
+            } catch (_) {
+                document.documentElement.classList.remove("intro-pending");
+            }
+        })();
+    </script>
+
     <style>
+        /* Metrisch abgestimmte Fallback-Schriften gegen Layoutverschiebungen beim Google-Fonts-Swap */
+        @font-face {
+            font-family: "DM Sans Fallback";
+            src: local("Arial"), local("Roboto"), local("Helvetica Neue"), local("sans-serif");
+            ascent-override: 99%;
+            descent-override: 31%;
+            line-gap-override: 0%;
+            size-adjust: 100.5%;
+        }
+
+        @font-face {
+            font-family: "Oswald Fallback";
+            src: local("Arial Narrow"), local("Roboto Condensed"), local("Arial"), local("sans-serif");
+            ascent-override: 118%;
+            descent-override: 29%;
+            line-gap-override: 0%;
+            size-adjust: 83%;
+        }
+
         :root {
             --bg: #090909;
             --bg-2: #0d0d0d;
@@ -44,6 +103,9 @@
             --border: rgba(255, 255, 255, 0.13);
             --border-light: rgba(255, 255, 255, 0.08);
             --border-strong: rgba(255, 255, 255, 0.24);
+
+            --font-sans: "DM Sans", "DM Sans Fallback", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            --font-display: "Oswald", "Oswald Fallback", "Arial Narrow", sans-serif;
 
             --max-width: 1240px;
             --header-height: 74px;
@@ -78,7 +140,7 @@
                 ),
                 var(--bg);
             color: var(--text);
-            font-family: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            font-family: var(--font-sans);
             font-size: 16px;
             line-height: 1.6;
             overflow-x: clip;
@@ -87,7 +149,9 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        body.overlay-locked {
+        body.overlay-locked,
+        html.intro-pending body,
+        body.intro-active {
             overflow: hidden;
         }
 
@@ -151,7 +215,7 @@
             padding: 12px 18px;
             background: var(--red);
             color: #ffffff;
-            font-family: "Oswald", sans-serif;
+            font-family: var(--font-display);
             font-size: 13px;
             font-weight: 600;
             letter-spacing: 0.12em;
@@ -184,12 +248,12 @@
         }
 
         /* =========================================================
-           IMAGE FALLBACKS
+           IMAGE FALLBACKS & STABLE LOGO CONTAINERS
         ========================================================= */
 
         .img-fallback-text {
             display: none;
-            font-family: "Oswald", sans-serif;
+            font-family: var(--font-display);
             font-weight: 600;
             letter-spacing: 0.14em;
             text-transform: uppercase;
@@ -201,7 +265,9 @@
         }
 
         .img-broken + .img-fallback-text {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
 
         /* =========================================================
@@ -220,6 +286,9 @@
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
             border-bottom: 1px solid transparent;
+        }
+
+        .header.transitions-ready {
             transition:
                 background 0.25s ease,
                 border-color 0.25s ease,
@@ -244,18 +313,23 @@
         .logo-link {
             display: inline-flex;
             align-items: center;
-            min-height: 44px;
+            width: 130px;
+            height: 44px;
             flex-shrink: 0;
         }
 
         .header-logo {
-            width: 130px;
-            max-height: 46px;
+            width: 100%;
+            height: 100%;
             object-fit: contain;
+            object-position: left center;
         }
 
         .logo-link .img-fallback-text {
-            font-size: 18px;
+            font-size: 16px;
+            width: 100%;
+            height: 100%;
+            justify-content: flex-start;
         }
 
         .desktop-nav {
@@ -271,7 +345,7 @@
             min-height: 44px;
             padding: 8px 4px;
             color: var(--muted);
-            font-family: "Oswald", sans-serif;
+            font-family: var(--font-display);
             font-size: 13px;
             font-weight: 600;
             letter-spacing: 0.15em;
@@ -441,7 +515,7 @@
         .mobile-menu-label {
             padding: 6px 0 12px;
             color: var(--muted-subtle);
-            font-family: "Oswald", sans-serif;
+            font-family: var(--font-display);
             font-size: 12px;
             font-weight: 600;
             letter-spacing: 0.2em;
@@ -456,7 +530,7 @@
             padding: 12px 0;
             border-top: 1px solid var(--border-light);
             color: var(--text);
-            font-family: "Oswald", sans-serif;
+            font-family: var(--font-display);
             font-size: 18px;
             font-weight: 500;
             letter-spacing: 0.08em;
@@ -473,7 +547,7 @@
         }
 
         .mobile-menu-panel .mobile-nav-sub {
-            font-family: "DM Sans", sans-serif;
+            font-family: var(--font-sans);
             font-size: 12px;
             font-weight: 500;
             letter-spacing: 0.02em;
@@ -482,7 +556,7 @@
         }
 
         /* =========================================================
-           HERO
+           HERO (SOFORT STABIL OHNE VERSCHIEBUNG BEIM RELOAD)
         ========================================================= */
 
         .hero {
@@ -531,7 +605,7 @@
             gap: 14px;
             margin-bottom: 36px;
             color: var(--muted);
-            font-family: "Oswald", sans-serif;
+            font-family: var(--font-display);
             font-size: 13px;
             font-weight: 600;
             letter-spacing: 0.18em;
@@ -558,23 +632,30 @@
             min-width: 0;
         }
 
+        /* Fester reservierter Platz für das Hero-Logo verhindert Layoutsprung beim Bildladen */
         .hero-logo-frame {
             position: relative;
-            padding: 16px 20px;
-            min-height: 180px;
+            width: min(640px, 100%);
+            aspect-ratio: 16 / 7;
+            margin: 0 auto;
+            padding: 12px 16px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
         .hero-logo {
-            width: min(640px, 100%);
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
             margin: 0 auto;
             filter: drop-shadow(0 18px 32px rgba(0, 0, 0, 0.45));
             animation: heroLogoFloat 6s ease-in-out infinite;
         }
 
         .hero-logo-frame .img-fallback-text {
+            width: 100%;
+            height: 100%;
             font-size: clamp(32px, 6vw, 56px);
             text-align: center;
             padding: 24px;
@@ -585,7 +666,7 @@
             display: block;
             margin-bottom: 10px;
             color: var(--muted);
-            font-family: "Oswald", sans-serif;
+            font-family: var(--font-display);
             font-size: 13px;
             font-weight: 600;
             letter-spacing: 0.16em;
@@ -622,7 +703,7 @@
             background: rgba(255, 255, 255, 0.035);
             border: 1px solid var(--border);
             color: var(--text);
-            font-family: "Oswald", sans-serif;
+            font-family: var(--font-display);
             font-size: 12px;
             font-weight: 500;
             letter-spacing: 0.1em;
@@ -653,7 +734,7 @@
             border: 1px solid var(--red);
             background: var(--red);
             color: #ffffff;
-            font-family: "Oswald", sans-serif;
+            font-family: var(--font-display);
             font-size: 13px;
             font-weight: 600;
             letter-spacing: 0.15em;
@@ -680,7 +761,7 @@
             border: 1px solid var(--border);
             background: rgba(255, 255, 255, 0.02);
             color: var(--text);
-            font-family: "Oswald", sans-serif;
+            font-family: var(--font-display);
             font-size: 13px;
             font-weight: 600;
             letter-spacing: 0.14em;
@@ -699,7 +780,7 @@
         }
 
         /* =========================================================
-           COUNTDOWN (MIT KOMPONENTENSPEZIFISCHER READY-KLASSE)
+           COUNTDOWN (STABILES LAYOUT OHNE HÖHENSPRUNG)
         ========================================================= */
 
         .countdown-section {
@@ -719,25 +800,36 @@
 
         .countdown-title {
             color: var(--muted);
-            font-family: "Oswald", sans-serif;
+            font-family: var(--font-display);
             font-size: 12px;
             font-weight: 600;
             letter-spacing: 0.2em;
             text-transform: uppercase;
         }
 
-        .countdown-date {
-            color: var(--muted-subtle);
-            font-size: 13px;
+        .countdown-status {
+            color: var(--white);
+            font-family: var(--font-display);
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
         }
 
         .countdown-fallback {
             padding: 18px 20px;
             border: 1px solid var(--border);
             background: rgba(255, 255, 255, 0.02);
-            color: var(--white);
+            color: var(--muted);
             font-size: 15px;
+        }
+
+        .countdown-fallback a {
+            color: var(--white);
             font-weight: 600;
+            text-decoration: underline;
+            text-decoration-color: var(--red-hover);
+            text-underline-offset: 4px;
         }
 
         .countdown {
@@ -748,11 +840,12 @@
             border-bottom: 1px solid var(--border);
         }
 
-        .countdown-section.is-ready .countdown-fallback {
+        /* Wenn JS im Head aktiv ist, wird das Countdown-Raster sofort vom ersten Paint an reserviert */
+        html.js-enabled:not(.countdown-failed) .countdown-fallback {
             display: none;
         }
 
-        .countdown-section.is-ready .countdown {
+        html.js-enabled:not(.countdown-failed) .countdown {
             display: grid;
         }
 
@@ -769,7 +862,7 @@
         .countdown-number {
             display: block;
             color: var(--white);
-            font-family: "Oswald", sans-serif;
+            font-family: var(--font-display);
             font-size: clamp(28px, 4vw, 44px);
             font-weight: 600;
             line-height: 1;
@@ -780,7 +873,7 @@
             display: block;
             margin-top: 8px;
             color: var(--muted);
-            font-family: "Oswald", sans-serif;
+            font-family: var(--font-display);
             font-size: 12px;
             font-weight: 600;
             letter-spacing: 0.14em;
@@ -788,7 +881,7 @@
         }
 
         /* =========================================================
-           QUICK INFO (ECKDATEN)
+           QUICK INFO (ECKDATEN / BESUCHSINFOS)
         ========================================================= */
 
         .quick-info {
@@ -820,7 +913,7 @@
         .quick-label {
             margin: 0 0 8px;
             color: var(--muted-subtle);
-            font-family: "Oswald", sans-serif;
+            font-family: var(--font-display);
             font-size: 12px;
             font-weight: 600;
             letter-spacing: 0.18em;
@@ -908,7 +1001,7 @@
             gap: 12px;
             margin-bottom: 14px;
             color: var(--muted);
-            font-family: "Oswald", sans-serif;
+            font-family: var(--font-display);
             font-size: 12px;
             font-weight: 600;
             letter-spacing: 0.2em;
@@ -925,7 +1018,7 @@
         .whatsapp-title {
             margin: 0;
             color: var(--white);
-            font-family: "Oswald", sans-serif;
+            font-family: var(--font-display);
             font-size: clamp(32px, 5vw, 52px);
             font-weight: 600;
             line-height: 1.02;
@@ -951,7 +1044,7 @@
             border: 1px solid rgba(37, 211, 102, 0.55);
             background: rgba(37, 211, 102, 0.08);
             color: var(--white);
-            font-family: "Oswald", sans-serif;
+            font-family: var(--font-display);
             font-size: 13px;
             font-weight: 600;
             letter-spacing: 0.15em;
@@ -986,7 +1079,7 @@
             gap: 12px;
             margin-bottom: 18px;
             color: var(--muted);
-            font-family: "Oswald", sans-serif;
+            font-family: var(--font-display);
             font-size: 12px;
             font-weight: 600;
             letter-spacing: 0.2em;
@@ -1005,7 +1098,7 @@
             max-width: 760px;
             margin: 0;
             color: var(--white);
-            font-family: "Oswald", sans-serif;
+            font-family: var(--font-display);
             font-size: clamp(38px, 5.8vw, 72px);
             font-weight: 600;
             line-height: 1;
@@ -1047,7 +1140,7 @@
             display: block;
             margin-bottom: 42px;
             color: var(--decorative);
-            font-family: "Oswald", sans-serif;
+            font-family: var(--font-display);
             font-size: 12px;
             font-weight: 600;
             letter-spacing: 0.16em;
@@ -1056,7 +1149,7 @@
         .experience-card h3 {
             margin: 0 0 12px;
             color: var(--white);
-            font-family: "Oswald", sans-serif;
+            font-family: var(--font-display);
             font-size: 21px;
             font-weight: 600;
             line-height: 1.15;
@@ -1112,7 +1205,7 @@
 
         .faq-question-text {
             min-width: 0;
-            font-family: "Oswald", sans-serif;
+            font-family: var(--font-display);
             font-size: 20px;
             font-weight: 500;
             line-height: 1.3;
@@ -1217,7 +1310,7 @@
             z-index: 1;
             margin-bottom: 12px;
             color: var(--muted);
-            font-family: "Oswald", sans-serif;
+            font-family: var(--font-display);
             font-size: 12px;
             font-weight: 600;
             letter-spacing: 0.2em;
@@ -1229,7 +1322,7 @@
             z-index: 1;
             margin: 0;
             color: var(--white);
-            font-family: "Oswald", sans-serif;
+            font-family: var(--font-display);
             font-size: clamp(36px, 5.8vw, 64px);
             font-weight: 600;
             line-height: 1;
@@ -1267,15 +1360,25 @@
             min-width: 0;
         }
 
-        .footer-logo {
+        .footer-logo-frame {
             width: 145px;
+            height: 52px;
             margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+        }
+
+        .footer-logo {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            object-position: left center;
             opacity: 0.9;
         }
 
-        .footer-brand .img-fallback-text {
+        .footer-logo-frame .img-fallback-text {
             font-size: 18px;
-            margin-bottom: 14px;
+            justify-content: flex-start;
         }
 
         .footer-description {
@@ -1293,7 +1396,7 @@
         .footer-contact-label {
             margin-bottom: 6px;
             color: var(--muted-subtle);
-            font-family: "Oswald", sans-serif;
+            font-family: var(--font-display);
             font-size: 12px;
             font-weight: 600;
             letter-spacing: 0.18em;
@@ -1336,7 +1439,7 @@
         .application-label {
             margin-bottom: 4px;
             color: var(--muted);
-            font-family: "Oswald", sans-serif;
+            font-family: var(--font-display);
             font-size: 12px;
             font-weight: 600;
             letter-spacing: 0.16em;
@@ -1358,7 +1461,7 @@
             border: 1px solid var(--border);
             flex-shrink: 0;
             color: var(--text);
-            font-family: "Oswald", sans-serif;
+            font-family: var(--font-display);
             font-size: 12px;
             font-weight: 600;
             letter-spacing: 0.14em;
@@ -1416,10 +1519,10 @@
         }
 
         /* =========================================================
-           IMPRESSUM (STATIC FALLBACK + MODAL WHEN INITIALIZED)
+           IMPRESSUM (OHNE JS REGULÄRER ABSCHNITT, MIT JS DIALOG AB START)
         ========================================================= */
 
-        /* Ohne Dialog-Initialisierung: Regulärer, voll zugänglicher Abschnitt */
+        /* Ohne JS oder bei Dialog-Fehler: regulärer Abschnitt im Dokumentfluss */
         .modal {
             padding: 0 0 60px;
             background: #070707;
@@ -1438,8 +1541,8 @@
             display: none;
         }
 
-        /* Erst nach erfolgreicher JS-Dialog-Initialisierung (.is-modal-ready) */
-        .modal.is-modal-ready {
+        /* Sobald js-enabled im Head aktiv ist, liegt das Impressum sofort außerhalb des Flusses (kein Höhen-Ruck beim Reload) */
+        html.js-enabled:not(.modal-failed) .modal {
             position: fixed;
             inset: 0;
             z-index: 5000;
@@ -1453,18 +1556,21 @@
             visibility: hidden;
             opacity: 0;
             pointer-events: none;
+        }
+
+        html.js-enabled:not(.modal-failed) .modal.transitions-ready {
             transition:
                 opacity 0.2s ease,
                 visibility 0.2s ease;
         }
 
-        .modal.is-modal-ready.open {
+        html.js-enabled:not(.modal-failed) .modal.open {
             visibility: visible;
             opacity: 1;
             pointer-events: auto;
         }
 
-        .modal.is-modal-ready .modal-content {
+        html.js-enabled:not(.modal-failed) .modal .modal-content {
             width: min(760px, 100%);
             margin: 0;
             max-height: 88vh;
@@ -1472,14 +1578,17 @@
             overflow-y: auto;
             box-shadow: 0 30px 100px rgba(0, 0, 0, 0.75);
             transform: translateY(10px);
+        }
+
+        html.js-enabled:not(.modal-failed) .modal.transitions-ready .modal-content {
             transition: transform 0.25s ease;
         }
 
-        .modal.is-modal-ready.open .modal-content {
+        html.js-enabled:not(.modal-failed) .modal.open .modal-content {
             transform: translateY(0);
         }
 
-        .modal.is-modal-ready .modal-close {
+        html.js-enabled:not(.modal-failed) .modal .modal-close {
             position: absolute;
             top: 18px;
             right: 18px;
@@ -1501,8 +1610,8 @@
                 background 0.2s ease;
         }
 
-        .modal.is-modal-ready .modal-close:hover,
-        .modal.is-modal-ready .modal-close:focus-visible {
+        html.js-enabled:not(.modal-failed) .modal .modal-close:hover,
+        html.js-enabled:not(.modal-failed) .modal .modal-close:focus-visible {
             color: var(--white);
             border-color: var(--border-strong);
             background: rgba(255, 255, 255, 0.08);
@@ -1512,7 +1621,7 @@
             padding-right: 56px;
             margin-bottom: 10px;
             color: var(--muted);
-            font-family: "Oswald", sans-serif;
+            font-family: var(--font-display);
             font-size: 12px;
             font-weight: 600;
             letter-spacing: 0.2em;
@@ -1523,7 +1632,7 @@
             padding-right: 56px;
             margin: 0 0 26px;
             color: var(--white);
-            font-family: "Oswald", sans-serif;
+            font-family: var(--font-display);
             font-size: clamp(32px, 5vw, 50px);
             font-weight: 600;
             line-height: 1.05;
@@ -1577,6 +1686,9 @@
             opacity: 0;
             visibility: hidden;
             transform: translateY(8px);
+        }
+
+        .back-top.transitions-ready {
             transition:
                 opacity 0.2s ease,
                 visibility 0.2s ease,
@@ -1608,14 +1720,15 @@
             --intro-logo-opacity: 1;
             --intro-glow-scale: 1;
             --intro-glow-opacity: 0.65;
-            --intro-ui-opacity: 1;
-            --intro-ui-y: 0px;
+            --intro-hint-opacity: 1;
+            --intro-hint-y: 0px;
+            --intro-skip-opacity: 1;
             --intro-progress: 0;
 
             position: fixed;
             inset: 0;
             z-index: 6000;
-            display: flex;
+            display: none;
             flex-direction: column;
             align-items: center;
             justify-content: center;
@@ -1626,6 +1739,21 @@
             touch-action: none;
             user-select: none;
             -webkit-user-select: none;
+        }
+
+        /* Durch intro-pending im Head ist das Intro beim berechtigten Erstaufruf ab dem 1. Frame sichtbar */
+        html.intro-pending .intro-screen,
+        body.intro-active .intro-screen {
+            display: flex;
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        html.intro-pending .header,
+        body.intro-active .header {
+            opacity: 0;
+            pointer-events: none;
         }
 
         .intro-backdrop {
@@ -1642,21 +1770,6 @@
             will-change: opacity;
         }
 
-        body.intro-active .intro-screen {
-            opacity: 1;
-            visibility: visible;
-            pointer-events: auto;
-        }
-
-        body.intro-active {
-            overflow: hidden;
-        }
-
-        body.intro-active .header {
-            opacity: 0;
-            pointer-events: none;
-        }
-
         .intro-stage {
             position: relative;
             z-index: 2;
@@ -1668,11 +1781,14 @@
             max-width: 680px;
         }
 
+        /* Feste intrinsische Proportion für das Intro-Logo verhindert Rutschen beim Laden */
         .intro-logo-wrap {
             position: relative;
             width: min(440px, 76vw);
-            display: grid;
-            place-items: center;
+            aspect-ratio: 16 / 7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             margin-bottom: 38px;
             opacity: var(--intro-logo-opacity);
             transform: translate3d(0, var(--intro-logo-y), 0) scale(var(--intro-logo-scale));
@@ -1701,7 +1817,8 @@
             position: relative;
             z-index: 1;
             width: 100%;
-            height: auto;
+            height: 100%;
+            object-fit: contain;
             filter: drop-shadow(0 20px 44px rgba(0, 0, 0, 0.88));
             pointer-events: none;
         }
@@ -1710,7 +1827,7 @@
             position: relative;
             z-index: 1;
             margin: 0;
-            font-family: "Oswald", sans-serif;
+            font-family: var(--font-display);
             font-size: clamp(28px, 6vw, 44px);
             letter-spacing: 0.12em;
             text-transform: uppercase;
@@ -1726,8 +1843,16 @@
             gap: 14px;
             width: min(280px, 82vw);
             text-align: center;
-            opacity: var(--intro-ui-opacity);
-            transform: translate3d(0, var(--intro-ui-y), 0);
+        }
+
+        .intro-Status-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
+            width: 100%;
+            opacity: var(--intro-hint-opacity);
+            transform: translate3d(0, var(--intro-hint-y), 0);
             will-change: transform, opacity;
         }
 
@@ -1751,13 +1876,14 @@
         .intro-hint {
             margin: 0;
             color: var(--muted);
-            font-family: "Oswald", sans-serif;
+            font-family: var(--font-display);
             font-size: 12px;
             font-weight: 500;
             letter-spacing: 0.2em;
             text-transform: uppercase;
         }
 
+        /* Skip-Button bleibt bis zum Abschluss klar sichtbar und bedienbar */
         .intro-enter-btn {
             display: inline-flex;
             align-items: center;
@@ -1765,15 +1891,16 @@
             min-height: 44px;
             margin-top: 4px;
             padding: 0 22px;
-            border: 1px solid var(--border);
-            background: rgba(255, 255, 255, 0.03);
-            color: var(--muted);
-            font-family: "Oswald", sans-serif;
+            border: 1px solid var(--border-strong);
+            background: rgba(17, 17, 17, 0.85);
+            color: var(--text);
+            font-family: var(--font-display);
             font-size: 12px;
             font-weight: 600;
             letter-spacing: 0.16em;
             text-transform: uppercase;
             cursor: pointer;
+            opacity: var(--intro-skip-opacity);
             transition:
                 background 0.2s ease,
                 border-color 0.2s ease,
@@ -1828,29 +1955,28 @@
             }
         }
 
-        .reveal-ready .reveal {
+        /* Nur Elemente, die beim Laden nachweislich unterhalb des Viewports liegen, erhalten .reveal-pending */
+        .reveal.reveal-pending {
             opacity: 0;
-            transform: translate3d(0, 24px, 0);
+            transform: translate3d(0, 20px, 0);
+        }
+
+        .reveal.reveal-animate {
             transition:
-                opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
-                transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+                opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
         }
 
-        .reveal-ready .reveal.visible {
-            opacity: 1;
-            transform: translate3d(0, 0, 0);
+        .reveal.reveal-animate.delay-1 {
+            transition-delay: 0.06s;
         }
 
-        .reveal-ready .delay-1 {
-            transition-delay: 0.07s;
+        .reveal.reveal-animate.delay-2 {
+            transition-delay: 0.12s;
         }
 
-        .reveal-ready .delay-2 {
-            transition-delay: 0.14s;
-        }
-
-        .reveal-ready .delay-3 {
-            transition-delay: 0.21s;
+        .reveal.reveal-animate.delay-3 {
+            transition-delay: 0.18s;
         }
 
         /* =========================================================
@@ -1894,8 +2020,9 @@
                 display: inline-flex;
             }
 
-            .header-logo {
+            .logo-link {
                 width: 112px;
+                height: 40px;
             }
 
             .hero {
@@ -1917,12 +2044,8 @@
             }
 
             .hero-logo-frame {
-                padding: 8px 12px;
-                min-height: 120px;
-            }
-
-            .hero-logo {
                 width: min(360px, 82vw);
+                padding: 8px 12px;
             }
 
             .hero-title {
@@ -2111,21 +2234,21 @@
                 width: 100%;
             }
 
-            .modal.is-modal-ready {
+            html.js-enabled:not(.modal-failed) .modal {
                 padding:
                     14px
                     14px
                     calc(14px + env(safe-area-inset-bottom, 0px));
             }
 
-            .modal.is-modal-ready .modal-content {
+            html.js-enabled:not(.modal-failed) .modal .modal-content {
                 width: 100%;
                 max-height: 90vh;
                 max-height: 90dvh;
                 padding: 26px 20px;
             }
 
-            .modal.is-modal-ready .modal-close {
+            html.js-enabled:not(.modal-failed) .modal .modal-close {
                 top: 12px;
                 right: 12px;
             }
@@ -2152,14 +2275,9 @@
                 transition-duration: 0.01ms !important;
             }
 
-            .reveal-ready .reveal {
+            .reveal.reveal-pending {
                 opacity: 1;
                 transform: none;
-            }
-
-            .hero-inner {
-                transform: none !important;
-                opacity: 1 !important;
             }
         }
     </style>
@@ -2171,14 +2289,13 @@
     </a>
 
     <!-- =========================================================
-         PROGRESS-DRIVEN CINEMATIC INTRO (STANDARDMÄSSIG HIDDEN)
+         PROGRESS-DRIVEN CINEMATIC INTRO
     ========================================================= -->
     <div
         class="intro-screen"
         id="introScreen"
         role="region"
         aria-label="Intro Schattenschreck"
-        hidden
     >
         <div class="intro-backdrop" aria-hidden="true"></div>
 
@@ -2188,8 +2305,10 @@
                     class="intro-logo"
                     src="https://i.imgur.com/Cl27hzM.png"
                     alt="Schattenschreck"
-                    width="390"
+                    width="440"
+                    height="192"
                     decoding="async"
+                    fetchpriority="high"
                     onerror="this.classList.add('img-broken')"
                 >
                 <p class="img-fallback-text intro-title-fallback">
@@ -2198,13 +2317,15 @@
             </div>
 
             <div class="intro-actions">
-                <div class="intro-progress-track" aria-hidden="true">
-                    <div class="intro-progress-fill"></div>
-                </div>
+                <div class="intro-Status-group">
+                    <div class="intro-progress-track" aria-hidden="true">
+                        <div class="intro-progress-fill"></div>
+                    </div>
 
-                <p class="intro-hint">
-                    Nach unten scrollen oder wischen ↓
-                </p>
+                    <p class="intro-hint">
+                        Nach unten scrollen oder wischen ↓
+                    </p>
+                </div>
 
                 <button
                     type="button"
@@ -2232,6 +2353,7 @@
                     src="https://i.imgur.com/Cl27hzM.png"
                     alt="Schattenschreck"
                     width="130"
+                    height="44"
                     decoding="async"
                     onerror="this.classList.add('img-broken')"
                 >
@@ -2323,20 +2445,21 @@
     <main id="top" tabindex="-1">
         <section class="hero" id="mainContent" tabindex="-1">
             <div class="container hero-inner" id="heroInner">
-                <div class="hero-topline reveal">
+                <div class="hero-topline">
                     <span>
-                        <time datetime="2026-10-31">Samstag, 31. Oktober 2026</time> · ab <time datetime="18:00">18:00 Uhr</time> · Wardersee
+                        <time datetime="2026-10-31">31. Oktober 2026</time> · ab <time datetime="18:00">18:00 Uhr</time> · Wardersee
                     </span>
                 </div>
 
                 <div class="hero-grid">
-                    <div class="hero-logo-area reveal">
+                    <div class="hero-logo-area">
                         <div class="hero-logo-frame">
                             <img
                                 class="hero-logo"
                                 src="https://i.imgur.com/Cl27hzM.png"
                                 alt="Schattenschreck Logo"
                                 width="640"
+                                height="280"
                                 decoding="async"
                                 fetchpriority="high"
                                 onerror="this.classList.add('img-broken')"
@@ -2345,7 +2468,7 @@
                         </div>
                     </div>
 
-                    <div class="hero-info reveal delay-1">
+                    <div class="hero-info">
                         <h1 class="hero-title">
                             <span class="hero-kicker">
                                 Schattenschreck · Horror-Event in Wardersee
@@ -2364,9 +2487,6 @@
                                 Eintritt kostenlos
                             </span>
                             <span class="hero-badge">
-                                Einlass <time datetime="18:00">18:00</time> – <time datetime="20:00">20:00</time> Uhr
-                            </span>
-                            <span class="hero-badge">
                                 Barrierefreier Zugang
                             </span>
                         </div>
@@ -2382,24 +2502,23 @@
                     </div>
                 </div>
 
-                <div class="countdown-section reveal" id="countdownSection">
+                <div class="countdown-section" id="countdownSection">
                     <div class="countdown-header">
                         <div class="countdown-title">
-                            Countdown bis zum Start
+                            Bis zum Schattenschreck
                         </div>
 
                         <div
-                            class="countdown-date"
+                            class="countdown-status"
                             id="countdownStatus"
                             aria-live="polite"
-                        >
-                            Bis zum 31. Oktober 2026, 18:00 Uhr
-                        </div>
+                            hidden
+                        ></div>
                     </div>
 
                     <!-- Statischer Fallback ohne JavaScript -->
                     <div class="countdown-fallback">
-                        Startet am <time datetime="2026-10-31T18:00:00+01:00">Samstag, 31. Oktober 2026 um 18:00 Uhr</time> in Wardersee (Einlass bis 20:00 Uhr).
+                        Datum und Einlasszeiten findest du in den <a href="#eckdaten">Besuchsinfos</a>.
                     </div>
 
                     <!-- Dynamischer Countdown mit JavaScript (Sekundentakt für Screenreader ausgeblendet) -->
@@ -2435,26 +2554,24 @@
             <div class="container">
                 <dl class="quick-grid reveal">
                     <div class="quick-item">
-                        <dt class="quick-label">Datum &amp; Ort</dt>
+                        <dt class="quick-label">Datum</dt>
                         <dd class="quick-value">
                             <time datetime="2026-10-31">Samstag, 31. Oktober 2026</time>
-                            <span class="quick-sub">Wardersee</span>
                         </dd>
                     </div>
 
                     <div class="quick-item">
-                        <dt class="quick-label">Beginn</dt>
+                        <dt class="quick-label">Beginn &amp; Einlass</dt>
                         <dd class="quick-value">
-                            <time datetime="18:00">18:00 Uhr</time>
-                            <span class="quick-sub">Start des Events</span>
+                            Ab <time datetime="18:00">18:00 Uhr</time>
+                            <span class="quick-sub">Letzter Einlass: <time datetime="20:00">20:00 Uhr</time></span>
                         </dd>
                     </div>
 
                     <div class="quick-item">
-                        <dt class="quick-label">Einlasszeitraum</dt>
+                        <dt class="quick-label">Ort</dt>
                         <dd class="quick-value">
-                            <time datetime="18:00">18:00</time> – <time datetime="20:00">20:00</time> Uhr
-                            <span class="quick-sub">Letzter Einlass um 20:00 Uhr</span>
+                            Wardersee
                         </dd>
                     </div>
 
@@ -2462,7 +2579,6 @@
                         <dt class="quick-label">Eintritt</dt>
                         <dd class="quick-value">
                             Kostenlos
-                            <span class="quick-sub">Freier Eintritt zum Event</span>
                         </dd>
                     </div>
                 </dl>
@@ -2638,9 +2754,7 @@
                         <div class="faq-answer">
                             <div class="faq-answer-inner">
                                 <p>
-                                    Der Einlass beginnt am <time datetime="2026-10-31">31. Oktober 2026</time>
-                                    um <time datetime="18:00">18:00 Uhr</time>. Der letzte
-                                    Einlass ist um <time datetime="20:00">20:00 Uhr</time>.
+                                    Einlass ist von <time datetime="18:00">18:00</time> bis <time datetime="20:00">20:00 Uhr</time>.
                                 </p>
                             </div>
                         </div>
@@ -2739,15 +2853,14 @@
                     </h2>
 
                     <p class="final-text">
-                        Merke dir den <time datetime="2026-10-31">31. Oktober 2026</time> vor und
-                        komm ab <time datetime="18:00">18:00 Uhr</time> zum Schattenschreck.
+                        <time datetime="2026-10-31">31. Oktober 2026</time> · ab <time datetime="18:00">18:00 Uhr</time>. Wir freuen uns auf deinen Besuch.
                     </p>
 
                     <a
                         class="primary-button"
-                        href="#top"
+                        href="#eckdaten"
                     >
-                        Nach oben ↑
+                        Besuchsinfos ansehen
                     </a>
                 </div>
             </div>
@@ -2761,21 +2874,22 @@
         <div class="container">
             <div class="footer-main">
                 <div class="footer-brand">
-                    <img
-                        class="footer-logo"
-                        src="https://i.imgur.com/CAD6jqP.png"
-                        alt="GOGOS Gruppe"
-                        width="145"
-                        loading="lazy"
-                        decoding="async"
-                        onerror="this.classList.add('img-broken')"
-                    >
-                    <span class="img-fallback-text">GOGOS Gruppe</span>
+                    <div class="footer-logo-frame">
+                        <img
+                            class="footer-logo"
+                            src="https://i.imgur.com/CAD6jqP.png"
+                            alt="GOGOS Gruppe"
+                            width="145"
+                            height="52"
+                            loading="lazy"
+                            decoding="async"
+                            onerror="this.classList.add('img-broken')"
+                        >
+                        <span class="img-fallback-text">GOGOS Gruppe</span>
+                    </div>
 
                     <p class="footer-description">
-                        Schattenschreck ist ein privates
-                        Horror-Event der GOGOS Gruppe
-                        am <time datetime="2026-10-31">31. Oktober 2026</time> in Wardersee.
+                        Schattenschreck ist ein privates Horror-Event der GOGOS Gruppe in Wardersee.
                     </p>
                 </div>
 
@@ -2941,6 +3055,9 @@
         (function () {
             "use strict";
 
+            if (window.__schattenschreckInitialized) return;
+            window.__schattenschreckInitialized = true;
+
             /* =====================================================
                ZENTRALE KONFIGURATION (EVENT & INTRO-FEINABSTIMMUNG)
             ===================================================== */
@@ -2952,28 +3069,29 @@
 
             const INTRO_CONFIG = {
                 sessionKey: "schattenschreck_intro_seen_2026",
-                forceAlwaysShowInDev: false, // Auf true setzen, um das Intro beim Testen bei jedem Reload zu sehen
+                forceAlwaysShowInDev: false, // Bei Bedarf synchron mit FORCE_DEV_INTRO im <head> auf true setzen
 
                 // Benötigte virtuelle Scrollstrecke (Mausrad / Trackpad) in normalisierten Pixeln
                 wheelDistancePx: 540,
-                maxSingleWheelStepPx: 115, // Begrenzt einzelne starke Mausrad-Spitzen
+                maxSingleWheelStepPx: 115,
 
                 // Benötigte vertikale Wischstrecke auf Touchscreens (ca. 38% der Viewporthöhe, geklemmt auf 210–340px)
                 touchViewportRatio: 0.38,
                 minTouchDistancePx: 210,
                 maxTouchDistancePx: 340,
 
-                // Rückgleiten vs. automatisches Vollenden nach Finger-Loslassen (touchend)
+                // Rückgleiten vs. automatisches Vollenden nach regulärem Finger-Loslassen (touchend)
                 touchCommitThreshold: 0.62,
 
                 // Animationsphasen (0.0 bis 1.0)
-                phaseLeadInEnd: 0.14,  // Bis 14%: ruhiger Anlauf
-                phaseCurtainEnd: 0.78, // 14% bis 78%: Logo-Bewegung & Vorhang-Aufhellung; ab 78%: finale Übergabe
+                phaseLeadInEnd: 0.14,
+                phaseCurtainEnd: 0.78,
 
-                // Glättung der Bewegung (höher = direkter, niedriger = weicher)
+                // Glättung der Bewegung
                 smoothingFactor: 0.16
             };
 
+            const docEl = document.documentElement;
             const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
             let reduceMotion = motionQuery.matches;
 
@@ -2982,9 +3100,7 @@
             const footerElement = document.getElementById("footer");
             const backTop = document.getElementById("backTop");
             const heroSection = document.getElementById("mainContent");
-            const heroInner = document.getElementById("heroInner");
 
-            // Zentrale Synchronisierung von prefers-reduced-motion vor allen Modulen
             motionQuery.addEventListener("change", (event) => {
                 reduceMotion = event.matches;
             });
@@ -3003,7 +3119,7 @@
                     if (!supportsScrollbarGutter) {
                         const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
                         if (scrollbarWidth > 0) {
-                            document.documentElement.style.setProperty(
+                            docEl.style.setProperty(
                                 "--modal-padding-compensation",
                                 `${scrollbarWidth}px`
                             );
@@ -3012,7 +3128,7 @@
                     document.body.classList.add("overlay-locked");
                 } else {
                     document.body.classList.remove("overlay-locked");
-                    document.documentElement.style.setProperty("--modal-padding-compensation", "0px");
+                    docEl.style.setProperty("--modal-padding-compensation", "0px");
                 }
             }
 
@@ -3057,10 +3173,17 @@
                1. FORTSCHRITTSBASIERTES CINEMATIC INTRO
             ===================================================== */
 
+            let abortIntroSafely = null;
+
             function initIntro() {
                 const introScreen = document.getElementById("introScreen");
                 const introSkipButton = document.getElementById("introSkipButton");
-                if (!introScreen || !introSkipButton) return;
+
+                if (!introScreen || !introSkipButton) {
+                    docEl.classList.remove("intro-pending");
+                    document.body.classList.remove("intro-active");
+                    return;
+                }
 
                 let hasSeenIntro = false;
                 if (!INTRO_CONFIG.forceAlwaysShowInDev) {
@@ -3072,35 +3195,46 @@
                 }
 
                 const hasHash = Boolean(window.location.hash && window.location.hash !== "#");
-                const isAlreadyScrolled = (window.scrollY || window.pageYOffset || 0) > 10;
+                const currentScrollY = window.scrollY || window.pageYOffset || 0;
+                const wasPreparedInHead = docEl.classList.contains("intro-pending");
 
-                // Direkte Hash-Links, bereits gescrollte Seiten und reduzierte Bewegung haben immer Vorrang
-                if (motionQuery.matches || hasSeenIntro || hasHash || isAlreadyScrolled) {
-                    introScreen.hidden = true;
+                if (
+                    motionQuery.matches ||
+                    hasSeenIntro ||
+                    hasHash ||
+                    currentScrollY > 10 ||
+                    (!wasPreparedInHead && !INTRO_CONFIG.forceAlwaysShowInDev)
+                ) {
+                    docEl.classList.remove("intro-pending");
                     document.body.classList.remove("intro-active");
+                    introScreen.hidden = true;
                     return;
                 }
 
-                // Zustände: "inactive" | "active" | "completing" | "completed"
+                // Zustände: "active" | "completing" | "completed"
                 let state = "active";
                 let targetProgress = 0;
                 let currentProgress = 0;
                 let rafId = null;
+                const startedAtTop = (window.scrollY || window.pageYOffset || 0) <= 10;
 
-                // Touch-Tracking-Variablen
+                // Touch-Tracking-Variablen (pro Geste konstant gehalten)
                 let activeTouchId = null;
                 let touchStartX = 0;
                 let touchStartY = 0;
                 let touchStartProgress = 0;
+                let currentGestureFullDistancePx = INTRO_CONFIG.minTouchDistancePx;
                 let isHorizontalGesture = false;
 
                 introScreen.hidden = false;
                 document.body.classList.add("intro-active");
+                docEl.classList.remove("intro-pending");
+
                 setElementInert(header, true);
                 setElementInert(mainElement, true);
                 setElementInert(footerElement, true);
 
-                function getTouchFullDistancePx() {
+                function computeTouchFullDistancePx() {
                     const vhDistance = window.innerHeight * INTRO_CONFIG.touchViewportRatio;
                     return clamp(
                         vhDistance,
@@ -3117,7 +3251,6 @@
                     const phase2 = easeInOutQuad(invLerp(pLead, pCurtain, p));
                     const phase3 = easeOutCubic(invLerp(pCurtain, 1, p));
 
-                    // Sanfte Skalierung von 1.00 -> 0.985 (Phase 1) -> 0.87 (Phase 2) -> 0.82 (Phase 3)
                     const logoScale = 1 - (0.015 * phase1) - (0.115 * phase2) - (0.05 * phase3);
                     const logoY = -(6 * phase1) - (38 * phase2) - (26 * phase3);
                     const logoOpacity = 1 - (0.15 * phase2) - (0.85 * phase3);
@@ -3125,13 +3258,13 @@
                     const glowScale = 1 + (0.12 * phase1) + (0.18 * phase2);
                     const glowOpacity = 0.65 + (0.25 * phase1) - (0.55 * phase2) - (0.35 * phase3);
 
-                    // Der dunkle Hintergrund lässt ab Phase 2 bereits leicht den Hero durchscheinen
                     const bgOpacity = 1 - (0.22 * phase2) - (0.78 * phase3);
 
-                    // Hinweis & Skip-Button treten während der Öffnung dezent zurück
-                    const uiFade = clamp(invLerp(0.05, 0.58, p), 0, 1);
-                    const uiOpacity = 1 - uiFade;
-                    const uiY = 14 * uiFade;
+                    // Hinweis & Fortschrittsbalken treten zurück, Skip-Button bleibt bis Phase 3 klar sichtbar
+                    const hintFade = clamp(invLerp(0.08, 0.62, p), 0, 1);
+                    const hintOpacity = 1 - hintFade;
+                    const hintY = 10 * hintFade;
+                    const skipOpacity = 1 - (0.85 * phase3);
 
                     introScreen.style.setProperty("--intro-progress", p.toFixed(4));
                     introScreen.style.setProperty("--intro-logo-scale", logoScale.toFixed(4));
@@ -3140,8 +3273,9 @@
                     introScreen.style.setProperty("--intro-glow-scale", glowScale.toFixed(4));
                     introScreen.style.setProperty("--intro-glow-opacity", clamp(glowOpacity, 0, 1).toFixed(4));
                     introScreen.style.setProperty("--intro-bg-opacity", clamp(bgOpacity, 0, 1).toFixed(4));
-                    introScreen.style.setProperty("--intro-ui-opacity", uiOpacity.toFixed(4));
-                    introScreen.style.setProperty("--intro-ui-y", `${uiY.toFixed(2)}px`);
+                    introScreen.style.setProperty("--intro-hint-opacity", hintOpacity.toFixed(4));
+                    introScreen.style.setProperty("--intro-hint-y", `${hintY.toFixed(2)}px`);
+                    introScreen.style.setProperty("--intro-skip-opacity", clamp(skipOpacity, 0.15, 1).toFixed(4));
                 }
 
                 function ensureAnimationLoop() {
@@ -3163,7 +3297,7 @@
                     applyVisualProgress(currentProgress);
 
                     if (targetProgress >= 1 && currentProgress >= 0.992) {
-                        completeIntro(false);
+                        completeIntro(false, true);
                         return;
                     }
 
@@ -3177,12 +3311,13 @@
                     window.removeEventListener("touchstart", onTouchStart);
                     window.removeEventListener("touchmove", onTouchMove);
                     window.removeEventListener("touchend", onTouchEnd);
-                    window.removeEventListener("touchcancel", onTouchEnd);
+                    window.removeEventListener("touchcancel", onTouchCancel);
                     window.removeEventListener("keydown", onKeyDown);
+                    window.removeEventListener("scroll", onUnexpectedScrollRestore);
                     motionQuery.removeEventListener("change", onMotionPreferenceChange);
                 }
 
-                function completeIntro(moveFocusToHero) {
+                function completeIntro(moveFocusToHero, markAsSeen) {
                     if (state === "completed") return;
                     state = "completed";
 
@@ -3193,23 +3328,27 @@
 
                     cleanupIntroListeners();
 
-                    try {
-                        window.sessionStorage.setItem(INTRO_CONFIG.sessionKey, "1");
-                    } catch (_) {
-                        // SessionStorage optional
+                    if (markAsSeen) {
+                        try {
+                            window.sessionStorage.setItem(INTRO_CONFIG.sessionKey, "1");
+                        } catch (_) {
+                            // SessionStorage optional
+                        }
                     }
 
                     const focusWasInsideIntro = introScreen.contains(document.activeElement);
 
+                    docEl.classList.remove("intro-pending");
                     document.body.classList.remove("intro-active");
                     setElementInert(header, false);
                     setElementInert(mainElement, false);
                     setElementInert(footerElement, false);
                     introScreen.hidden = true;
 
-                    // Sicherstellen, dass die Hauptseite exakt am oberen Rand beginnt
-                    if ((window.scrollY || window.pageYOffset || 0) > 0) {
-                        window.scrollTo(0, 0);
+                    // Nur wenn das Intro wirklich am Seitenanfang gestartet wurde, evtl. minimalen Drift sofort korrigieren
+                    const currentY = window.scrollY || window.pageYOffset || 0;
+                    if (startedAtTop && currentY > 0 && currentY < 120 && markAsSeen) {
+                        window.scrollTo({ top: 0, left: 0, behavior: "instant" });
                     }
 
                     if ((moveFocusToHero || focusWasInsideIntro) && heroSection) {
@@ -3217,13 +3356,25 @@
                     }
                 }
 
+                abortIntroSafely = () => {
+                    completeIntro(false, false);
+                };
+
+                // Falls der Browser nach Script-Start noch eine gespeicherte tiefere Scrollposition wiederherstellt:
+                // Intro sofort lautlos freigeben, ohne an den Seitenanfang zu springen.
+                function onUnexpectedScrollRestore() {
+                    if (state === "completed") return;
+                    const y = window.scrollY || window.pageYOffset || 0;
+                    if (y > 40) {
+                        completeIntro(false, false);
+                    }
+                }
+
                 function normalizeWheelDelta(event) {
                     let deltaY = event.deltaY;
                     if (event.deltaMode === 1) {
-                        // DOM_DELTA_LINE
                         deltaY *= 24;
                     } else if (event.deltaMode === 2) {
-                        // DOM_DELTA_PAGE
                         deltaY *= window.innerHeight * 0.85;
                     }
                     return clamp(
@@ -3235,10 +3386,7 @@
 
                 function onWheel(event) {
                     if (state !== "active") return;
-                    // Browser-Zoom (Strg/Cmd + Mausrad) ignorieren
                     if (event.ctrlKey || event.metaKey) return;
-
-                    // Überwiegend horizontales Trackpad-Wischen ignorieren
                     if (Math.abs(event.deltaX) > Math.abs(event.deltaY) * 1.3) return;
 
                     const deltaPx = normalizeWheelDelta(event);
@@ -3260,7 +3408,6 @@
                 function onTouchStart(event) {
                     if (state !== "active") return;
 
-                    // Mehrfinger-Gesten (z. B. Pinch-Zoom) nicht als Intro-Wisch werten
                     if (event.touches.length !== 1) {
                         activeTouchId = null;
                         return;
@@ -3271,6 +3418,8 @@
                     touchStartX = touch.clientX;
                     touchStartY = touch.clientY;
                     touchStartProgress = targetProgress;
+                    // Strecke einmalig beim Start der Geste berechnen (stabil gegen Browserleisten-Resize)
+                    currentGestureFullDistancePx = computeTouchFullDistancePx();
                     isHorizontalGesture = false;
                 }
 
@@ -3282,16 +3431,15 @@
                     if (touch.identifier !== activeTouchId) return;
 
                     const deltaX = touchStartX - touch.clientX;
-                    const deltaY = touchStartY - touch.clientY; // Positiv, wenn Finger nach oben wischt (Inhalt nach unten scrollt)
+                    const deltaY = touchStartY - touch.clientY;
 
                     if (!isHorizontalGesture && Math.abs(deltaX) > Math.abs(deltaY) * 1.25 && Math.abs(deltaX) > 12) {
                         isHorizontalGesture = true;
                     }
                     if (isHorizontalGesture) return;
 
-                    const fullDistance = getTouchFullDistancePx();
                     targetProgress = clamp(
-                        touchStartProgress + deltaY / fullDistance,
+                        touchStartProgress + deltaY / currentGestureFullDistancePx,
                         0,
                         1
                     );
@@ -3314,7 +3462,6 @@
                     activeTouchId = null;
                     if (state !== "active") return;
 
-                    // Sanftes Einrasten nach dem Loslassen
                     if (targetProgress >= INTRO_CONFIG.touchCommitThreshold) {
                         targetProgress = 1;
                         state = "completing";
@@ -3324,12 +3471,26 @@
                     ensureAnimationLoop();
                 }
 
+                // Abgebrochene Geste (touchcancel) bestätigt niemals automatisch das Intro
+                function onTouchCancel() {
+                    if (activeTouchId === null) return;
+                    activeTouchId = null;
+
+                    if (state === "completing") {
+                        state = "active";
+                    }
+                    if (state === "active") {
+                        targetProgress = 0;
+                        ensureAnimationLoop();
+                    }
+                }
+
                 function onKeyDown(event) {
                     if (state !== "active" && state !== "completing") return;
 
                     if (event.key === "Escape") {
                         event.preventDefault();
-                        completeIntro(true);
+                        completeIntro(true, true);
                         return;
                     }
 
@@ -3341,7 +3502,6 @@
 
                     if (event.key === "ArrowDown" || event.key === "PageDown" || event.key === " ") {
                         if (document.activeElement === introSkipButton && event.key === " ") {
-                            // Leertaste auf dem fokussierten Skip-Button löst dessen Klick aus
                             return;
                         }
                         event.preventDefault();
@@ -3360,13 +3520,12 @@
 
                 function onMotionPreferenceChange(event) {
                     if (event.matches && state !== "completed") {
-                        completeIntro(false);
+                        completeIntro(false, true);
                     }
                 }
 
-                // Bewusster Button-Klick überspringt das Intro sofort und verschiebt Fokus sinnvoll
                 introSkipButton.addEventListener("click", () => {
-                    completeIntro(true);
+                    completeIntro(true, true);
                 });
 
                 applyVisualProgress(0);
@@ -3375,8 +3534,9 @@
                 window.addEventListener("touchstart", onTouchStart, { passive: true });
                 window.addEventListener("touchmove", onTouchMove, { passive: true });
                 window.addEventListener("touchend", onTouchEnd, { passive: true });
-                window.addEventListener("touchcancel", onTouchEnd, { passive: true });
+                window.addEventListener("touchcancel", onTouchCancel, { passive: true });
                 window.addEventListener("keydown", onKeyDown);
+                window.addEventListener("scroll", onUnexpectedScrollRestore, { passive: true });
                 motionQuery.addEventListener("change", onMotionPreferenceChange);
             }
 
@@ -3538,8 +3698,6 @@
                 }
 
                 if (impressumButton && impressumModal && modalClose) {
-                    // Erst jetzt vom statischen Abschnitt in echten Modal-Dialog umwandeln
-                    impressumModal.classList.add("is-modal-ready");
                     impressumModal.setAttribute("role", "dialog");
                     impressumModal.setAttribute("aria-modal", "true");
                     impressumModal.setAttribute("aria-hidden", "true");
@@ -3564,6 +3722,12 @@
                     if (window.location.hash === "#impressumModal") {
                         openImpressumModal(impressumButton);
                     }
+
+                    window.requestAnimationFrame(() => {
+                        impressumModal.classList.add("transitions-ready");
+                    });
+                } else {
+                    docEl.classList.add("modal-failed");
                 }
 
                 document.addEventListener("keydown", (event) => {
@@ -3623,7 +3787,7 @@
             }
 
             /* =====================================================
-               3. COUNTDOWN (OHNE ERFUNDENE EVENT-ENDZEIT)
+               3. COUNTDOWN (OHNE DATUMSWIEDERHOLUNG & OHNE HÖHENSPRUNG)
             ===================================================== */
 
             function initCountdown() {
@@ -3634,24 +3798,40 @@
                 const secondsEl = document.getElementById("seconds");
                 const statusEl = document.getElementById("countdownStatus");
 
-                if (!sectionEl || !daysEl || !hoursEl || !minutesEl || !secondsEl || !statusEl) return;
+                if (!sectionEl || !daysEl || !hoursEl || !minutesEl || !secondsEl || !statusEl) {
+                    docEl.classList.add("countdown-failed");
+                    return;
+                }
 
                 const startTimeMs = new Date(EVENT_CONFIG.startIso).getTime();
                 const lastEntryMs = new Date(EVENT_CONFIG.lastEntryIso).getTime();
-                if (Number.isNaN(startTimeMs)) return;
+                if (Number.isNaN(startTimeMs)) {
+                    docEl.classList.add("countdown-failed");
+                    return;
+                }
 
                 const prevValues = {
                     days: "",
                     hours: "",
                     minutes: "",
                     seconds: "",
-                    status: statusEl.textContent
+                    status: ""
                 };
 
                 function setTextIfChanged(el, key, nextVal) {
                     if (prevValues[key] !== nextVal) {
                         prevValues[key] = nextVal;
                         el.textContent = nextVal;
+                    }
+                }
+
+                function setStatusMessage(message) {
+                    if (!message) {
+                        statusEl.hidden = true;
+                        setTextIfChanged(statusEl, "status", "");
+                    } else {
+                        statusEl.hidden = false;
+                        setTextIfChanged(statusEl, "status", message);
                     }
                 }
 
@@ -3669,22 +3849,17 @@
                         setTextIfChanged(minutesEl, "minutes", "00");
                         setTextIfChanged(secondsEl, "seconds", "00");
 
-                        if (!Number.isNaN(lastEntryMs) && now <= lastEntryMs) {
-                            setTextIfChanged(
-                                statusEl,
-                                "status",
-                                "Event gestartet (31. Oktober 2026, 18:00 Uhr · Einlass bis 20:00 Uhr)."
-                            );
-                            return true; // Weiterlaufen, bis Einlassschluss erreicht ist
+                        if (!Number.isNaN(lastEntryMs) && now < lastEntryMs) {
+                            setStatusMessage("Der Eventstart ist erreicht.");
+                            return true;
                         }
 
-                        setTextIfChanged(
-                            statusEl,
-                            "status",
-                            "Startzeit (31. Oktober 2026, 18:00 Uhr) und Einlassende (20:00 Uhr) sind erreicht."
-                        );
+                        setStatusMessage("Der letzte Einlass ist erreicht.");
                         return false;
                     }
+
+                    // Vor Veranstaltungsbeginn keine weitere Datums-/Uhrzeitzeile anzeigen
+                    setStatusMessage("");
 
                     const totalSeconds = Math.floor(difference / 1000);
                     const d = Math.floor(totalSeconds / 86400);
@@ -3701,8 +3876,6 @@
                 }
 
                 const shouldKeepRunning = updateCountdown();
-                sectionEl.classList.add("is-ready");
-
                 let intervalId = null;
 
                 if (shouldKeepRunning) {
@@ -3846,13 +4019,11 @@
             }
 
             /* =====================================================
-               5. SCROLL-EFFEKTE, REVEAL & BACK-TO-TOP
+               5. SCROLL-ZUSTÄNDE, SELEKTIVES REVEAL & BFCACHE-SCHUTZ
             ===================================================== */
 
             function initScrollAndReveal() {
                 let scrollTicking = false;
-                let lastHeroProgress = -1;
-                let isHeroVisible = true;
 
                 function updateScrollState() {
                     const y = Math.max(0, window.scrollY || window.pageYOffset || 0);
@@ -3864,18 +4035,15 @@
                     if (backTop) {
                         backTop.classList.toggle("visible", y > 600);
                     }
-
-                    if (heroInner && !reduceMotion && isHeroVisible && y <= 600) {
-                        const progress = Math.min(1, y / 500);
-                        if (Math.abs(progress - lastHeroProgress) > 0.004) {
-                            lastHeroProgress = progress;
-                            const offset = (progress * -24).toFixed(2);
-                            const opacity = (1 - progress * 0.14).toFixed(3);
-                            heroInner.style.transform = `translate3d(0, ${offset}px, 0)`;
-                            heroInner.style.opacity = opacity;
-                        }
-                    }
                 }
+
+                // Initialen Zustand sofort ohne Transition setzen
+                updateScrollState();
+
+                window.requestAnimationFrame(() => {
+                    if (header) header.classList.add("transitions-ready");
+                    if (backTop) backTop.classList.add("transitions-ready");
+                });
 
                 window.addEventListener(
                     "scroll",
@@ -3889,8 +4057,6 @@
                     },
                     { passive: true }
                 );
-
-                updateScrollState();
 
                 if (backTop) {
                     backTop.addEventListener("click", () => {
@@ -3908,7 +4074,6 @@
                     const heroObserver = new IntersectionObserver(
                         (entries) => {
                             entries.forEach((entry) => {
-                                isHeroVisible = entry.isIntersecting;
                                 heroSection.classList.toggle("is-offscreen", !entry.isIntersecting);
                             });
                         },
@@ -3917,21 +4082,56 @@
                     heroObserver.observe(heroSection);
                 }
 
+                // Selektives Reveal: Bereits sichtbare oder oberhalb liegende Elemente werden NIEMALS ausgeblendet
                 const revealElements = Array.from(document.querySelectorAll(".reveal"));
-                const showAllReveals = () => {
-                    revealElements.forEach((el) => el.classList.add("visible"));
-                };
+                let revealObserver = null;
 
-                if (reduceMotion || !("IntersectionObserver" in window)) {
-                    showAllReveals();
-                } else {
+                function revealAllImmediately() {
+                    if (revealObserver) {
+                        revealObserver.disconnect();
+                        revealObserver = null;
+                    }
+                    revealElements.forEach((el) => {
+                        el.classList.remove("reveal-pending", "reveal-animate");
+                    });
+                }
+
+                function setupSelectiveReveals() {
+                    if (reduceMotion || !("IntersectionObserver" in window)) {
+                        revealAllImmediately();
+                        return;
+                    }
+
+                    const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 800;
+                    const belowFoldElements = [];
+
+                    revealElements.forEach((el) => {
+                        const rect = el.getBoundingClientRect();
+                        // Nur Elemente vorbereiten, die noch deutlich unterhalb des aktuellen Sichtbereichs liegen
+                        if (rect.top > viewportHeight * 0.96) {
+                            el.classList.add("reveal-pending");
+                            belowFoldElements.push(el);
+                        } else {
+                            el.classList.remove("reveal-pending", "reveal-animate");
+                        }
+                    });
+
+                    if (belowFoldElements.length === 0) return;
+
+                    window.requestAnimationFrame(() => {
+                        belowFoldElements.forEach((el) => {
+                            if (el.classList.contains("reveal-pending")) {
+                                el.classList.add("reveal-animate");
+                            }
+                        });
+                    });
+
                     try {
-                        document.documentElement.classList.add("reveal-ready");
-                        const revealObserver = new IntersectionObserver(
+                        revealObserver = new IntersectionObserver(
                             (entries) => {
                                 entries.forEach((entry) => {
                                     if (entry.isIntersecting) {
-                                        entry.target.classList.add("visible");
+                                        entry.target.classList.remove("reveal-pending");
                                         revealObserver.unobserve(entry.target);
                                     }
                                 });
@@ -3942,30 +4142,70 @@
                             }
                         );
 
-                        revealElements.forEach((el) => revealObserver.observe(el));
+                        belowFoldElements.forEach((el) => revealObserver.observe(el));
                     } catch (_) {
-                        document.documentElement.classList.remove("reveal-ready");
-                        showAllReveals();
+                        revealAllImmediately();
                     }
                 }
 
+                setupSelectiveReveals();
+
+                // Falls der Browser bei Reload/Zurücknavigation die Scrollposition erst bei pageshow anwendet:
+                // Alle nun im Sichtfeld liegenden Elemente sofort ohne Animation sichtbar schalten.
+                window.addEventListener("pageshow", (event) => {
+                    updateScrollState();
+
+                    const vh = window.innerHeight || document.documentElement.clientHeight || 800;
+                    revealElements.forEach((el) => {
+                        if (el.classList.contains("reveal-pending")) {
+                            const rect = el.getBoundingClientRect();
+                            if (rect.top <= vh * 0.98) {
+                                el.classList.remove("reveal-pending", "reveal-animate");
+                                if (revealObserver) {
+                                    revealObserver.unobserve(el);
+                                }
+                            }
+                        }
+                    });
+
+                    if (event.persisted) {
+                        if (typeof abortIntroSafely === "function") {
+                            abortIntroSafely();
+                        }
+                        if (!isMenuOpen && !isModalOpen) {
+                            setElementInert(header, false);
+                            setElementInert(mainElement, false);
+                            setElementInert(footerElement, false);
+                            updateScrollbarCompensation(false);
+                        }
+                    }
+                });
+
                 motionQuery.addEventListener("change", (event) => {
                     if (event.matches) {
-                        showAllReveals();
-                        if (heroInner) {
-                            heroInner.style.transform = "";
-                            heroInner.style.opacity = "";
-                        }
+                        revealAllImmediately();
                     }
                 });
             }
 
             /* =====================================================
-               INITIALISIERUNG MIT FEHLERISOLIERUNG
+               INITIALISIERUNG MIT FEHLERISOLIERUNG & NOTFALL-FREIGABE
             ===================================================== */
 
+            try {
+                initIntro();
+            } catch (err) {
+                console.error("Intro-Initialisierungsfehler:", err);
+                docEl.classList.remove("intro-pending");
+                document.body.classList.remove("intro-active");
+                const introEl = document.getElementById("introScreen");
+                if (introEl) introEl.hidden = true;
+                setElementInert(header, false);
+                setElementInert(mainElement, false);
+                setElementInert(footerElement, false);
+            }
+
             const modules = [
-                initIntro,
                 initNavigationAndOverlays,
                 initCountdown,
                 initFaq,
