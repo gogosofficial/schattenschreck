@@ -224,7 +224,7 @@
                 background 0.25s ease,
                 border-color 0.25s ease,
                 box-shadow 0.25s ease,
-                opacity 0.25s ease;
+                opacity 0.35s ease;
         }
 
         .header.scrolled {
@@ -699,7 +699,7 @@
         }
 
         /* =========================================================
-           COUNTDOWN
+           COUNTDOWN (MIT KOMPONENTENSPEZIFISCHER READY-KLASSE)
         ========================================================= */
 
         .countdown-section {
@@ -740,10 +740,6 @@
             font-weight: 600;
         }
 
-        .js .countdown-fallback {
-            display: none;
-        }
-
         .countdown {
             display: none;
             grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -752,7 +748,11 @@
             border-bottom: 1px solid var(--border);
         }
 
-        .js .countdown {
+        .countdown-section.is-ready .countdown-fallback {
+            display: none;
+        }
+
+        .countdown-section.is-ready .countdown {
             display: grid;
         }
 
@@ -1416,10 +1416,10 @@
         }
 
         /* =========================================================
-           IMPRESSUM (STATIC FALLBACK WITHOUT JS + MODAL WITH JS)
+           IMPRESSUM (STATIC FALLBACK + MODAL WHEN INITIALIZED)
         ========================================================= */
 
-        /* Ohne JS: Als regulärer Abschnitt unter dem Footer sichtbar */
+        /* Ohne Dialog-Initialisierung: Regulärer, voll zugänglicher Abschnitt */
         .modal {
             padding: 0 0 60px;
             background: #070707;
@@ -1438,8 +1438,8 @@
             display: none;
         }
 
-        /* Mit JS: Als modales Overlay */
-        .js .modal {
+        /* Erst nach erfolgreicher JS-Dialog-Initialisierung (.is-modal-ready) */
+        .modal.is-modal-ready {
             position: fixed;
             inset: 0;
             z-index: 5000;
@@ -1458,13 +1458,13 @@
                 visibility 0.2s ease;
         }
 
-        .js .modal.open {
+        .modal.is-modal-ready.open {
             visibility: visible;
             opacity: 1;
             pointer-events: auto;
         }
 
-        .js .modal-content {
+        .modal.is-modal-ready .modal-content {
             width: min(760px, 100%);
             margin: 0;
             max-height: 88vh;
@@ -1475,11 +1475,11 @@
             transition: transform 0.25s ease;
         }
 
-        .js .modal.open .modal-content {
+        .modal.is-modal-ready.open .modal-content {
             transform: translateY(0);
         }
 
-        .js .modal-close {
+        .modal.is-modal-ready .modal-close {
             position: absolute;
             top: 18px;
             right: 18px;
@@ -1501,8 +1501,8 @@
                 background 0.2s ease;
         }
 
-        .js .modal-close:hover,
-        .js .modal-close:focus-visible {
+        .modal.is-modal-ready .modal-close:hover,
+        .modal.is-modal-ready .modal-close:focus-visible {
             color: var(--white);
             border-color: var(--border-strong);
             background: rgba(255, 255, 255, 0.08);
@@ -1598,10 +1598,20 @@
         }
 
         /* =========================================================
-           OPTIONAL CINEMATIC INTRO (ONLY WHEN ACTIVATED BY JS)
+           PROGRESS-DRIVEN CINEMATIC INTRO
         ========================================================= */
 
         .intro-screen {
+            --intro-bg-opacity: 1;
+            --intro-logo-scale: 1;
+            --intro-logo-y: 0px;
+            --intro-logo-opacity: 1;
+            --intro-glow-scale: 1;
+            --intro-glow-opacity: 0.65;
+            --intro-ui-opacity: 1;
+            --intro-ui-y: 0px;
+            --intro-progress: 0;
+
             position: fixed;
             inset: 0;
             z-index: 6000;
@@ -1610,22 +1620,32 @@
             align-items: center;
             justify-content: center;
             padding: 24px 20px calc(28px + env(safe-area-inset-bottom, 0px));
-            background: #050505;
             opacity: 0;
             visibility: hidden;
             pointer-events: none;
-            transition:
-                opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1),
-                visibility 0s linear 0.5s;
+            touch-action: none;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .intro-backdrop {
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(
+                    circle at 50% 44%,
+                    rgba(145, 6, 16, 0.16),
+                    rgba(5, 5, 5, 0.98) 62%
+                ),
+                #050505;
+            opacity: var(--intro-bg-opacity);
+            will-change: opacity;
         }
 
         body.intro-active .intro-screen {
             opacity: 1;
             visibility: visible;
             pointer-events: auto;
-            transition:
-                opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1),
-                visibility 0s linear 0s;
         }
 
         body.intro-active {
@@ -1637,12 +1657,27 @@
             pointer-events: none;
         }
 
+        .intro-stage {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 680px;
+        }
+
         .intro-logo-wrap {
             position: relative;
-            width: min(380px, 68vw);
+            width: min(440px, 76vw);
             display: grid;
             place-items: center;
-            margin-bottom: 36px;
+            margin-bottom: 38px;
+            opacity: var(--intro-logo-opacity);
+            transform: translate3d(0, var(--intro-logo-y), 0) scale(var(--intro-logo-scale));
+            transform-origin: center center;
+            will-change: transform, opacity;
         }
 
         .intro-logo-wrap::before {
@@ -1653,10 +1688,13 @@
             border-radius: 50%;
             background: radial-gradient(
                 circle,
-                rgba(160, 0, 14, 0.16),
-                transparent 64%
+                rgba(185, 8, 20, 0.24),
+                transparent 65%
             );
+            opacity: var(--intro-glow-opacity);
+            transform: scale(var(--intro-glow-scale));
             pointer-events: none;
+            will-change: transform, opacity;
         }
 
         .intro-logo {
@@ -1664,8 +1702,8 @@
             z-index: 1;
             width: 100%;
             height: auto;
-            filter: drop-shadow(0 18px 40px rgba(0, 0, 0, 0.8));
-            user-select: none;
+            filter: drop-shadow(0 20px 44px rgba(0, 0, 0, 0.88));
+            pointer-events: none;
         }
 
         .intro-title-fallback {
@@ -1686,34 +1724,28 @@
             flex-direction: column;
             align-items: center;
             gap: 14px;
+            width: min(280px, 82vw);
             text-align: center;
+            opacity: var(--intro-ui-opacity);
+            transform: translate3d(0, var(--intro-ui-y), 0);
+            will-change: transform, opacity;
         }
 
-        .intro-enter-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 48px;
-            padding: 0 28px;
-            border: 1px solid var(--border-strong);
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--white);
-            font-family: "Oswald", sans-serif;
-            font-size: 13px;
-            font-weight: 600;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition:
-                background 0.2s ease,
-                border-color 0.2s ease,
-                transform 0.2s ease;
+        .intro-progress-track {
+            position: relative;
+            width: 100%;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.14);
+            overflow: hidden;
         }
 
-        .intro-enter-btn:hover,
-        .intro-enter-btn:focus-visible {
-            background: var(--red);
-            border-color: var(--red-hover);
+        .intro-progress-fill {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--red), var(--red-hover));
+            transform: scaleX(var(--intro-progress));
+            transform-origin: left center;
+            will-change: transform;
         }
 
         .intro-hint {
@@ -1724,6 +1756,35 @@
             font-weight: 500;
             letter-spacing: 0.2em;
             text-transform: uppercase;
+        }
+
+        .intro-enter-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 44px;
+            margin-top: 4px;
+            padding: 0 22px;
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--muted);
+            font-family: "Oswald", sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition:
+                background 0.2s ease,
+                border-color 0.2s ease,
+                color 0.2s ease;
+        }
+
+        .intro-enter-btn:hover,
+        .intro-enter-btn:focus-visible {
+            background: var(--red);
+            border-color: var(--red-hover);
+            color: var(--white);
         }
 
         /* =========================================================
@@ -1767,7 +1828,7 @@
             }
         }
 
-        .js .reveal {
+        .reveal-ready .reveal {
             opacity: 0;
             transform: translate3d(0, 24px, 0);
             transition:
@@ -1775,20 +1836,20 @@
                 transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
         }
 
-        .js .reveal.visible {
+        .reveal-ready .reveal.visible {
             opacity: 1;
             transform: translate3d(0, 0, 0);
         }
 
-        .js .delay-1 {
+        .reveal-ready .delay-1 {
             transition-delay: 0.07s;
         }
 
-        .js .delay-2 {
+        .reveal-ready .delay-2 {
             transition-delay: 0.14s;
         }
 
-        .js .delay-3 {
+        .reveal-ready .delay-3 {
             transition-delay: 0.21s;
         }
 
@@ -2050,21 +2111,21 @@
                 width: 100%;
             }
 
-            .js .modal {
+            .modal.is-modal-ready {
                 padding:
                     14px
                     14px
                     calc(14px + env(safe-area-inset-bottom, 0px));
             }
 
-            .js .modal-content {
+            .modal.is-modal-ready .modal-content {
                 width: 100%;
                 max-height: 90vh;
                 max-height: 90dvh;
                 padding: 26px 20px;
             }
 
-            .js .modal-close {
+            .modal.is-modal-ready .modal-close {
                 top: 12px;
                 right: 12px;
             }
@@ -2091,7 +2152,7 @@
                 transition-duration: 0.01ms !important;
             }
 
-            .js .reveal {
+            .reveal-ready .reveal {
                 opacity: 1;
                 transform: none;
             }
@@ -2102,10 +2163,6 @@
             }
         }
     </style>
-
-    <script>
-        document.documentElement.classList.add("js");
-    </script>
 </head>
 
 <body>
@@ -2114,7 +2171,7 @@
     </a>
 
     <!-- =========================================================
-         OPTIONAL CINEMATIC INTRO (STANDARDMÄSSIG HIDDEN)
+         PROGRESS-DRIVEN CINEMATIC INTRO (STANDARDMÄSSIG HIDDEN)
     ========================================================= -->
     <div
         class="intro-screen"
@@ -2123,31 +2180,40 @@
         aria-label="Intro Schattenschreck"
         hidden
     >
-        <div class="intro-logo-wrap" id="introLogoWrap">
-            <img
-                class="intro-logo"
-                src="https://i.imgur.com/Cl27hzM.png"
-                alt="Schattenschreck"
-                width="390"
-                decoding="async"
-                onerror="this.classList.add('img-broken')"
-            >
-            <p class="img-fallback-text intro-title-fallback">
-                Schattenschreck
-            </p>
-        </div>
+        <div class="intro-backdrop" aria-hidden="true"></div>
 
-        <div class="intro-actions">
-            <button
-                type="button"
-                class="intro-enter-btn"
-                id="introSkipButton"
-            >
-                Direkt zur Website
-            </button>
-            <p class="intro-hint">
-                Oder scrollen zum Eintreten ↓
-            </p>
+        <div class="intro-stage">
+            <div class="intro-logo-wrap" id="introLogoWrap">
+                <img
+                    class="intro-logo"
+                    src="https://i.imgur.com/Cl27hzM.png"
+                    alt="Schattenschreck"
+                    width="390"
+                    decoding="async"
+                    onerror="this.classList.add('img-broken')"
+                >
+                <p class="img-fallback-text intro-title-fallback">
+                    Schattenschreck
+                </p>
+            </div>
+
+            <div class="intro-actions">
+                <div class="intro-progress-track" aria-hidden="true">
+                    <div class="intro-progress-fill"></div>
+                </div>
+
+                <p class="intro-hint">
+                    Nach unten scrollen oder wischen ↓
+                </p>
+
+                <button
+                    type="button"
+                    class="intro-enter-btn"
+                    id="introSkipButton"
+                >
+                    Intro überspringen
+                </button>
+            </div>
         </div>
     </div>
 
@@ -2295,7 +2361,7 @@
 
                         <div class="hero-badges" aria-label="Wichtige Kurzinfos">
                             <span class="hero-badge hero-badge-highlight">
-                                Eintritt kostenlos · Keine Besucheranmeldung nötig
+                                Eintritt kostenlos
                             </span>
                             <span class="hero-badge">
                                 Einlass <time datetime="18:00">18:00</time> – <time datetime="20:00">20:00</time> Uhr
@@ -2316,7 +2382,7 @@
                     </div>
                 </div>
 
-                <div class="countdown-section reveal">
+                <div class="countdown-section reveal" id="countdownSection">
                     <div class="countdown-header">
                         <div class="countdown-title">
                             Countdown bis zum Start
@@ -2396,7 +2462,7 @@
                         <dt class="quick-label">Eintritt</dt>
                         <dd class="quick-value">
                             Kostenlos
-                            <span class="quick-sub">Ohne Voranmeldung für Besucher</span>
+                            <span class="quick-sub">Freier Eintritt zum Event</span>
                         </dd>
                     </div>
                 </dl>
@@ -2556,8 +2622,7 @@
                                 <p>
                                     Schattenschreck ist ein inszeniertes Horror-Erlebnis.
                                     Dich erwarten Atmosphäre, Geschichte, Aufgaben und
-                                    Live-Erschrecker. Für den regulären Besuch ist keine
-                                    Anmeldung erforderlich.
+                                    Live-Erschrecker.
                                 </p>
                             </div>
                         </div>
@@ -2735,7 +2800,7 @@
                     </div>
 
                     <p class="application-text">
-                        Bewerbung ausschließlich für Live-Erschrecker (keine Besucheranmeldung).
+                        Bewerbung für Live-Erschrecker im Schattenschreck-Team.
                     </p>
                 </div>
 
@@ -2759,8 +2824,6 @@
                         href="#impressumModal"
                         class="footer-legal-link"
                         id="impressumButton"
-                        aria-haspopup="dialog"
-                        aria-controls="impressumModal"
                     >
                         Impressum
                     </a>
@@ -2770,15 +2833,12 @@
     </footer>
 
     <!-- =========================================================
-         IMPRESSUM (OHNE JS STATISCH SICHTBAR, MIT JS DIALOG)
+         IMPRESSUM (OHNE JS REGULÄRER ABSCHNITT, MIT JS DIALOG)
     ========================================================= -->
-    <div
+    <section
         class="modal"
         id="impressumModal"
-        role="dialog"
-        aria-modal="true"
         aria-labelledby="impressumTitle"
-        aria-hidden="true"
     >
         <div class="modal-content" id="impressumContent">
             <button
@@ -2860,7 +2920,7 @@
                 </p>
             </div>
         </div>
-    </div>
+    </section>
 
     <!-- =========================================================
          BACK TO TOP
@@ -2881,10 +2941,37 @@
         (function () {
             "use strict";
 
+            /* =====================================================
+               ZENTRALE KONFIGURATION (EVENT & INTRO-FEINABSTIMMUNG)
+            ===================================================== */
+
             const EVENT_CONFIG = {
                 startIso: "2026-10-31T18:00:00+01:00",
-                dayEndIso: "2026-11-01T04:00:00+01:00",
-                introSessionKey: "schattenschreck_intro_seen_2026"
+                lastEntryIso: "2026-10-31T20:00:00+01:00"
+            };
+
+            const INTRO_CONFIG = {
+                sessionKey: "schattenschreck_intro_seen_2026",
+                forceAlwaysShowInDev: false, // Auf true setzen, um das Intro beim Testen bei jedem Reload zu sehen
+
+                // Benötigte virtuelle Scrollstrecke (Mausrad / Trackpad) in normalisierten Pixeln
+                wheelDistancePx: 540,
+                maxSingleWheelStepPx: 115, // Begrenzt einzelne starke Mausrad-Spitzen
+
+                // Benötigte vertikale Wischstrecke auf Touchscreens (ca. 38% der Viewporthöhe, geklemmt auf 210–340px)
+                touchViewportRatio: 0.38,
+                minTouchDistancePx: 210,
+                maxTouchDistancePx: 340,
+
+                // Rückgleiten vs. automatisches Vollenden nach Finger-Loslassen (touchend)
+                touchCommitThreshold: 0.62,
+
+                // Animationsphasen (0.0 bis 1.0)
+                phaseLeadInEnd: 0.14,  // Bis 14%: ruhiger Anlauf
+                phaseCurtainEnd: 0.78, // 14% bis 78%: Logo-Bewegung & Vorhang-Aufhellung; ab 78%: finale Übergabe
+
+                // Glättung der Bewegung (höher = direkter, niedriger = weicher)
+                smoothingFactor: 0.16
             };
 
             const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -2897,18 +2984,30 @@
             const heroSection = document.getElementById("mainContent");
             const heroInner = document.getElementById("heroInner");
 
+            // Zentrale Synchronisierung von prefers-reduced-motion vor allen Modulen
+            motionQuery.addEventListener("change", (event) => {
+                reduceMotion = event.matches;
+            });
+
             /* =====================================================
                HILFSFUNKTIONEN FÜR SCROLL-LOCK & HINTERGRUND-INERT
             ===================================================== */
 
+            const supportsScrollbarGutter =
+                typeof CSS !== "undefined" &&
+                typeof CSS.supports === "function" &&
+                CSS.supports("scrollbar-gutter: stable");
+
             function updateScrollbarCompensation(lock) {
                 if (lock) {
-                    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-                    if (scrollbarWidth > 0) {
-                        document.documentElement.style.setProperty(
-                            "--modal-padding-compensation",
-                            `${scrollbarWidth}px`
-                        );
+                    if (!supportsScrollbarGutter) {
+                        const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+                        if (scrollbarWidth > 0) {
+                            document.documentElement.style.setProperty(
+                                "--modal-padding-compensation",
+                                `${scrollbarWidth}px`
+                            );
+                        }
                     }
                     document.body.classList.add("overlay-locked");
                 } else {
@@ -2937,8 +3036,25 @@
                 ).filter((el) => !el.hasAttribute("disabled") && el.offsetParent !== null);
             }
 
+            function clamp(value, min, max) {
+                return Math.min(max, Math.max(min, value));
+            }
+
+            function invLerp(a, b, v) {
+                if (a === b) return 0;
+                return clamp((v - a) / (b - a), 0, 1);
+            }
+
+            function easeOutCubic(t) {
+                return 1 - Math.pow(1 - t, 3);
+            }
+
+            function easeInOutQuad(t) {
+                return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+            }
+
             /* =====================================================
-               1. OPTIONALES CINEMATIC INTRO
+               1. FORTSCHRITTSBASIERTES CINEMATIC INTRO
             ===================================================== */
 
             function initIntro() {
@@ -2947,23 +3063,36 @@
                 if (!introScreen || !introSkipButton) return;
 
                 let hasSeenIntro = false;
-                try {
-                    hasSeenIntro = window.sessionStorage.getItem(EVENT_CONFIG.introSessionKey) === "1";
-                } catch (_) {
-                    hasSeenIntro = false;
+                if (!INTRO_CONFIG.forceAlwaysShowInDev) {
+                    try {
+                        hasSeenIntro = window.sessionStorage.getItem(INTRO_CONFIG.sessionKey) === "1";
+                    } catch (_) {
+                        hasSeenIntro = false;
+                    }
                 }
 
                 const hasHash = Boolean(window.location.hash && window.location.hash !== "#");
                 const isAlreadyScrolled = (window.scrollY || window.pageYOffset || 0) > 10;
 
-                if (reduceMotion || hasSeenIntro || hasHash || isAlreadyScrolled) {
+                // Direkte Hash-Links, bereits gescrollte Seiten und reduzierte Bewegung haben immer Vorrang
+                if (motionQuery.matches || hasSeenIntro || hasHash || isAlreadyScrolled) {
                     introScreen.hidden = true;
                     document.body.classList.remove("intro-active");
                     return;
                 }
 
-                let introActive = true;
-                let hideTimer = null;
+                // Zustände: "inactive" | "active" | "completing" | "completed"
+                let state = "active";
+                let targetProgress = 0;
+                let currentProgress = 0;
+                let rafId = null;
+
+                // Touch-Tracking-Variablen
+                let activeTouchId = null;
+                let touchStartX = 0;
+                let touchStartY = 0;
+                let touchStartProgress = 0;
+                let isHorizontalGesture = false;
 
                 introScreen.hidden = false;
                 document.body.classList.add("intro-active");
@@ -2971,86 +3100,284 @@
                 setElementInert(mainElement, true);
                 setElementInert(footerElement, true);
 
-                function dismissIntro(moveFocusToMain) {
-                    if (!introActive) return;
-                    introActive = false;
+                function getTouchFullDistancePx() {
+                    const vhDistance = window.innerHeight * INTRO_CONFIG.touchViewportRatio;
+                    return clamp(
+                        vhDistance,
+                        INTRO_CONFIG.minTouchDistancePx,
+                        INTRO_CONFIG.maxTouchDistancePx
+                    );
+                }
+
+                function applyVisualProgress(p) {
+                    const pLead = INTRO_CONFIG.phaseLeadInEnd;
+                    const pCurtain = INTRO_CONFIG.phaseCurtainEnd;
+
+                    const phase1 = invLerp(0, pLead, p);
+                    const phase2 = easeInOutQuad(invLerp(pLead, pCurtain, p));
+                    const phase3 = easeOutCubic(invLerp(pCurtain, 1, p));
+
+                    // Sanfte Skalierung von 1.00 -> 0.985 (Phase 1) -> 0.87 (Phase 2) -> 0.82 (Phase 3)
+                    const logoScale = 1 - (0.015 * phase1) - (0.115 * phase2) - (0.05 * phase3);
+                    const logoY = -(6 * phase1) - (38 * phase2) - (26 * phase3);
+                    const logoOpacity = 1 - (0.15 * phase2) - (0.85 * phase3);
+
+                    const glowScale = 1 + (0.12 * phase1) + (0.18 * phase2);
+                    const glowOpacity = 0.65 + (0.25 * phase1) - (0.55 * phase2) - (0.35 * phase3);
+
+                    // Der dunkle Hintergrund lässt ab Phase 2 bereits leicht den Hero durchscheinen
+                    const bgOpacity = 1 - (0.22 * phase2) - (0.78 * phase3);
+
+                    // Hinweis & Skip-Button treten während der Öffnung dezent zurück
+                    const uiFade = clamp(invLerp(0.05, 0.58, p), 0, 1);
+                    const uiOpacity = 1 - uiFade;
+                    const uiY = 14 * uiFade;
+
+                    introScreen.style.setProperty("--intro-progress", p.toFixed(4));
+                    introScreen.style.setProperty("--intro-logo-scale", logoScale.toFixed(4));
+                    introScreen.style.setProperty("--intro-logo-y", `${logoY.toFixed(2)}px`);
+                    introScreen.style.setProperty("--intro-logo-opacity", clamp(logoOpacity, 0, 1).toFixed(4));
+                    introScreen.style.setProperty("--intro-glow-scale", glowScale.toFixed(4));
+                    introScreen.style.setProperty("--intro-glow-opacity", clamp(glowOpacity, 0, 1).toFixed(4));
+                    introScreen.style.setProperty("--intro-bg-opacity", clamp(bgOpacity, 0, 1).toFixed(4));
+                    introScreen.style.setProperty("--intro-ui-opacity", uiOpacity.toFixed(4));
+                    introScreen.style.setProperty("--intro-ui-y", `${uiY.toFixed(2)}px`);
+                }
+
+                function ensureAnimationLoop() {
+                    if (rafId !== null || state === "completed") return;
+                    rafId = window.requestAnimationFrame(stepAnimation);
+                }
+
+                function stepAnimation() {
+                    rafId = null;
+                    if (state === "completed") return;
+
+                    const diff = targetProgress - currentProgress;
+                    if (Math.abs(diff) > 0.0015) {
+                        currentProgress += diff * INTRO_CONFIG.smoothingFactor;
+                    } else {
+                        currentProgress = targetProgress;
+                    }
+
+                    applyVisualProgress(currentProgress);
+
+                    if (targetProgress >= 1 && currentProgress >= 0.992) {
+                        completeIntro(false);
+                        return;
+                    }
+
+                    if (Math.abs(targetProgress - currentProgress) > 0.0015 || state === "completing") {
+                        ensureAnimationLoop();
+                    }
+                }
+
+                function cleanupIntroListeners() {
+                    window.removeEventListener("wheel", onWheel);
+                    window.removeEventListener("touchstart", onTouchStart);
+                    window.removeEventListener("touchmove", onTouchMove);
+                    window.removeEventListener("touchend", onTouchEnd);
+                    window.removeEventListener("touchcancel", onTouchEnd);
+                    window.removeEventListener("keydown", onKeyDown);
+                    motionQuery.removeEventListener("change", onMotionPreferenceChange);
+                }
+
+                function completeIntro(moveFocusToHero) {
+                    if (state === "completed") return;
+                    state = "completed";
+
+                    if (rafId !== null) {
+                        window.cancelAnimationFrame(rafId);
+                        rafId = null;
+                    }
+
+                    cleanupIntroListeners();
 
                     try {
-                        window.sessionStorage.setItem(EVENT_CONFIG.introSessionKey, "1");
+                        window.sessionStorage.setItem(INTRO_CONFIG.sessionKey, "1");
                     } catch (_) {
                         // SessionStorage optional
                     }
 
-                    window.removeEventListener("wheel", onWheelIntent);
-                    window.removeEventListener("touchmove", onTouchIntent);
-                    window.removeEventListener("keydown", onKeyIntent);
+                    const focusWasInsideIntro = introScreen.contains(document.activeElement);
 
                     document.body.classList.remove("intro-active");
                     setElementInert(header, false);
                     setElementInert(mainElement, false);
                     setElementInert(footerElement, false);
+                    introScreen.hidden = true;
 
-                    if (moveFocusToMain && heroSection) {
+                    // Sicherstellen, dass die Hauptseite exakt am oberen Rand beginnt
+                    if ((window.scrollY || window.pageYOffset || 0) > 0) {
+                        window.scrollTo(0, 0);
+                    }
+
+                    if ((moveFocusToHero || focusWasInsideIntro) && heroSection) {
                         heroSection.focus({ preventScroll: true });
                     }
+                }
 
-                    const finalizeHide = () => {
-                        introScreen.hidden = true;
-                    };
+                function normalizeWheelDelta(event) {
+                    let deltaY = event.deltaY;
+                    if (event.deltaMode === 1) {
+                        // DOM_DELTA_LINE
+                        deltaY *= 24;
+                    } else if (event.deltaMode === 2) {
+                        // DOM_DELTA_PAGE
+                        deltaY *= window.innerHeight * 0.85;
+                    }
+                    return clamp(
+                        deltaY,
+                        -INTRO_CONFIG.maxSingleWheelStepPx,
+                        INTRO_CONFIG.maxSingleWheelStepPx
+                    );
+                }
 
-                    if (reduceMotion) {
-                        finalizeHide();
+                function onWheel(event) {
+                    if (state !== "active") return;
+                    // Browser-Zoom (Strg/Cmd + Mausrad) ignorieren
+                    if (event.ctrlKey || event.metaKey) return;
+
+                    // Überwiegend horizontales Trackpad-Wischen ignorieren
+                    if (Math.abs(event.deltaX) > Math.abs(event.deltaY) * 1.3) return;
+
+                    const deltaPx = normalizeWheelDelta(event);
+                    if (Math.abs(deltaPx) < 0.5) return;
+
+                    targetProgress = clamp(
+                        targetProgress + deltaPx / INTRO_CONFIG.wheelDistancePx,
+                        0,
+                        1
+                    );
+
+                    if (targetProgress >= 1) {
+                        state = "completing";
+                    }
+
+                    ensureAnimationLoop();
+                }
+
+                function onTouchStart(event) {
+                    if (state !== "active") return;
+
+                    // Mehrfinger-Gesten (z. B. Pinch-Zoom) nicht als Intro-Wisch werten
+                    if (event.touches.length !== 1) {
+                        activeTouchId = null;
+                        return;
+                    }
+
+                    const touch = event.touches[0];
+                    activeTouchId = touch.identifier;
+                    touchStartX = touch.clientX;
+                    touchStartY = touch.clientY;
+                    touchStartProgress = targetProgress;
+                    isHorizontalGesture = false;
+                }
+
+                function onTouchMove(event) {
+                    if (state !== "active" || activeTouchId === null) return;
+                    if (event.touches.length !== 1) return;
+
+                    const touch = event.touches[0];
+                    if (touch.identifier !== activeTouchId) return;
+
+                    const deltaX = touchStartX - touch.clientX;
+                    const deltaY = touchStartY - touch.clientY; // Positiv, wenn Finger nach oben wischt (Inhalt nach unten scrollt)
+
+                    if (!isHorizontalGesture && Math.abs(deltaX) > Math.abs(deltaY) * 1.25 && Math.abs(deltaX) > 12) {
+                        isHorizontalGesture = true;
+                    }
+                    if (isHorizontalGesture) return;
+
+                    const fullDistance = getTouchFullDistancePx();
+                    targetProgress = clamp(
+                        touchStartProgress + deltaY / fullDistance,
+                        0,
+                        1
+                    );
+
+                    if (targetProgress >= 1) {
+                        state = "completing";
+                    }
+
+                    ensureAnimationLoop();
+                }
+
+                function onTouchEnd(event) {
+                    if (activeTouchId === null) return;
+
+                    const endedTouch = Array.from(event.changedTouches || []).find(
+                        (t) => t.identifier === activeTouchId
+                    );
+                    if (!endedTouch && event.touches && event.touches.length > 0) return;
+
+                    activeTouchId = null;
+                    if (state !== "active") return;
+
+                    // Sanftes Einrasten nach dem Loslassen
+                    if (targetProgress >= INTRO_CONFIG.touchCommitThreshold) {
+                        targetProgress = 1;
+                        state = "completing";
                     } else {
-                        hideTimer = window.setTimeout(finalizeHide, 520);
+                        targetProgress = 0;
                     }
+                    ensureAnimationLoop();
                 }
 
-                function onWheelIntent(event) {
-                    if (event.deltaY > 4) {
-                        dismissIntro(false);
-                    }
-                }
+                function onKeyDown(event) {
+                    if (state !== "active" && state !== "completing") return;
 
-                function onTouchIntent() {
-                    dismissIntro(false);
-                }
-
-                function onKeyIntent(event) {
-                    if (
-                        event.key === "Escape" ||
-                        event.key === "ArrowDown" ||
-                        event.key === "PageDown" ||
-                        event.key === " "
-                    ) {
+                    if (event.key === "Escape") {
                         event.preventDefault();
-                        dismissIntro(true);
-                    } else if (event.key === "Tab") {
+                        completeIntro(true);
+                        return;
+                    }
+
+                    if (event.key === "Tab") {
                         event.preventDefault();
                         introSkipButton.focus();
+                        return;
+                    }
+
+                    if (event.key === "ArrowDown" || event.key === "PageDown" || event.key === " ") {
+                        if (document.activeElement === introSkipButton && event.key === " ") {
+                            // Leertaste auf dem fokussierten Skip-Button löst dessen Klick aus
+                            return;
+                        }
+                        event.preventDefault();
+                        const step = event.key === "ArrowDown" ? 0.28 : 0.55;
+                        targetProgress = clamp(targetProgress + step, 0, 1);
+                        if (targetProgress >= 1) {
+                            state = "completing";
+                        }
+                        ensureAnimationLoop();
+                    } else if (event.key === "ArrowUp" || event.key === "PageUp") {
+                        event.preventDefault();
+                        targetProgress = clamp(targetProgress - 0.28, 0, 1);
+                        ensureAnimationLoop();
                     }
                 }
 
+                function onMotionPreferenceChange(event) {
+                    if (event.matches && state !== "completed") {
+                        completeIntro(false);
+                    }
+                }
+
+                // Bewusster Button-Klick überspringt das Intro sofort und verschiebt Fokus sinnvoll
                 introSkipButton.addEventListener("click", () => {
-                    dismissIntro(true);
+                    completeIntro(true);
                 });
 
-                introScreen.addEventListener("click", (event) => {
-                    if (event.target === introScreen) {
-                        dismissIntro(false);
-                    }
-                });
+                applyVisualProgress(0);
 
-                window.addEventListener("wheel", onWheelIntent, { passive: true });
-                window.addEventListener("touchmove", onTouchIntent, { passive: true });
-                window.addEventListener("keydown", onKeyIntent);
-
-                // Falls während der Sitzung prefers-reduced-motion aktiviert wird
-                motionQuery.addEventListener("change", (e) => {
-                    if (e.matches && introActive) {
-                        if (hideTimer) window.clearTimeout(hideTimer);
-                        dismissIntro(false);
-                    }
-                });
+                window.addEventListener("wheel", onWheel, { passive: true });
+                window.addEventListener("touchstart", onTouchStart, { passive: true });
+                window.addEventListener("touchmove", onTouchMove, { passive: true });
+                window.addEventListener("touchend", onTouchEnd, { passive: true });
+                window.addEventListener("touchcancel", onTouchEnd, { passive: true });
+                window.addEventListener("keydown", onKeyDown);
+                motionQuery.addEventListener("change", onMotionPreferenceChange);
             }
 
             /* =====================================================
@@ -3211,6 +3538,14 @@
                 }
 
                 if (impressumButton && impressumModal && modalClose) {
+                    // Erst jetzt vom statischen Abschnitt in echten Modal-Dialog umwandeln
+                    impressumModal.classList.add("is-modal-ready");
+                    impressumModal.setAttribute("role", "dialog");
+                    impressumModal.setAttribute("aria-modal", "true");
+                    impressumModal.setAttribute("aria-hidden", "true");
+                    impressumButton.setAttribute("aria-haspopup", "dialog");
+                    impressumButton.setAttribute("aria-controls", "impressumModal");
+
                     impressumButton.addEventListener("click", (event) => {
                         event.preventDefault();
                         openImpressumModal(impressumButton);
@@ -3226,13 +3561,11 @@
                         }
                     });
 
-                    // Falls Seite direkt mit #impressumModal aufgerufen wird
                     if (window.location.hash === "#impressumModal") {
                         openImpressumModal(impressumButton);
                     }
                 }
 
-                // Globale Tastatursteuerung für Overlays (Escape & Fokusfalle)
                 document.addEventListener("keydown", (event) => {
                     if (event.key === "Escape") {
                         if (isModalOpen) {
@@ -3290,20 +3623,21 @@
             }
 
             /* =====================================================
-               3. COUNTDOWN (ROBUST, TAB-SYNC, SPARSAME DOM-UPDATES)
+               3. COUNTDOWN (OHNE ERFUNDENE EVENT-ENDZEIT)
             ===================================================== */
 
             function initCountdown() {
+                const sectionEl = document.getElementById("countdownSection");
                 const daysEl = document.getElementById("days");
                 const hoursEl = document.getElementById("hours");
                 const minutesEl = document.getElementById("minutes");
                 const secondsEl = document.getElementById("seconds");
                 const statusEl = document.getElementById("countdownStatus");
 
-                if (!daysEl || !hoursEl || !minutesEl || !secondsEl || !statusEl) return;
+                if (!sectionEl || !daysEl || !hoursEl || !minutesEl || !secondsEl || !statusEl) return;
 
                 const startTimeMs = new Date(EVENT_CONFIG.startIso).getTime();
-                const dayEndMs = new Date(EVENT_CONFIG.dayEndIso).getTime();
+                const lastEntryMs = new Date(EVENT_CONFIG.lastEntryIso).getTime();
                 if (Number.isNaN(startTimeMs)) return;
 
                 const prevValues = {
@@ -3335,20 +3669,20 @@
                         setTextIfChanged(minutesEl, "minutes", "00");
                         setTextIfChanged(secondsEl, "seconds", "00");
 
-                        if (now < dayEndMs) {
+                        if (!Number.isNaN(lastEntryMs) && now <= lastEntryMs) {
                             setTextIfChanged(
                                 statusEl,
                                 "status",
-                                "Startzeit erreicht (31. Oktober 2026, 18:00 Uhr · Einlass bis 20:00 Uhr)."
+                                "Event gestartet (31. Oktober 2026, 18:00 Uhr · Einlass bis 20:00 Uhr)."
                             );
-                        } else {
-                            setTextIfChanged(
-                                statusEl,
-                                "status",
-                                "Das Event am 31. Oktober 2026 hat bereits stattgefunden."
-                            );
+                            return true; // Weiterlaufen, bis Einlassschluss erreicht ist
                         }
 
+                        setTextIfChanged(
+                            statusEl,
+                            "status",
+                            "Startzeit (31. Oktober 2026, 18:00 Uhr) und Einlassende (20:00 Uhr) sind erreicht."
+                        );
                         return false;
                     }
 
@@ -3367,6 +3701,8 @@
                 }
 
                 const shouldKeepRunning = updateCountdown();
+                sectionEl.classList.add("is-ready");
+
                 let intervalId = null;
 
                 if (shouldKeepRunning) {
@@ -3389,12 +3725,92 @@
             }
 
             /* =====================================================
-               4. FAQ ACCORDION (PROGRESSIVE ENHANCEMENT AUF DETAILS)
+               4. FAQ ACCORDION (ZENTRAL KOORDINIERTE ANIMATIONEN)
             ===================================================== */
 
             function initFaq() {
                 const faqItems = Array.from(document.querySelectorAll(".faq-item"));
                 if (faqItems.length === 0) return;
+
+                const controllers = new Map();
+
+                function cancelItemAnimation(details) {
+                    const ctrl = controllers.get(details);
+                    if (ctrl && ctrl.animation) {
+                        ctrl.animation.onfinish = null;
+                        ctrl.animation.oncancel = null;
+                        ctrl.animation.cancel();
+                        ctrl.animation = null;
+                    }
+                    if (ctrl && ctrl.answer) {
+                        ctrl.answer.style.height = "";
+                    }
+                }
+
+                function closeDetailsItem(details, animate) {
+                    const ctrl = controllers.get(details);
+                    if (!ctrl || !details.open) return;
+
+                    cancelItemAnimation(details);
+
+                    if (!animate || reduceMotion || typeof ctrl.answer.animate !== "function") {
+                        details.open = false;
+                        return;
+                    }
+
+                    const startHeight = `${ctrl.answer.offsetHeight}px`;
+                    const anim = ctrl.answer.animate(
+                        [{ height: startHeight }, { height: "0px" }],
+                        { duration: 220, easing: "cubic-bezier(0.22, 1, 0.36, 1)" }
+                    );
+                    ctrl.animation = anim;
+
+                    anim.onfinish = () => {
+                        if (ctrl.animation !== anim) return;
+                        ctrl.animation = null;
+                        details.open = false;
+                        ctrl.answer.style.height = "";
+                    };
+
+                    anim.oncancel = () => {
+                        if (ctrl.animation === anim) {
+                            ctrl.animation = null;
+                        }
+                        ctrl.answer.style.height = "";
+                    };
+                }
+
+                function openDetailsItem(details, animate) {
+                    const ctrl = controllers.get(details);
+                    if (!ctrl) return;
+
+                    cancelItemAnimation(details);
+                    details.open = true;
+
+                    if (!animate || reduceMotion || typeof ctrl.answer.animate !== "function") {
+                        return;
+                    }
+
+                    const endHeight = `${ctrl.inner.offsetHeight}px`;
+                    const anim = ctrl.answer.animate(
+                        [{ height: "0px" }, { height: endHeight }],
+                        { duration: 250, easing: "cubic-bezier(0.22, 1, 0.36, 1)" }
+                    );
+                    ctrl.animation = anim;
+
+                    anim.onfinish = () => {
+                        if (ctrl.animation !== anim) return;
+                        ctrl.animation = null;
+                        ctrl.answer.style.height = "";
+                    };
+
+                    anim.oncancel = () => {
+                        if (ctrl.animation === anim) {
+                            ctrl.animation = null;
+                        }
+                        ctrl.answer.style.height = "";
+                    };
+                }
 
                 faqItems.forEach((details) => {
                     const summary = details.querySelector(".faq-question");
@@ -3402,54 +3818,28 @@
                     const inner = details.querySelector(".faq-answer-inner");
                     if (!summary || !answer || !inner) return;
 
-                    let currentAnimation = null;
+                    controllers.set(details, {
+                        summary,
+                        answer,
+                        inner,
+                        animation: null
+                    });
 
                     summary.addEventListener("click", (event) => {
-                        if (reduceMotion || typeof answer.animate !== "function") {
-                            // Ohne Animationswunsch nur andere offene Elemente schließen
-                            if (!details.open) {
-                                faqItems.forEach((other) => {
-                                    if (other !== details && other.open) {
-                                        other.open = false;
-                                    }
-                                });
-                            }
-                            return;
-                        }
-
                         event.preventDefault();
 
-                        if (currentAnimation) {
-                            currentAnimation.cancel();
-                        }
+                        const ctrl = controllers.get(details);
+                        const isCurrentlyClosing = Boolean(ctrl && ctrl.animation && details.open);
 
-                        if (details.open) {
-                            const startHeight = `${answer.offsetHeight}px`;
-                            currentAnimation = answer.animate(
-                                [{ height: startHeight }, { height: "0px" }],
-                                { duration: 240, easing: "cubic-bezier(0.22, 1, 0.36, 1)" }
-                            );
-                            currentAnimation.onfinish = () => {
-                                details.open = false;
-                                currentAnimation = null;
-                            };
+                        if (details.open && !isCurrentlyClosing) {
+                            closeDetailsItem(details, true);
                         } else {
-                            // Andere geöffnete FAQ-Einträge schließen
                             faqItems.forEach((other) => {
                                 if (other !== details && other.open) {
-                                    other.open = false;
+                                    closeDetailsItem(other, true);
                                 }
                             });
-
-                            details.open = true;
-                            const endHeight = `${inner.offsetHeight}px`;
-                            currentAnimation = answer.animate(
-                                [{ height: "0px" }, { height: endHeight }],
-                                { duration: 260, easing: "cubic-bezier(0.22, 1, 0.36, 1)" }
-                            );
-                            currentAnimation.onfinish = () => {
-                                currentAnimation = null;
-                            };
+                            openDetailsItem(details, true);
                         }
                     });
                 });
@@ -3514,7 +3904,6 @@
                     });
                 }
 
-                // Pausiere Hero-Daueranimationen außerhalb des Viewports
                 if ("IntersectionObserver" in window && heroSection) {
                     const heroObserver = new IntersectionObserver(
                         (entries) => {
@@ -3528,7 +3917,6 @@
                     heroObserver.observe(heroSection);
                 }
 
-                // Reveal-Animationen mit sicherem Fallback
                 const revealElements = Array.from(document.querySelectorAll(".reveal"));
                 const showAllReveals = () => {
                     revealElements.forEach((el) => el.classList.add("visible"));
@@ -3538,6 +3926,7 @@
                     showAllReveals();
                 } else {
                     try {
+                        document.documentElement.classList.add("reveal-ready");
                         const revealObserver = new IntersectionObserver(
                             (entries) => {
                                 entries.forEach((entry) => {
@@ -3555,14 +3944,13 @@
 
                         revealElements.forEach((el) => revealObserver.observe(el));
                     } catch (_) {
+                        document.documentElement.classList.remove("reveal-ready");
                         showAllReveals();
                     }
                 }
 
-                // Live-Reaktion auf geänderte Systemeinstellung für reduzierte Bewegung
                 motionQuery.addEventListener("change", (event) => {
-                    reduceMotion = event.matches;
-                    if (reduceMotion) {
+                    if (event.matches) {
                         showAllReveals();
                         if (heroInner) {
                             heroInner.style.transform = "";
