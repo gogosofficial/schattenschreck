@@ -2387,7 +2387,8 @@
             touch-action: pan-y;
         }
 
-        /* Lade-Indikator: sichtbar, solange das Bild weder geladen noch fehlerhaft ist */
+        /* Lade-Indikator: nur sichtbar, solange die Bühne die Klasse .stage-busy trägt
+           (per JS gesetzt, solange ein Bild lädt; kein :has() nötig) */
         .gallery-stage::before {
             content: "Bild wird geladen …";
             position: absolute;
@@ -2402,15 +2403,13 @@
             text-transform: uppercase;
             color: var(--muted);
             pointer-events: none;
-            opacity: 1;
+            opacity: 0;
             transition: opacity 0.2s ease;
-            animation: galleryLoadingPulse 1.6s ease-in-out infinite;
         }
 
-        .gallery-stage:has(img.is-loaded)::before,
-        .gallery-stage:has(img.img-broken)::before {
-            opacity: 0;
-            animation: none;
+        .gallery-stage.stage-busy::before {
+            opacity: 1;
+            animation: galleryLoadingPulse 1.6s ease-in-out infinite;
         }
 
         @keyframes galleryLoadingPulse {
@@ -2419,7 +2418,7 @@
         }
 
         @media (prefers-reduced-motion: reduce) {
-            .gallery-stage::before {
+            .gallery-stage.stage-busy::before {
                 animation: none;
             }
         }
@@ -2704,6 +2703,25 @@
             }
         }
         /* === HIER WIEDER ENTFERNEN (ENDE DANKSAGUNG CSS) === */
+    
+        /* Keine Tipp-Verzögerung auf Touch-Geräten */
+        button,
+        a,
+        [data-gallery-open] {
+            touch-action: manipulation;
+        }
+
+        /* Kompaktere Abstände auf kleinen Smartphones */
+        @media (max-width: 520px) {
+            .section {
+                padding: 56px 0;
+            }
+
+            .quick-info,
+            .whatsapp-section {
+                padding-bottom: 56px;
+            }
+        }
     </style>
 </head>
 
@@ -3554,7 +3572,6 @@
                     alt=""
                     decoding="async"
                     draggable="false"
-                    onerror="this.classList.add('img-broken')"
                 >
                 <span class="img-fallback-text">Bild konnte nicht geladen werden</span>
             </div>
@@ -4337,10 +4354,17 @@
                     // Dasselbe Bild ist bereits geladen → direkt sichtbar lassen (kein schwarzes Bild)
                     galleryImageEl.classList.remove("img-broken");
                     galleryImageEl.classList.add("is-loaded");
+                    if (galleryStageEl) galleryStageEl.classList.remove("stage-busy");
                 } else {
                     galleryImageEl.classList.remove("img-broken", "is-loaded");
+                    if (galleryStageEl) galleryStageEl.classList.add("stage-busy");
                     galleryImageEl.onload = () => {
                         galleryImageEl.classList.add("is-loaded");
+                        if (galleryStageEl) galleryStageEl.classList.remove("stage-busy");
+                    };
+                    galleryImageEl.onerror = () => {
+                        galleryImageEl.classList.add("img-broken");
+                        if (galleryStageEl) galleryStageEl.classList.remove("stage-busy");
                     };
                     galleryImageEl.src = url;
                 }
@@ -4357,9 +4381,7 @@
 
                 // Nächstes Bild leise vorladen, damit das Durchschalten ohne Wartezeit klappt
                 if (total > 1) {
-                    const preloadNext = new Image();
-                    preloadNext.decoding = "async";
-                    preloadNext.src = data.images[(galleryIndex + 1) % total];
+                    preloadImage(data.images[(galleryIndex + 1) % total]);
                 }
             }
 
@@ -4380,6 +4402,23 @@
                 }
 
                 showGalleryImage(index || 0);
+            }
+
+            /* ---- Preload-Helfer (gemeinsamer Scope für Galerie & Jahres-Preload) ---- */
+            const preloadCache = new Map();
+
+            function canPreload() {
+                // Datensparmodus respektieren
+                const conn = navigator.connection;
+                return !(conn && conn.saveData);
+            }
+
+            function preloadImage(url) {
+                if (!url || preloadCache.has(url)) return;
+                const img = new Image();
+                img.decoding = "async";
+                img.src = url;
+                preloadCache.set(url, img);
             }
 
             // Lädt die weiteren Bilder eines Jahres sukzessive im Hintergrund,
@@ -4698,26 +4737,10 @@
                     galleryModal.classList.add("transitions-ready");
                 });
 
-                /* ---- Preloading: sparsam & bedarfsgesteuert ---- */
-                // Nach dem Seitenaufbau wird nur das erste Bild von 2026 vorgeladen.
-                // Alle weiteren Bilder eines Jahres folgen erst, wenn die Galerie
-                // geöffnet oder das Jahr angeklickt wird (siehe selectGalleryYear).
-                const preloadCache = new Map();
-
-                function canPreload() {
-                    // Datensparmodus respektieren
-                    const conn = navigator.connection;
-                    return !(conn && conn.saveData);
-                }
-
-                function preloadImage(url) {
-                    if (!url || preloadCache.has(url)) return;
-                    const img = new Image();
-                    img.decoding = "async";
-                    img.src = url;
-                    preloadCache.set(url, img);
-                }
-
+                /* ---- Preloading beim Seitenstart: nur das erste Bild von 2026 ----
+                   Alle weiteren Bilder folgen erst beim Öffnen der Galerie bzw.
+                   Jahreswechsel (siehe preloadGalleryYear). Die Helfer preloadCache,
+                   canPreload und preloadImage liegen im äußeren Scope. */
                 function startInitialPreload() {
                     if (!canPreload()) return;
                     const first = GALLERY_DATA["2026"];
