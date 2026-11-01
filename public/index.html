@@ -2313,6 +2313,421 @@
                 transform: none;
             }
         }
+
+        /* =========================================================
+           GALERIE (SEKTION + OVERLAY) – dauerhaft
+        ========================================================= */
+
+        /* Ohne JavaScript ist die Galerie nicht bedienbar → komplett ausblenden */
+        html:not(.js-enabled) .gallery-section,
+        html:not(.js-enabled) #galleryModal,
+        html.modal-failed #galleryModal {
+            display: none;
+        }
+
+        .gallery-section {
+            padding: 0;
+        }
+
+        .gallery-card {
+            position: relative;
+            padding: clamp(28px, 5vw, 56px);
+            border: 1px solid var(--border);
+            background: linear-gradient(120deg, #111111, #0c0c0c);
+            overflow: hidden;
+            isolation: isolate;
+        }
+
+        .gallery-card::after {
+            content: "";
+            position: absolute;
+            right: -110px;
+            top: -150px;
+            width: 380px;
+            height: 380px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(150, 0, 12, 0.12), transparent 68%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .gallery-card-badge {
+            margin-bottom: 22px;
+        }
+
+        .gallery-card-title {
+            margin: 0;
+            color: var(--white);
+            font-family: var(--font-display);
+            font-size: clamp(34px, 5.4vw, 60px);
+            font-weight: 600;
+            line-height: 1;
+            letter-spacing: -0.01em;
+            text-transform: uppercase;
+        }
+
+        .gallery-card-text {
+            max-width: 640px;
+            margin: 18px 0 0;
+            color: var(--muted);
+            font-size: 15px;
+            line-height: 1.75;
+        }
+
+        .gallery-card-actions {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 14px 18px;
+            margin-top: 30px;
+        }
+
+        .gallery-year-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .gallery-year-buttons .secondary-button {
+            padding: 0 18px;
+            cursor: pointer;
+        }
+
+        /* Galerie-Overlay (nutzt die bestehende .modal-Basis des Impressums) */
+        html.js-enabled:not(.modal-failed) #galleryModal .modal-content {
+            width: min(920px, 100%);
+        }
+
+        .gallery-modal-title {
+            margin-bottom: 20px;
+        }
+
+        .gallery-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .gallery-tab {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 44px;
+            padding: 0 18px;
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.02);
+            color: var(--text);
+            font-family: var(--font-display);
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition:
+                border-color 0.2s ease,
+                background 0.2s ease,
+                color 0.2s ease;
+        }
+
+        .gallery-tab:hover,
+        .gallery-tab:focus-visible {
+            border-color: var(--border-strong);
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--white);
+        }
+
+        .gallery-tab.is-active {
+            border-color: var(--red-border);
+            background: rgba(178, 8, 18, 0.18);
+            color: var(--white);
+        }
+
+        .gallery-note {
+            margin-top: 14px;
+        }
+
+        .gallery-stage {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 10;
+            max-height: 56vh;
+            max-height: 56dvh;
+            margin-top: 20px;
+            background: #090909;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            touch-action: pan-y;
+        }
+
+        .gallery-stage img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            max-width: none;
+            object-fit: contain;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+
+        .gallery-stage img.is-loaded {
+            opacity: 1;
+        }
+
+        .gallery-stage .img-fallback-text {
+            position: absolute;
+            inset: 0;
+            padding: 20px;
+            text-align: center;
+            font-size: 14px;
+            letter-spacing: 0.08em;
+            color: var(--muted);
+        }
+
+        .gallery-controls {
+            display: grid;
+            grid-template-columns: auto minmax(0, 1fr) auto;
+            align-items: center;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .gallery-nav-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 48px;
+            padding: 0 20px;
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.02);
+            color: var(--text);
+            font-family: var(--font-display);
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            white-space: nowrap;
+            cursor: pointer;
+            transition:
+                border-color 0.2s ease,
+                background 0.2s ease,
+                color 0.2s ease;
+        }
+
+        .gallery-nav-button:hover,
+        .gallery-nav-button:focus-visible {
+            border-color: var(--border-strong);
+            background: rgba(255, 255, 255, 0.07);
+            color: var(--white);
+        }
+
+        .gallery-counter {
+            min-width: 0;
+            text-align: center;
+            color: var(--muted);
+            font-family: var(--font-display);
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+        }
+
+        .gallery-counter-num {
+            color: var(--white);
+        }
+
+        .gallery-counter-year::before {
+            content: " · ";
+        }
+
+        .gallery-actions {
+            display: flex;
+            justify-content: center;
+            margin-top: 14px;
+        }
+
+        .gallery-download {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 44px;
+            padding: 8px 16px;
+            border: 1px solid var(--border-light);
+            color: var(--muted);
+            font-family: var(--font-display);
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.14em;
+            text-align: center;
+            text-transform: uppercase;
+            transition:
+                color 0.2s ease,
+                border-color 0.2s ease,
+                background 0.2s ease;
+        }
+
+        .gallery-download:hover,
+        .gallery-download:focus-visible {
+            color: var(--white);
+            border-color: var(--border-strong);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        @media (max-width: 520px) {
+            .gallery-card {
+                padding: 26px 20px;
+            }
+
+            .gallery-card-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .gallery-year-buttons {
+                flex-wrap: nowrap;
+            }
+
+            .gallery-year-buttons .secondary-button {
+                flex: 1 1 0;
+                padding: 0 8px;
+            }
+
+            .gallery-tab {
+                flex: 1 1 auto;
+                padding: 0 12px;
+                font-size: 12px;
+                letter-spacing: 0.1em;
+            }
+
+            .gallery-controls {
+                grid-template-columns: auto minmax(0, 1fr) auto;
+                gap: 8px;
+            }
+
+            .gallery-nav-button {
+                padding: 0 12px;
+                font-size: 12px;
+                letter-spacing: 0.08em;
+            }
+
+            .gallery-counter {
+                font-size: 11px;
+                letter-spacing: 0.08em;
+            }
+
+            .gallery-counter-num,
+            .gallery-counter-year {
+                display: block;
+            }
+
+            .gallery-counter-year::before {
+                content: none;
+            }
+
+            .gallery-download {
+                width: 100%;
+            }
+        }
+
+        /* === HIER WIEDER ENTFERNEN (START DANKSAGUNG CSS) === */
+        .thanks-box {
+            position: relative;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            align-items: center;
+            gap: 32px;
+            margin-top: 40px;
+            padding: clamp(22px, 4vw, 34px);
+            border: 1px solid var(--red-border);
+            background: linear-gradient(120deg, #111111, #0c0c0c);
+            overflow: hidden;
+            isolation: isolate;
+        }
+
+        .thanks-box::after {
+            content: "";
+            position: absolute;
+            right: -110px;
+            top: -140px;
+            width: 320px;
+            height: 320px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(150, 0, 12, 0.14), transparent 68%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .thanks-copy {
+            min-width: 0;
+        }
+
+        .thanks-label {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+            color: var(--muted);
+            font-family: var(--font-display);
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+        }
+
+        .thanks-label::before {
+            content: "";
+            width: 28px;
+            height: 2px;
+            flex-shrink: 0;
+            background: var(--red-hover);
+        }
+
+        .thanks-title {
+            margin: 0;
+            color: var(--white);
+            font-family: var(--font-display);
+            font-size: clamp(26px, 3.8vw, 40px);
+            font-weight: 600;
+            line-height: 1.05;
+            text-transform: uppercase;
+        }
+
+        .thanks-text {
+            max-width: 640px;
+            margin: 12px 0 0;
+            color: var(--muted);
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        .thanks-button {
+            white-space: nowrap;
+        }
+
+        html:not(.js-enabled) .thanks-button {
+            display: none;
+        }
+
+        @media (max-width: 800px) {
+            .thanks-box {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                margin-top: 32px;
+            }
+
+            .thanks-button {
+                width: 100%;
+                white-space: normal;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .thanks-box {
+                padding: 22px 18px;
+            }
+        }
+        /* === HIER WIEDER ENTFERNEN (ENDE DANKSAGUNG CSS) === */
     </style>
 </head>
 
@@ -2400,6 +2815,7 @@
             <nav class="desktop-nav" aria-label="Hauptnavigation">
                 <a href="#eckdaten">Besuchsinfos</a>
                 <a href="#erlebnis">Erlebnis</a>
+                <a href="#galerie">Galerie</a>
                 <a href="#faq">FAQ</a>
                 <a
                     href="https://tally.so/r/VL2y6M"
@@ -2459,6 +2875,10 @@
 
             <a href="#erlebnis">
                 <span>Erlebnis</span>
+            </a>
+
+            <a href="#galerie">
+                <span>Galerie</span>
             </a>
 
             <a href="#faq">
@@ -2581,6 +3001,36 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- === HIER WIEDER ENTFERNEN (START DANKSAGUNG) === -->
+                <aside class="thanks-box" id="danksagung" aria-labelledby="thanksHeading">
+                    <div class="thanks-copy">
+                        <div class="thanks-label">
+                            Schattenschreck 2026 · Rückblick
+                        </div>
+
+                        <h2 class="thanks-title" id="thanksHeading">
+                            Danke an unser Team &amp; unsere Besucher.
+                        </h2>
+
+                        <p class="thanks-text">
+                            Ein riesiges Dankeschön an unser gesamtes Team hinter den Kulissen –
+                            die Live-Erschrecker und alle Helferinnen und Helfer – sowie an alle
+                            Besucherinnen und Besucher. Ihr habt den Schattenschreck in diesem
+                            Jahr zu einer unvergesslichen Nacht gemacht.
+                        </p>
+                    </div>
+
+                    <button
+                        type="button"
+                        class="primary-button thanks-button"
+                        data-gallery-open
+                        data-gallery-year="2026"
+                    >
+                        Neue Bilder 2026 ansehen
+                    </button>
+                </aside>
+                <!-- === HIER WIEDER ENTFERNEN (ENDE DANKSAGUNG) === -->
             </div>
         </section>
 
@@ -2739,6 +3189,54 @@
                             gemeinsam erlebt zu werden.
                         </p>
                     </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================================
+             GALERIE (TEASER – ÖFFNET DAS GALERIE-OVERLAY)
+        ========================================================= -->
+        <section class="gallery-section" id="galerie" aria-labelledby="galerieHeading">
+            <div class="container">
+                <div class="gallery-card reveal">
+                    <div class="gallery-card-badge">
+                        <span class="hero-badge hero-badge-highlight">
+                            Neue Bilder von 2026 veröffentlicht
+                        </span>
+                    </div>
+
+                    <div class="section-label">
+                        Rückblick · 3 Jahre Schattenschreck
+                    </div>
+
+                    <h2 class="gallery-card-title" id="galerieHeading">
+                        Einblicke in<br>
+                        die Dunkelheit.
+                    </h2>
+
+                    <p class="gallery-card-text">
+                        Den Schattenschreck gibt es bereits seit drei Jahren. Hier kannst du dir
+                        die Fotos aus 2024, 2025 und 2026 ansehen – inklusive der brandneuen
+                        Bilder vom diesjährigen Event.
+                    </p>
+
+                    <div class="gallery-card-actions">
+                        <button
+                            type="button"
+                            class="primary-button"
+                            data-gallery-open
+                            aria-haspopup="dialog"
+                            aria-controls="galleryModal"
+                        >
+                            Galerie öffnen (2024–2026)
+                        </button>
+
+                        <div class="gallery-year-buttons" role="group" aria-label="Direkt zu einem Jahr springen">
+                            <button type="button" class="secondary-button" data-gallery-open data-gallery-year="2026">2026</button>
+                            <button type="button" class="secondary-button" data-gallery-open data-gallery-year="2025">2025</button>
+                            <button type="button" class="secondary-button" data-gallery-open data-gallery-year="2024">2024</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -3078,6 +3576,79 @@
     </section>
 
     <!-- =========================================================
+         GALERIE-OVERLAY (GLEICHES PRINZIP WIE DAS IMPRESSUM)
+    ========================================================= -->
+    <section
+        class="modal"
+        id="galleryModal"
+        aria-labelledby="galleryTitle"
+    >
+        <div class="modal-content" id="galleryContent">
+            <button
+                class="modal-close"
+                id="galleryClose"
+                type="button"
+                aria-label="Galerie schließen"
+            >
+                ×
+            </button>
+
+            <div class="modal-label">
+                Rückblick · 2024 – 2026
+            </div>
+
+            <h2 class="modal-title gallery-modal-title" id="galleryTitle">
+                Galerie
+            </h2>
+
+            <!-- Jahres-Tabs werden per JavaScript aus GALLERY_DATA erzeugt -->
+            <div class="gallery-tabs" id="galleryTabs" role="tablist" aria-label="Jahr auswählen"></div>
+
+            <div class="gallery-note" id="galleryNote" hidden>
+                <span class="hero-badge hero-badge-highlight" id="galleryNoteText"></span>
+            </div>
+
+            <div class="gallery-stage" id="galleryStage">
+                <img
+                    id="galleryImage"
+                    alt=""
+                    decoding="async"
+                    draggable="false"
+                    onerror="this.classList.add('img-broken')"
+                >
+                <span class="img-fallback-text">Bild konnte nicht geladen werden</span>
+            </div>
+
+            <div class="gallery-controls">
+                <button type="button" class="gallery-nav-button" id="galleryPrev" aria-label="Vorheriges Bild">
+                    ← Zurück
+                </button>
+
+                <div class="gallery-counter" id="galleryCounter" aria-live="polite">
+                    <span class="gallery-counter-num" id="galleryCounterNum">01 / 05</span><span class="gallery-counter-year" id="galleryCounterYear">Schattenschreck 2026</span>
+                </div>
+
+                <button type="button" class="gallery-nav-button" id="galleryNext" aria-label="Nächstes Bild">
+                    Weiter →
+                </button>
+            </div>
+
+            <div class="gallery-actions">
+                <a
+                    class="gallery-download"
+                    id="galleryDownload"
+                    href="#"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    download
+                >
+                    Bild herunterladen / Vollbild ↗
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- =========================================================
          BACK TO TOP
     ========================================================= -->
     <button
@@ -3098,6 +3669,48 @@
 
             if (window.__schattenschreckInitialized) return;
             window.__schattenschreckInitialized = true;
+
+            /* =====================================================
+               GALERIE-BILDER (HIER JEDERZEIT LEICHT AUSTAUSCHEN / ERGÄNZEN)
+               Pro Jahr: label (Tab-Text), note (Hinweis-Badge, optional), images (Direktlinks)
+               Neue Jahre einfach als weiteren Eintrag ergänzen – Tabs entstehen automatisch.
+            ===================================================== */
+
+            const GALLERY_DATA = {
+                "2026": {
+                    label: "2026 (Neu)",
+                    note: "Neue Bilder von 2026 veröffentlicht",
+                    images: [
+                        "https://i.postimg.cc/xCMJLHVp/cc17fa3e-35fb-4310-9fe8-15f0932d45dd.jpg",
+                        "https://i.postimg.cc/sxzBmXVP/3b1feca0-a4be-493c-9076-ead6d1f5907f.jpg",
+                        "https://i.postimg.cc/L85JNGMs/9BA880C8-B368-4FEB-BAEE-9E7D55730D4C.jpg",
+                        "https://i.postimg.cc/DwN8D5vK/0443c57a-508a-423e-8569-7730d2e4db34.jpg",
+                        "https://i.postimg.cc/jjJLrN2R/179ad8ca-8a01-431f-a3d1-75897a39023c.jpg"
+                    ]
+                },
+                "2025": {
+                    label: "2025",
+                    note: "",
+                    images: [
+                        "https://i.postimg.cc/xTSGpfsd/bb1280a1-d39a-4212-8d84-2b3bd39a261c.jpg",
+                        "https://i.postimg.cc/pXYfgw4V/d1cb3507-c40e-4e3f-b9b7-2abd1b99dba8.jpg",
+                        "https://i.postimg.cc/3xtgwg3Z/794CB09D-517C-403F-9F67-827CCBA50B43.jpg",
+                        "https://i.postimg.cc/KzMLQwB5/06316b00-5694-43e7-93a5-beeee5556b09.jpg",
+                        "https://i.postimg.cc/2jnhWpzR/f1afada9-6013-49ee-89bf-539dc262dd9b.jpg"
+                    ]
+                },
+                "2024": {
+                    label: "2024",
+                    note: "",
+                    images: [
+                        "https://i.postimg.cc/RhJts8tg/4e0b1d45-34f1-43ae-8ffb-659ebc88d4de.jpg",
+                        "https://i.postimg.cc/TwF03nJX/53fb4270-8bde-4cd0-b30a-74afaf763f42.jpg",
+                        "https://i.postimg.cc/3r09bbYs/0175b7e3-0579-4aab-b2e4-66991303144e.jpg",
+                        "https://i.postimg.cc/m2xVxNr2/2df6dc38-6b0a-461e-a585-451f0a8bf5b3.jpg",
+                        "https://i.postimg.cc/P5CqmZm1/571223d4-52b7-410f-ac57-3b22a27a8998.jpg"
+                    ]
+                }
+            };
 
             /* =====================================================
                ZENTRALE KONFIGURATION (EVENT & INTRO-FEINABSTIMMUNG)
@@ -3598,10 +4211,38 @@
             let lastModalTrigger = null;
             let modalFocusTimer = null;
 
+            /* ---- Galerie-Overlay: Elemente & Zustand ---- */
+            const galleryModal = document.getElementById("galleryModal");
+            const galleryClose = document.getElementById("galleryClose");
+            const galleryTabsEl = document.getElementById("galleryTabs");
+            const galleryNoteEl = document.getElementById("galleryNote");
+            const galleryNoteTextEl = document.getElementById("galleryNoteText");
+            const galleryStageEl = document.getElementById("galleryStage");
+            const galleryImageEl = document.getElementById("galleryImage");
+            const galleryPrevBtn = document.getElementById("galleryPrev");
+            const galleryNextBtn = document.getElementById("galleryNext");
+            const galleryCounterNumEl = document.getElementById("galleryCounterNum");
+            const galleryCounterYearEl = document.getElementById("galleryCounterYear");
+            const galleryDownloadEl = document.getElementById("galleryDownload");
+
+            let isGalleryOpen = false;
+            let lastGalleryTrigger = null;
+            let galleryFocusTimer = null;
+            let galleryYear = null;
+            let galleryIndex = 0;
+
+            // Jahre absteigend (neuestes zuerst); nur Jahre mit mindestens einem Bild
+            const galleryYears = Object.keys(GALLERY_DATA)
+                .filter((year) => GALLERY_DATA[year] && Array.isArray(GALLERY_DATA[year].images) && GALLERY_DATA[year].images.length > 0)
+                .sort((a, b) => Number(b) - Number(a));
+
             function openMobileMenu() {
                 if (!menuButton || !mobileMenu) return;
                 if (isModalOpen) {
                     closeImpressumModal(false);
+                }
+                if (isGalleryOpen) {
+                    closeGalleryModal(false);
                 }
 
                 isMenuOpen = true;
@@ -3642,6 +4283,9 @@
                 if (!impressumModal || !modalClose) return;
                 if (isMenuOpen) {
                     closeMobileMenu(false);
+                }
+                if (isGalleryOpen) {
+                    closeGalleryModal(false);
                 }
 
                 lastModalTrigger = triggerElement || document.activeElement;
@@ -3690,6 +4334,156 @@
                     lastModalTrigger.offsetParent !== null
                 ) {
                     lastModalTrigger.focus();
+                }
+            }
+
+            /* ---- Galerie-Overlay: Logik ---- */
+
+            function pad2(n) {
+                return String(n).padStart(2, "0");
+            }
+
+            function renderGalleryTabs() {
+                if (!galleryTabsEl) return;
+                galleryTabsEl.textContent = "";
+
+                galleryYears.forEach((year) => {
+                    const btn = document.createElement("button");
+                    btn.type = "button";
+                    btn.className = "gallery-tab";
+                    btn.dataset.year = year;
+                    btn.setAttribute("role", "tab");
+                    btn.setAttribute("aria-selected", "false");
+                    btn.textContent = GALLERY_DATA[year].label || year;
+                    btn.addEventListener("click", () => {
+                        selectGalleryYear(year, 0);
+                    });
+                    galleryTabsEl.appendChild(btn);
+                });
+            }
+
+            function updateGalleryTabs() {
+                if (!galleryTabsEl) return;
+                galleryTabsEl.querySelectorAll(".gallery-tab").forEach((btn) => {
+                    const active = btn.dataset.year === galleryYear;
+                    btn.classList.toggle("is-active", active);
+                    btn.setAttribute("aria-selected", active ? "true" : "false");
+                });
+            }
+
+            function showGalleryImage(index) {
+                const data = GALLERY_DATA[galleryYear];
+                if (!data || !galleryImageEl) return;
+
+                const total = data.images.length;
+                galleryIndex = ((index % total) + total) % total;
+                const url = data.images[galleryIndex];
+
+                galleryImageEl.classList.remove("img-broken", "is-loaded");
+                galleryImageEl.onload = () => {
+                    galleryImageEl.classList.add("is-loaded");
+                };
+                galleryImageEl.alt = `Schattenschreck ${galleryYear} – Bild ${galleryIndex + 1} von ${total}`;
+                galleryImageEl.src = url;
+
+                if (galleryCounterNumEl) {
+                    galleryCounterNumEl.textContent = `${pad2(galleryIndex + 1)} / ${pad2(total)}`;
+                }
+                if (galleryCounterYearEl) {
+                    galleryCounterYearEl.textContent = `Schattenschreck ${galleryYear}`;
+                }
+                if (galleryDownloadEl) {
+                    galleryDownloadEl.setAttribute("href", url);
+                }
+
+                // Nächstes Bild leise vorladen, damit das Durchschalten ohne Wartezeit klappt
+                if (total > 1) {
+                    const preloadNext = new Image();
+                    preloadNext.decoding = "async";
+                    preloadNext.src = data.images[(galleryIndex + 1) % total];
+                }
+            }
+
+            function selectGalleryYear(year, index) {
+                if (!GALLERY_DATA[year] || !GALLERY_DATA[year].images || GALLERY_DATA[year].images.length === 0) {
+                    year = galleryYears[0];
+                }
+                if (!year) return;
+
+                galleryYear = year;
+                updateGalleryTabs();
+
+                const note = GALLERY_DATA[year].note;
+                if (galleryNoteEl && galleryNoteTextEl) {
+                    galleryNoteTextEl.textContent = note || "";
+                    galleryNoteEl.hidden = !note;
+                }
+
+                showGalleryImage(index || 0);
+            }
+
+            function galleryStep(direction) {
+                if (!isGalleryOpen || !galleryYear) return;
+                showGalleryImage(galleryIndex + direction);
+            }
+
+            function openGalleryModal(year, triggerElement) {
+                if (!galleryModal || !galleryClose || galleryYears.length === 0) return;
+                if (isMenuOpen) {
+                    closeMobileMenu(false);
+                }
+                if (isModalOpen) {
+                    closeImpressumModal(false);
+                }
+
+                lastGalleryTrigger = triggerElement || document.activeElement;
+                isGalleryOpen = true;
+
+                selectGalleryYear(String(year || galleryYears[0]), 0);
+
+                galleryModal.classList.add("open");
+                galleryModal.setAttribute("aria-hidden", "false");
+
+                setElementInert(header, true);
+                setElementInert(mainElement, true);
+                setElementInert(footerElement, true);
+                updateScrollbarCompensation(true);
+
+                if (galleryFocusTimer) {
+                    window.clearTimeout(galleryFocusTimer);
+                }
+                galleryFocusTimer = window.setTimeout(() => {
+                    if (isGalleryOpen) {
+                        galleryClose.focus();
+                    }
+                }, 30);
+            }
+
+            function closeGalleryModal(restoreFocus = true) {
+                if (!galleryModal || !isGalleryOpen) return;
+
+                isGalleryOpen = false;
+                if (galleryFocusTimer) {
+                    window.clearTimeout(galleryFocusTimer);
+                    galleryFocusTimer = null;
+                }
+
+                galleryModal.classList.remove("open");
+                galleryModal.setAttribute("aria-hidden", "true");
+
+                setElementInert(header, false);
+                setElementInert(mainElement, false);
+                setElementInert(footerElement, false);
+                updateScrollbarCompensation(false);
+
+                if (
+                    restoreFocus &&
+                    lastGalleryTrigger &&
+                    typeof lastGalleryTrigger.focus === "function" &&
+                    document.contains(lastGalleryTrigger) &&
+                    lastGalleryTrigger.offsetParent !== null
+                ) {
+                    lastGalleryTrigger.focus();
                 }
             }
 
@@ -3773,6 +4567,11 @@
 
                 document.addEventListener("keydown", (event) => {
                     if (event.key === "Escape") {
+                        if (isGalleryOpen) {
+                            event.preventDefault();
+                            closeGalleryModal(true);
+                            return;
+                        }
                         if (isModalOpen) {
                             event.preventDefault();
                             closeImpressumModal(true);
@@ -3785,9 +4584,17 @@
                         }
                     }
 
+                    if (isGalleryOpen && (event.key === "ArrowLeft" || event.key === "ArrowRight")) {
+                        event.preventDefault();
+                        galleryStep(event.key === "ArrowRight" ? 1 : -1);
+                        return;
+                    }
+
                     if (event.key === "Tab") {
-                        if (isModalOpen && impressumModal) {
-                            const focusables = getFocusableElements(impressumModal);
+                        const activeDialog = isGalleryOpen ? galleryModal : (isModalOpen ? impressumModal : null);
+
+                        if (activeDialog) {
+                            const focusables = getFocusableElements(activeDialog);
                             if (focusables.length === 0) return;
                             const first = focusables[0];
                             const last = focusables[focusables.length - 1];
@@ -3825,6 +4632,130 @@
                     },
                     { passive: true }
                 );
+            }
+
+            /* =====================================================
+               2b. GALERIE (OVERLAY-STEUERUNG, TABS, SWIPE, PRELOAD)
+            ===================================================== */
+
+            function initGallery() {
+                if (
+                    !galleryModal || !galleryClose || !galleryImageEl || !galleryStageEl ||
+                    galleryYears.length === 0
+                ) {
+                    return;
+                }
+
+                galleryModal.setAttribute("role", "dialog");
+                galleryModal.setAttribute("aria-modal", "true");
+                galleryModal.setAttribute("aria-hidden", "true");
+
+                renderGalleryTabs();
+
+                // Öffnen über alle Trigger (Danksagung, Teaser-Button, Jahres-Direktwahl)
+                document.querySelectorAll("[data-gallery-open]").forEach((btn) => {
+                    btn.setAttribute("aria-haspopup", "dialog");
+                    btn.setAttribute("aria-controls", "galleryModal");
+                    btn.addEventListener("click", (event) => {
+                        event.preventDefault();
+                        openGalleryModal(btn.dataset.galleryYear || galleryYears[0], btn);
+                    });
+                });
+
+                // Schließen: ×, Klick auf dunklen Hintergrund (Escape siehe globaler Keydown-Handler)
+                galleryClose.addEventListener("click", () => {
+                    closeGalleryModal(true);
+                });
+
+                galleryModal.addEventListener("click", (event) => {
+                    if (event.target === galleryModal) {
+                        closeGalleryModal(true);
+                    }
+                });
+
+                if (galleryPrevBtn) {
+                    galleryPrevBtn.addEventListener("click", () => galleryStep(-1));
+                }
+                if (galleryNextBtn) {
+                    galleryNextBtn.addEventListener("click", () => galleryStep(1));
+                }
+
+                // Touch-Swipe links/rechts auf der Bildbühne
+                let swipeStartX = 0;
+                let swipeStartY = 0;
+                let swipeTracking = false;
+
+                galleryStageEl.addEventListener("touchstart", (event) => {
+                    if (event.touches.length !== 1) {
+                        swipeTracking = false;
+                        return;
+                    }
+                    swipeTracking = true;
+                    swipeStartX = event.touches[0].clientX;
+                    swipeStartY = event.touches[0].clientY;
+                }, { passive: true });
+
+                galleryStageEl.addEventListener("touchend", (event) => {
+                    if (!swipeTracking) return;
+                    swipeTracking = false;
+
+                    const touch = event.changedTouches && event.changedTouches[0];
+                    if (!touch) return;
+
+                    const dx = touch.clientX - swipeStartX;
+                    const dy = touch.clientY - swipeStartY;
+
+                    if (Math.abs(dx) >= 40 && Math.abs(dx) > Math.abs(dy) * 1.3) {
+                        galleryStep(dx < 0 ? 1 : -1);
+                    }
+                }, { passive: true });
+
+                galleryStageEl.addEventListener("touchcancel", () => {
+                    swipeTracking = false;
+                }, { passive: true });
+
+                window.requestAnimationFrame(() => {
+                    galleryModal.classList.add("transitions-ready");
+                });
+
+                /* ---- Preloading im Hintergrund NACH dem Seitenaufbau ---- */
+                const preloadCache = [];
+
+                function startPreload() {
+                    // Datensparmodus respektieren
+                    const conn = navigator.connection;
+                    if (conn && conn.saveData) return;
+
+                    const urls = [];
+                    galleryYears.forEach((year) => {
+                        GALLERY_DATA[year].images.forEach((url) => urls.push(url));
+                    });
+
+                    let i = 0;
+                    function loadNext() {
+                        if (i >= urls.length) return;
+                        const img = new Image();
+                        img.decoding = "async";
+                        img.src = urls[i++];
+                        preloadCache.push(img);
+                        window.setTimeout(loadNext, 180);
+                    }
+                    loadNext();
+                }
+
+                function schedulePreload() {
+                    if (typeof window.requestIdleCallback === "function") {
+                        window.requestIdleCallback(startPreload, { timeout: 4000 });
+                    } else {
+                        window.setTimeout(startPreload, 1500);
+                    }
+                }
+
+                if (document.readyState === "complete") {
+                    schedulePreload();
+                } else {
+                    window.addEventListener("load", schedulePreload, { once: true });
+                }
             }
 
             /* =====================================================
@@ -4213,7 +5144,7 @@
                         if (typeof abortIntroSafely === "function") {
                             abortIntroSafely();
                         }
-                        if (!isMenuOpen && !isModalOpen) {
+                        if (!isMenuOpen && !isModalOpen && !isGalleryOpen) {
                             setElementInert(header, false);
                             setElementInert(mainElement, false);
                             setElementInert(footerElement, false);
@@ -4248,6 +5179,7 @@
 
             const modules = [
                 initNavigationAndOverlays,
+                initGallery,
                 initCountdown,
                 initFaq,
                 initScrollAndReveal
