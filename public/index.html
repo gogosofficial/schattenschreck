@@ -10,19 +10,19 @@
     <!-- End Google Tag Manager -->  
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="description" content="Schattenschreck — Kostenloses Horror-Event mit Atmosphäre, Geschichte, Aufgaben und Live-Erschreckern am 31. Oktober 2026 ab 18:00 Uhr in Wardersee.">
+    <meta name="description" content="Schattenschreck — Kostenloses Horror-Event mit Atmosphäre, Geschichte, Aufgaben und Live-Erschreckern am 31. Oktober 2027 ab 18:00 Uhr in Wardersee.">
     <meta name="theme-color" content="#090909">
     <meta name="color-scheme" content="dark">
 
     <!-- Open Graph (nur bestätigte Angaben ohne erfundene Domain) -->
-    <meta property="og:title" content="Schattenschreck — Horror-Event am 31. Oktober 2026 in Wardersee">
-    <meta property="og:description" content="Atmosphäre, Geschichte, interaktive Aufgaben und Live-Erschrecker. Samstag, 31.10.2026 ab 18:00 Uhr in Wardersee. Eintritt kostenlos.">
+    <meta property="og:title" content="Schattenschreck — Horror-Event am 31. Oktober 2027 in Wardersee">
+    <meta property="og:description" content="Atmosphäre, Geschichte, interaktive Aufgaben und Live-Erschrecker. Sonntag, 31.10.2027 ab 18:00 Uhr in Wardersee. Eintritt kostenlos.">
     <meta property="og:type" content="website">
     <meta property="og:locale" content="de_DE">
     <meta property="og:image" content="https://i.imgur.com/Cl27hzM.png">
     <meta property="og:image:alt" content="Schattenschreck Logo">
 
-    <title>Schattenschreck — Horror-Event am 31. Oktober 2026 in Wardersee</title>
+    <title>Schattenschreck — Horror-Event am 31. Oktober 2027 in Wardersee</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -35,7 +35,7 @@
                 var docEl = document.documentElement;
                 docEl.classList.add("js-enabled");
 
-                var SESSION_KEY = "schattenschreck_intro_seen_2026";
+                var SESSION_KEY = "schattenschreck_intro_seen_2027";
                 var FORCE_DEV_INTRO = false;
 
                 var reduceMotion = false;
@@ -1281,72 +1281,6 @@
         }
 
         /* =========================================================
-           FINAL CTA
-        ========================================================= */
-
-        .final-section {
-            padding: 48px 0 110px;
-        }
-
-        .final-box {
-            position: relative;
-            padding: clamp(32px, 6vw, 60px);
-            border: 1px solid var(--border);
-            background: linear-gradient(120deg, #111111, #0d0d0d);
-            overflow: hidden;
-        }
-
-        .final-box::after {
-            content: "";
-            position: absolute;
-            right: -100px;
-            top: -150px;
-            width: 400px;
-            height: 400px;
-            border-radius: 50%;
-            background: radial-gradient(
-                circle,
-                rgba(150, 0, 12, 0.12),
-                transparent 68%
-            );
-            pointer-events: none;
-        }
-
-        .final-label {
-            position: relative;
-            z-index: 1;
-            margin-bottom: 12px;
-            color: var(--muted);
-            font-family: var(--font-display);
-            font-size: 12px;
-            font-weight: 600;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-        }
-
-        .final-title {
-            position: relative;
-            z-index: 1;
-            margin: 0;
-            color: var(--white);
-            font-family: var(--font-display);
-            font-size: clamp(36px, 5.8vw, 64px);
-            font-weight: 600;
-            line-height: 1;
-            text-transform: uppercase;
-        }
-
-        .final-text {
-            position: relative;
-            z-index: 1;
-            max-width: 620px;
-            margin: 18px 0 28px;
-            color: var(--muted);
-            font-size: 15px;
-            line-height: 1.75;
-        }
-
-        /* =========================================================
            FOOTER
         ========================================================= */
 
@@ -1878,7 +1812,7 @@
             text-align: center;
         }
 
-        .intro-Status-group {
+        .intro-status-group {
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -2255,15 +2189,7 @@
                 padding-right: 0;
             }
 
-            .final-section {
-                padding: 40px 0 76px;
-            }
-
-            .final-box {
-                padding: 28px 20px;
-            }
-
-            .application-link {
+.application-link {
                 width: 100%;
             }
 
@@ -2325,6 +2251,8 @@
             display: none;
         }
 
+        /* Abstand oben/unten kommt von #erlebnis und #faq (je 96px bzw. 76px mobil),
+           so sitzt die Galerie-Karte mittig und luftig dazwischen. */
         .gallery-section {
             padding: 0;
         }
@@ -2457,6 +2385,43 @@
             border: 1px solid var(--border);
             overflow: hidden;
             touch-action: pan-y;
+        }
+
+        /* Lade-Indikator: sichtbar, solange das Bild weder geladen noch fehlerhaft ist */
+        .gallery-stage::before {
+            content: "Bild wird geladen …";
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            text-align: center;
+            font-size: 13px;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--muted);
+            pointer-events: none;
+            opacity: 1;
+            transition: opacity 0.2s ease;
+            animation: galleryLoadingPulse 1.6s ease-in-out infinite;
+        }
+
+        .gallery-stage:has(img.is-loaded)::before,
+        .gallery-stage:has(img.img-broken)::before {
+            opacity: 0;
+            animation: none;
+        }
+
+        @keyframes galleryLoadingPulse {
+            0%, 100% { color: rgba(160, 160, 160, 0.45); }
+            50% { color: rgba(220, 220, 220, 0.9); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .gallery-stage::before {
+                animation: none;
+            }
         }
 
         .gallery-stage img {
@@ -2780,7 +2745,7 @@
             </div>
 
             <div class="intro-actions">
-                <div class="intro-Status-group">
+                <div class="intro-status-group">
                     <div class="intro-progress-track" aria-hidden="true">
                         <div class="intro-progress-fill"></div>
                     </div>
@@ -2915,7 +2880,7 @@
             <div class="container hero-inner" id="heroInner">
                 <div class="hero-topline">
                     <span>
-                        <time datetime="2026-10-31">31. Oktober 2026</time> · ab <time datetime="18:00">18:00 Uhr</time> · Wardersee
+                        <time datetime="2027-10-31">31. Oktober 2027</time> · ab <time datetime="18:00">18:00 Uhr</time> · Wardersee
                     </span>
                 </div>
 
@@ -2945,9 +2910,10 @@
                         </h1>
 
                         <p class="hero-description">
-                            Ein inszeniertes Halloween-Erlebnis, das dunkle Atmosphäre,
-                            eine eigene Geschichte und interaktive Aufgaben mit dem puren
-                            Nervenkitzel von Live-Erschreckern vereint.
+                            Kein gewöhnlicher Halloween-Spaziergang: Im Schattenschreck-Garten
+                            erwarten dich dichter Nebel, eine eigene düstere Geschichte,
+                            interaktive Aufgaben im Dunkeln und echte Live-Erschrecker, die
+                            genau im falschen Moment aus dem Schatten treten.
                         </p>
 
                         <div class="hero-badges" aria-label="Wichtige Kurzinfos">
@@ -2956,6 +2922,9 @@
                             </span>
                             <span class="hero-badge">
                                 Barrierefreier Zugang
+                            </span>
+                            <span class="hero-badge">
+                                Ohne Voranmeldung
                             </span>
                         </div>
 
@@ -2973,7 +2942,7 @@
                 <div class="countdown-section" id="countdownSection">
                     <div class="countdown-header">
                         <div class="countdown-title">
-                            Bis zum Schattenschreck
+                            Bis zum Schattenschreck 2027
                         </div>
 
                         <div
@@ -3025,10 +2994,12 @@
                         </h2>
 
                         <p class="thanks-text">
-                            Ein riesiges Dankeschön an unser gesamtes Team hinter den Kulissen –
-                            die Live-Erschrecker und alle Helferinnen und Helfer – sowie an alle
-                            Besucherinnen und Besucher. Ihr habt den Schattenschreck in diesem
-                            Jahr zu einer unvergesslichen Nacht gemacht.
+                            Was für eine Nacht! Ein riesiges Dankeschön an unser gesamtes Team
+                            hinter den Kulissen – alle Live-Erschrecker, Helferinnen und Helfer –
+                            sowie an jeden einzelnen Besucher, der gestern dabei war. Ihr habt den
+                            Schattenschreck 2026 unvergesslich gemacht. Während der Countdown für
+                            2027 schon läuft, könnt ihr euch hier die ersten Bilder von gestern
+                            ansehen!
                         </p>
                     </div>
 
@@ -3054,7 +3025,7 @@
                     <div class="quick-item">
                         <dt class="quick-label">Datum</dt>
                         <dd class="quick-value">
-                            <time datetime="2026-10-31">Samstag, 31. Oktober 2026</time>
+                            <time datetime="2027-10-31">Sonntag, 31. Oktober 2027</time>
                         </dd>
                     </div>
 
@@ -3070,6 +3041,7 @@
                         <dt class="quick-label">Ort</dt>
                         <dd class="quick-value">
                             Wardersee
+                            <span class="quick-sub">Schattenschreck-Garten</span>
                         </dd>
                     </div>
 
@@ -3077,6 +3049,7 @@
                         <dt class="quick-label">Eintritt</dt>
                         <dd class="quick-value">
                             Kostenlos
+                            <span class="quick-sub">Ohne Anmeldung · Einfach vorbeikommen</span>
                         </dd>
                     </div>
                 </dl>
@@ -3100,10 +3073,10 @@
                         </h2>
 
                         <p class="whatsapp-text">
-                            Folge unserem offiziellen WhatsApp-Kanal
-                            für Updates rund um den Schattenschreck-Garten,
-                            Neuigkeiten zum Event und wichtige Informationen
-                            direkt auf dein Handy.
+                            Du willst wissen, wann die Vorbereitungen starten, was sich hinter den
+                            Kulissen tut oder ob es wichtige Infos zum Einlass gibt? In unserem
+                            offiziellen WhatsApp-Kanal halten wir dich direkt und ohne Spam auf
+                            dem Laufenden.
                         </p>
                     </div>
 
@@ -3146,10 +3119,7 @@
                         </span>
                         <h3>Atmosphäre</h3>
                         <p>
-                            Dunkle Kulissen, Licht, Geräusche
-                            und eine Umgebung, die dich direkt
-                            in die Welt von Schattenschreck
-                            versetzt.
+                            Dichter Nebel, flackerndes Licht, eigene Soundkulissen und aufwendig gestaltete Ecken ziehen dich ab dem ersten Schritt in eine andere Welt.
                         </p>
                     </article>
 
@@ -3159,9 +3129,7 @@
                         </span>
                         <h3>Live-Erschrecker</h3>
                         <p>
-                            Live-Erschrecker sorgen für
-                            Begegnungen, die du nicht einfach
-                            planen kannst.
+                            Keine starren Plastikfiguren: Unser Team lauert live in der Dunkelheit, reagiert auf deine Gruppe und sorgt für echten Adrenalin-Puls.
                         </p>
                     </article>
 
@@ -3171,9 +3139,7 @@
                         </span>
                         <h3>Geschichte</h3>
                         <p>
-                            Das Event ist mehr als einzelne
-                            Schreckmomente und erzählt seine
-                            eigene kleine Geschichte.
+                            Hinter dem Spuk steckt mehr als nur einzelne Schreckmomente – jede Szene ist Teil einer eigenen, kleinen Geschichte.
                         </p>
                     </article>
 
@@ -3183,9 +3149,7 @@
                         </span>
                         <h3>Aufgaben</h3>
                         <p>
-                            Entdecke die Umgebung und stelle
-                            dich verschiedenen Aufgaben
-                            innerhalb des Erlebnisses.
+                            Du schaust nicht nur zu: Unterwegs musst du selbst kleine Aufgaben meistern, um deinen Weg durch die Dunkelheit fortzusetzen.
                         </p>
                     </article>
 
@@ -3195,9 +3159,7 @@
                         </span>
                         <h3>Für alle</h3>
                         <p>
-                            Der Zugang ist barrierefrei und
-                            das Event ist darauf ausgelegt,
-                            gemeinsam erlebt zu werden.
+                            Der Zugang ist barrierefrei, der Eintritt komplett kostenlos und das gesamte Erlebnis darauf ausgelegt, gemeinsam Gänsehaut zu erleben.
                         </p>
                     </article>
                 </div>
@@ -3283,9 +3245,7 @@
                         <div class="faq-answer">
                             <div class="faq-answer-inner">
                                 <p>
-                                    Schattenschreck ist ein inszeniertes Horror-Erlebnis.
-                                    Dich erwarten Atmosphäre, Geschichte, Aufgaben und
-                                    Live-Erschrecker.
+                                    Schattenschreck ist ein inszeniertes Horror-Erlebnis in unserem Garten: Dich erwarten dichte Atmosphäre, eine eigene Geschichte, kleine Aufgaben und Live-Erschrecker. Eine Voranmeldung oder Ticketbuchung ist nicht nötig – komm einfach innerhalb der Einlasszeit von <time datetime="18:00">18:00</time> bis <time datetime="20:00">20:00 Uhr</time> vorbei.
                                 </p>
                             </div>
                         </div>
@@ -3301,7 +3261,7 @@
                         <div class="faq-answer">
                             <div class="faq-answer-inner">
                                 <p>
-                                    Einlass ist von <time datetime="18:00">18:00</time> bis <time datetime="20:00">20:00 Uhr</time>.
+                                    Wir lassen dich von <time datetime="18:00">18:00</time> bis <time datetime="20:00">20:00 Uhr</time> herein – komm einfach in dieser Zeit vorbei.
                                 </p>
                             </div>
                         </div>
@@ -3317,7 +3277,7 @@
                         <div class="faq-answer">
                             <div class="faq-answer-inner">
                                 <p>
-                                    Nein. Der Eintritt zum Schattenschreck-Event ist kostenlos.
+                                    Nein, der Eintritt zum Schattenschreck ist komplett kostenlos.
                                 </p>
                             </div>
                         </div>
@@ -3333,7 +3293,7 @@
                         <div class="faq-answer">
                             <div class="faq-answer-inner">
                                 <p>
-                                    Ja. Der Zugang zum Event ist barrierefrei.
+                                    Ja, der Zugang zum Event ist barrierefrei – alle sollen die Gänsehaut miterleben können.
                                 </p>
                             </div>
                         </div>
@@ -3349,8 +3309,8 @@
                         <div class="faq-answer">
                             <div class="faq-answer-inner">
                                 <p>
-                                    Ja. Für Personen, die selbst hinter den Kulissen als
-                                    Live-Erschrecker mitwirken möchten, gibt es eine separate
+                                    Ja, sehr gern! Wenn du selbst hinter den Kulissen als
+                                    Live-Erschrecker mitwirken möchtest, gibt es eine separate
                                     Bewerbung. Du findest den Link oben in der Navigation unter
                                     „Mitmachen“, unten im Footer oder
                                     <a
@@ -3373,9 +3333,7 @@
                         <div class="faq-answer">
                             <div class="faq-answer-inner">
                                 <p>
-                                    Bei Fragen kannst du dich jederzeit per E-Mail an
-                                    <a href="mailto:gogosofficialgroup@gmail.com">gogosofficialgroup@gmail.com</a>
-                                    wenden.
+                                    Bei Fragen schreib uns jederzeit gern eine E-Mail an <a href="mailto:gogosofficialgroup@gmail.com">gogosofficialgroup@gmail.com</a> – wir helfen dir gern weiter.
                                 </p>
                             </div>
                         </div>
@@ -3384,34 +3342,6 @@
             </div>
         </section>
 
-        <!-- =========================================================
-             FINAL CTA
-        ========================================================= -->
-        <section class="final-section" aria-labelledby="finalHeading">
-            <div class="container">
-                <div class="final-box reveal">
-                    <div class="final-label">
-                        Schattenschreck 2026
-                    </div>
-
-                    <h2 class="final-title" id="finalHeading">
-                        Wir sehen<br>
-                        uns in Wardersee.
-                    </h2>
-
-                    <p class="final-text">
-                        <time datetime="2026-10-31">31. Oktober 2026</time> · ab <time datetime="18:00">18:00 Uhr</time>. Wir freuen uns auf deinen Besuch.
-                    </p>
-
-                    <a
-                        class="primary-button"
-                        href="#eckdaten"
-                    >
-                        Besuchsinfos ansehen
-                    </a>
-                </div>
-            </div>
-        </section>
     </main>
 
     <!-- =========================================================
@@ -3477,7 +3407,7 @@
 
             <div class="footer-bottom">
                 <div>
-                    © 2026 GOGOS Gruppe
+                    © 2027 GOGOS Gruppe
                 </div>
 
                 <div class="footer-credit">
@@ -3525,7 +3455,7 @@
 
             <div class="modal-body">
                 <p>
-                    <strong>GOGOS Gruppe © 2026</strong>
+                    <strong>GOGOS Gruppe © 2027</strong>
                 </p>
 
                 <p>
@@ -3546,7 +3476,7 @@
                 </p>
 
                 <p>
-                    <strong>Führende leitung:</strong><br>
+                    <strong>Führende Leitung:</strong><br>
                     Ben T.
                 </p>
 
@@ -3557,7 +3487,7 @@
 
                 <p>
                     <strong>Anschrift:</strong><br>
-                    <br><br>
+                    
                     Karl-Marx-Straße 23, Pößneck,
                     07381 Deutschland
                 </p>
@@ -3650,9 +3580,8 @@
                     href="#"
                     target="_blank"
                     rel="noopener noreferrer"
-                    download
                 >
-                    Bild herunterladen / Vollbild ↗
+                    Vollbild öffnen / Speichern ↗
                 </a>
             </div>
         </div>
@@ -3736,12 +3665,12 @@
             ===================================================== */
 
             const EVENT_CONFIG = {
-                startIso: "2026-10-31T18:00:00+01:00",
-                lastEntryIso: "2026-10-31T20:00:00+01:00"
+                startIso: "2027-10-31T18:00:00+01:00",
+                lastEntryIso: "2027-10-31T20:00:00+01:00"
             };
 
             const INTRO_CONFIG = {
-                sessionKey: "schattenschreck_intro_seen_2026",
+                sessionKey: "schattenschreck_intro_seen_2027",
                 forceAlwaysShowInDev: false, // Bei Bedarf synchron mit FORCE_DEV_INTRO im <head> auf true setzen
 
                 // Benötigte virtuelle Scrollstrecke (Mausrad / Trackpad) in normalisierten Pixeln
@@ -4442,6 +4371,7 @@
 
                 galleryYear = year;
                 updateGalleryTabs();
+                preloadGalleryYear(year);
 
                 const note = GALLERY_DATA[year].note;
                 if (galleryNoteEl && galleryNoteTextEl) {
@@ -4450,6 +4380,26 @@
                 }
 
                 showGalleryImage(index || 0);
+            }
+
+            // Lädt die weiteren Bilder eines Jahres sukzessive im Hintergrund,
+            // sobald die Galerie geöffnet oder das Jahr ausgewählt wird.
+            const yearPreloadStarted = {};
+
+            function preloadGalleryYear(year) {
+                if (yearPreloadStarted[year] || !GALLERY_DATA[year]) return;
+                if (!canPreload()) return;
+                yearPreloadStarted[year] = true;
+
+                const urls = GALLERY_DATA[year].images.slice();
+                let i = 0;
+
+                function loadNext() {
+                    if (i >= urls.length) return;
+                    preloadImage(urls[i++]);
+                    window.setTimeout(loadNext, 180);
+                }
+                loadNext();
             }
 
             function galleryStep(direction) {
@@ -4748,36 +4698,39 @@
                     galleryModal.classList.add("transitions-ready");
                 });
 
-                /* ---- Preloading im Hintergrund NACH dem Seitenaufbau ---- */
-                const preloadCache = [];
+                /* ---- Preloading: sparsam & bedarfsgesteuert ---- */
+                // Nach dem Seitenaufbau wird nur das erste Bild von 2026 vorgeladen.
+                // Alle weiteren Bilder eines Jahres folgen erst, wenn die Galerie
+                // geöffnet oder das Jahr angeklickt wird (siehe selectGalleryYear).
+                const preloadCache = new Map();
 
-                function startPreload() {
+                function canPreload() {
                     // Datensparmodus respektieren
                     const conn = navigator.connection;
-                    if (conn && conn.saveData) return;
+                    return !(conn && conn.saveData);
+                }
 
-                    const urls = [];
-                    galleryYears.forEach((year) => {
-                        GALLERY_DATA[year].images.forEach((url) => urls.push(url));
-                    });
+                function preloadImage(url) {
+                    if (!url || preloadCache.has(url)) return;
+                    const img = new Image();
+                    img.decoding = "async";
+                    img.src = url;
+                    preloadCache.set(url, img);
+                }
 
-                    let i = 0;
-                    function loadNext() {
-                        if (i >= urls.length) return;
-                        const img = new Image();
-                        img.decoding = "async";
-                        img.src = urls[i++];
-                        preloadCache.push(img);
-                        window.setTimeout(loadNext, 180);
+                function startInitialPreload() {
+                    if (!canPreload()) return;
+                    const first = GALLERY_DATA["2026"];
+                    if (first && first.images && first.images.length > 0) {
+                        preloadImage(first.images[0]);
                     }
-                    loadNext();
                 }
 
                 function schedulePreload() {
                     if (typeof window.requestIdleCallback === "function") {
-                        window.requestIdleCallback(startPreload, { timeout: 4000 });
+                        window.requestIdleCallback(startInitialPreload, { timeout: 4000 });
                     } else {
-                        window.setTimeout(startPreload, 1500);
+                        window.setTimeout(startInitialPreload, 1500);
                     }
                 }
 
