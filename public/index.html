@@ -2629,6 +2629,17 @@
             }
         }
 
+        @media (max-width: 380px) {
+            .gallery-tabs {
+                gap: 8px;
+            }
+
+            .gallery-tab {
+                padding: 0 10px;
+                letter-spacing: 0.06em;
+            }
+        }
+
         /* === HIER WIEDER ENTFERNEN (START DANKSAGUNG CSS) === */
         .thanks-box {
             position: relative;
@@ -3215,8 +3226,8 @@
                     </h2>
 
                     <p class="gallery-card-text">
-                        Den Schattenschreck gibt es bereits seit mehr als 3 Jahren. Hier kannst du dir
-                        die Fotos aus 2024, 2025 und 2026 ansehen – inklusive der brandneuen
+                        Den Schattenschreck gibt es bereits seit vier Jahren. Hier kannst du dir
+                        die Fotos aus 2023, 2024, 2025 und 2026 ansehen – inklusive der brandneuen
                         Bilder vom diesjährigen Event.
                     </p>
 
@@ -3228,13 +3239,14 @@
                             aria-haspopup="dialog"
                             aria-controls="galleryModal"
                         >
-                            Galerie öffnen (2024–2026)
+                            Galerie öffnen (2023–2026)
                         </button>
 
                         <div class="gallery-year-buttons" role="group" aria-label="Direkt zu einem Jahr springen">
                             <button type="button" class="secondary-button" data-gallery-open data-gallery-year="2026">2026</button>
                             <button type="button" class="secondary-button" data-gallery-open data-gallery-year="2025">2025</button>
                             <button type="button" class="secondary-button" data-gallery-open data-gallery-year="2024">2024</button>
+                            <button type="button" class="secondary-button" data-gallery-open data-gallery-year="2023">2023</button>
                         </div>
                     </div>
                 </div>
@@ -3594,7 +3606,7 @@
             </button>
 
             <div class="modal-label">
-                Rückblick · 2024 – 2026
+                Rückblick · 2023 – 2026
             </div>
 
             <h2 class="modal-title gallery-modal-title" id="galleryTitle">
@@ -3708,6 +3720,15 @@
                         "https://i.postimg.cc/3r09bbYs/0175b7e3-0579-4aab-b2e4-66991303144e.jpg",
                         "https://i.postimg.cc/m2xVxNr2/2df6dc38-6b0a-461e-a585-451f0a8bf5b3.jpg",
                         "https://i.postimg.cc/P5CqmZm1/571223d4-52b7-410f-ac57-3b22a27a8998.jpg"
+                    ]
+                },
+                "2023": {
+                    label: "2023",
+                    note: "",
+                    images: [
+                        "https://i.postimg.cc/T3cp2GJP/37b77913-a662-454a-8ece-0a780045ec77.jpg",
+                        "https://i.postimg.cc/y8KDzW9M/50154b5b-e8f0-4158-bf1d-8470c21de5b0.jpg",
+                        "https://i.postimg.cc/qB9tj1vY/24059b0f-2805-4356-8de4-13897438377a.jpg"
                     ]
                 }
             };
@@ -4379,12 +4400,23 @@
                 galleryIndex = ((index % total) + total) % total;
                 const url = data.images[galleryIndex];
 
-                galleryImageEl.classList.remove("img-broken", "is-loaded");
-                galleryImageEl.onload = () => {
-                    galleryImageEl.classList.add("is-loaded");
-                };
                 galleryImageEl.alt = `Schattenschreck ${galleryYear} – Bild ${galleryIndex + 1} von ${total}`;
-                galleryImageEl.src = url;
+
+                if (
+                    galleryImageEl.getAttribute("src") === url &&
+                    galleryImageEl.complete &&
+                    galleryImageEl.naturalWidth > 0
+                ) {
+                    // Dasselbe Bild ist bereits geladen → direkt sichtbar lassen (kein schwarzes Bild)
+                    galleryImageEl.classList.remove("img-broken");
+                    galleryImageEl.classList.add("is-loaded");
+                } else {
+                    galleryImageEl.classList.remove("img-broken", "is-loaded");
+                    galleryImageEl.onload = () => {
+                        galleryImageEl.classList.add("is-loaded");
+                    };
+                    galleryImageEl.src = url;
+                }
 
                 if (galleryCounterNumEl) {
                     galleryCounterNumEl.textContent = `${pad2(galleryIndex + 1)} / ${pad2(total)}`;
