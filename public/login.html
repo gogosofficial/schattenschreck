@@ -5,29 +5,45 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#090909">
+<meta name="color-scheme" content="dark">
 <title>Team-Login — Schattenschreck</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="/ss.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&family=Oswald:wght@500;600&display=swap">
+<link rel="stylesheet" href="/css/app.css">
 </head>
 <body>
+<a class="skip-link" href="#loginForm">Zum Login-Formular springen</a>
 <header class="header"><div class="container header-inner">
-<a href="/" aria-label="Zur Startseite"><img class="logo" src="https://i.imgur.com/Cl27hzM.png" alt="Schattenschreck" width="130" height="44"></a>
+<a class="logo-link" href="/" aria-label="Zur Startseite"><img class="logo" src="https://i.imgur.com/Cl27hzM.png" alt="Schattenschreck" width="130" height="44"></a>
 <a class="secondary-button" href="/">Zur Webseite</a>
 </div></header>
 <main class="container auth-wrap">
 <div class="card auth-card">
 <div class="label">Nur für Live-Erschrecker</div>
 <h1 class="title">Team-Login</h1>
+<p class="auth-intro">Melde dich mit den Zugangsdaten an, die du vom Team bekommen hast.</p>
 <form id="loginForm" autocomplete="on" novalidate>
-<label class="field"><span>E-Mail</span><input id="email" name="email" type="email" autocomplete="username" required></label>
-<label class="field"><span>Passwort</span><input id="password" name="password" type="password" autocomplete="current-password" required></label>
-<p class="err" id="err" role="alert" aria-live="polite"></p>
-<button class="primary-button" id="btn" type="submit">Einloggen</button>
+<div class="field">
+<label for="email">E-Mail</label>
+<input id="email" name="email" type="email" inputmode="email" autocomplete="username" autocapitalize="none" spellcheck="false" required aria-describedby="emailErr">
+<p class="field-err" id="emailErr"></p>
+</div>
+<div class="field">
+<label for="password">Passwort</label>
+<div class="pw-wrap">
+<input id="password" name="password" type="password" autocomplete="current-password" required aria-describedby="pwErr capsHint">
+<button class="pw-toggle" id="pwToggle" type="button" aria-controls="password" aria-pressed="false">Anzeigen</button>
+</div>
+<p class="field-hint" id="capsHint" hidden>Feststelltaste ist aktiv.</p>
+<p class="field-err" id="pwErr"></p>
+</div>
+<p class="err" id="err" role="alert"></p>
+<button class="primary-button" id="btn" type="submit"><span class="btn-text">Einloggen</span></button>
 </form>
-<p class="hint">Kein Zugang? Melde dich beim Team, Konten werden nur manuell angelegt.</p>
+<p class="hint">Kein Zugang oder Passwort vergessen? Melde dich beim Team unter <a href="mailto:gogosofficialgroup@gmail.com">gogosofficialgroup@gmail.com</a>. Konten werden nur manuell angelegt.</p>
 </div>
 </main>
-<script src="/login.js"></script>
+<script src="/js/login.js"></script>
 </body>
 </html>

@@ -1,0 +1,4 @@
+# Alte Asset-Pfade (vor der Umstrukturierung) leiten auf die neuen Dateien weiter
+/ss.css    /css/app.css       301
+/login.js  /js/login.js       301
+/dash.js   /js/dashboard.js   301
