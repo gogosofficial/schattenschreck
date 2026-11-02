@@ -1,13 +1,6 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <!-- Google Tag Manager -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-5DK82LGV');</script>
-    <!-- End Google Tag Manager -->  
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="description" content="Schattenschreck — Kostenloses Horror-Event mit Atmosphäre, Geschichte, Aufgaben und Live-Erschreckern am 31. Oktober 2027 ab 18:00 Uhr in Wardersee.">
@@ -1634,6 +1627,159 @@
            BACK TO TOP
         ========================================================= */
 
+
+        /* =========================================================
+           COOKIE-BANNER (FLOATING BAR) & DATENSCHUTZ-ERGÄNZUNGEN
+        ========================================================= */
+
+        .cookie-banner {
+            position: fixed;
+            left: 50%;
+            bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+            z-index: 4500;
+            width: min(calc(100% - 32px), 760px);
+            padding: 20px 22px;
+            border: 1px solid var(--border-strong);
+            background: rgba(17, 17, 17, 0.96);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+            opacity: 0;
+            transform: translate(-50%, 16px);
+            transition:
+                opacity 0.3s ease,
+                transform 0.3s ease;
+        }
+
+        .cookie-banner[hidden] {
+            display: none;
+        }
+
+        .cookie-banner.is-visible {
+            opacity: 1;
+            transform: translate(-50%, 0);
+        }
+
+        .cookie-banner-title {
+            margin: 0 0 8px;
+            color: var(--white);
+            font-family: var(--font-display);
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            line-height: 1.3;
+            text-transform: uppercase;
+        }
+
+        .cookie-banner-text {
+            margin: 0;
+            color: var(--muted);
+            font-family: var(--font-sans);
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .cookie-banner-text a {
+            color: var(--white);
+            text-decoration: underline;
+            text-decoration-color: rgba(255, 255, 255, 0.35);
+            text-underline-offset: 3px;
+            cursor: pointer;
+        }
+
+        .cookie-banner-text a:hover,
+        .cookie-banner-text a:focus-visible {
+            text-decoration-color: var(--red-hover);
+        }
+
+        .cookie-banner-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .cookie-banner-actions .primary-button,
+        .cookie-banner-actions .secondary-button {
+            flex: 1 1 0;
+            min-height: 44px;
+            padding: 0 14px;
+            font-size: 12px;
+            letter-spacing: 0.12em;
+            cursor: pointer;
+        }
+
+        .cookie-banner-actions .secondary-button {
+            border-color: var(--border-strong);
+        }
+
+        @media (max-width: 520px) {
+            .cookie-banner {
+                width: calc(100% - 24px);
+                padding: 16px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .cookie-banner {
+                transition: none;
+            }
+        }
+
+        /* Footer: Button im Stil der Links, Links dürfen umbrechen */
+        .footer-links {
+            flex-wrap: wrap;
+        }
+
+        button.footer-legal-link {
+            -webkit-appearance: none;
+            appearance: none;
+            border: 0;
+            background: none;
+            font-family: inherit;
+            text-align: left;
+        }
+
+        /* Datenschutz-Modal: Überschriften, Listen, Code */
+        #datenschutzModal .modal-body h3 {
+            margin: 30px 0 10px;
+            color: var(--white);
+            font-family: var(--font-display);
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            line-height: 1.3;
+            text-transform: uppercase;
+        }
+
+        #datenschutzModal .modal-body p + h3,
+        #datenschutzModal .modal-body ul + h3 {
+            margin-top: 30px;
+        }
+
+        #datenschutzModal .modal-body ul {
+            margin: 0 0 18px;
+            padding-left: 20px;
+        }
+
+        #datenschutzModal .modal-body li {
+            margin-bottom: 8px;
+        }
+
+        #datenschutzModal .modal-body code {
+            padding: 1px 6px;
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--white);
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            font-size: 12.5px;
+            word-break: break-all;
+        }
+
+        #datenschutzModal .cookie-inline-button {
+            min-height: 44px;
+            margin-top: 4px;
+            cursor: pointer;
+        }
+
         .back-top {
             position: fixed;
             right: 22px;
@@ -2627,10 +2773,6 @@
 </head>
 
 <body>
-    <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5DK82LGV"
-    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-    <!-- End Google Tag Manager (noscript) -->
     <a class="skip-link" href="#mainContent">
         Zum Hauptinhalt springen
     </a>
@@ -3310,6 +3452,20 @@
                     >
                         Impressum
                     </a>
+                    <a
+                        href="#datenschutzModal"
+                        class="footer-legal-link"
+                        id="datenschutzButton"
+                    >
+                        Datenschutz
+                    </a>
+                    <button
+                        type="button"
+                        class="footer-legal-link"
+                        id="cookieSettingsButton"
+                    >
+                        Cookie-Einstellungen
+                    </button>
                 </div>
             </div>
         </div>
@@ -3404,6 +3560,231 @@
     </section>
 
     <!-- =========================================================
+         DATENSCHUTZERKLÄRUNG (GLEICHES PRINZIP WIE DAS IMPRESSUM)
+    ========================================================= -->
+    <section
+        class="modal"
+        id="datenschutzModal"
+        aria-labelledby="datenschutzTitle"
+    >
+        <div class="modal-content" id="datenschutzContent">
+            <button
+                class="modal-close"
+                id="datenschutzClose"
+                type="button"
+                aria-label="Datenschutzerklärung schließen"
+            >
+                ×
+            </button>
+
+            <div class="modal-label">
+                Rechtliche Informationen
+            </div>
+
+            <h2 class="modal-title" id="datenschutzTitle">
+                Datenschutz&shy;erklärung
+            </h2>
+
+            <div class="modal-body">
+                <p>
+                    Der Schutz deiner Daten ist uns wichtig. Diese Erklärung
+                    zeigt dir, welche personenbezogenen Daten beim Besuch dieser
+                    Website verarbeitet werden und welche Rechte du hast.
+                    Analyse-Dienste laden wir nur mit deiner ausdrücklichen
+                    Einwilligung.
+                </p>
+
+                <h3>1. Verantwortlicher</h3>
+                <p>
+                    Verantwortlicher im Sinne des Art. 4 Nr. 7 DSGVO ist:
+                </p>
+                <p>
+                    <strong>GOGOS Gruppe</strong><br>
+                    (privates, nicht-kommerzielles Eventprojekt)
+                </p>
+                <p>
+                    <strong>Vertreten durch:</strong><br>
+                    Ulf T. (Inhaber)<br>
+                    Paul W. (Technischer Leiter)<br>
+                    Ben T. (Führende Leitung)<br>
+                    Ute T. (Oberste Sekretärin)
+                </p>
+                <p>
+                    <strong>Anschrift:</strong><br>
+                    Karl-Marx-Straße 23<br>
+                    07381 Pößneck<br>
+                    Deutschland
+                </p>
+                <p>
+                    <strong>E-Mail:</strong><br>
+                    <a href="mailto:gogosofficialgroup@gmail.com">gogosofficialgroup@gmail.com</a>
+                </p>
+
+                <h3>2. Hosting &amp; Bereitstellung der Website</h3>
+                <p>
+                    Diese Website ist eine statische Seite und wird über einen
+                    Hosting-Dienst (Cloudflare Pages bzw. GitHub Pages)
+                    ausgeliefert. Beim Aufruf verarbeitet der Hosting-Anbieter
+                    technisch notwendige Server-Logfiles, insbesondere
+                    IP-Adresse, Browsertyp, Betriebssystem sowie Datum und
+                    Uhrzeit des Zugriffs. Das ist erforderlich, um die Website
+                    sicher und fehlerfrei auszuliefern.
+                </p>
+                <p>
+                    Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO (berechtigtes
+                    Interesse an einem sicheren und stabilen Betrieb der
+                    Website). Soweit dabei Daten in die USA übermittelt werden,
+                    stützt sich das auf den Angemessenheitsbeschluss der
+                    EU-Kommission zum EU-US Data Privacy Framework bzw. auf
+                    Standardvertragsklauseln.
+                </p>
+
+                <h3>3. Lokale Speicherung (SessionStorage &amp; LocalStorage)</h3>
+                <p>
+                    Diese Website setzt selbst keine Tracking-Cookies. Sie nutzt
+                    ausschließlich die folgenden technisch notwendigen Einträge
+                    im Speicher deines Browsers:
+                </p>
+                <ul>
+                    <li>
+                        <code>schattenschreck_intro_seen_2027</code>
+                        (<code>sessionStorage</code>): Speichert für die Dauer
+                        der Sitzung, ob das Eingangs-Intro bereits abgespielt
+                        wurde.
+                    </li>
+                    <li>
+                        <code>schattenschreck_cookie_consent_v1</code>
+                        (<code>localStorage</code>): Speichert deine
+                        Datenschutz-Entscheidung (Zustimmung oder Ablehnung),
+                        damit wir dich nicht bei jedem Besuch erneut fragen
+                        müssen.
+                    </li>
+                </ul>
+                <p>
+                    Diese Einträge verlassen deinen Browser nicht. Der Zugriff
+                    ist nach § 25 Abs. 2 TDDDG ohne Einwilligung zulässig, weil
+                    er für den Betrieb der Seite bzw. zur Umsetzung deiner
+                    Entscheidung erforderlich ist. Rechtsgrundlage der
+                    Verarbeitung ist Art. 6 Abs. 1 lit. f DSGVO. Der Eintrag im
+                    <code>sessionStorage</code> endet mit dem Schließen des
+                    Tabs; den Eintrag im <code>localStorage</code> kannst du
+                    jederzeit in deinem Browser löschen.
+                </p>
+
+                <h3>4. Google Tag Manager &amp; Webanalyse (nur mit Einwilligung)</h3>
+                <p>
+                    Nur wenn du im Banner auf „Alle akzeptieren“ klickst, laden
+                    wir den Google Tag Manager (Container-ID
+                    <code>GTM-5DK82LGV</code>). Anbieter ist Google Ireland
+                    Limited, Gordon House, Barrow Street, Dublin 4, Irland;
+                    Mutterkonzern ist Google LLC, USA. Er dient uns zur
+                    Analyse und Verbesserung unseres Events. Dabei können
+                    Cookies oder ähnliche Technologien gesetzt und Daten wie
+                    deine IP-Adresse, Geräte- und Browserinformationen sowie
+                    dein Nutzungsverhalten an Google übermittelt werden.
+                </p>
+                <p>
+                    Rechtsgrundlage ist deine Einwilligung nach § 25 Abs. 1
+                    TDDDG und Art. 6 Abs. 1 lit. a DSGVO. Es ist möglich, dass
+                    Daten in die USA übermittelt werden; Google LLC ist
+                    nach unserem Kenntnisstand unter dem EU-US Data Privacy
+                    Framework zertifiziert. Ohne deine Einwilligung wird der
+                    Google Tag Manager nicht geladen. Die Seite funktioniert
+                    mit „Nur Notwendige“ vollständig.
+                </p>
+                <p>
+                    Du kannst deine Einwilligung jederzeit mit Wirkung für die
+                    Zukunft widerrufen: über „Cookie-Einstellungen“ im Footer
+                    oder mit dem folgenden Button und anschließend „Nur
+                    Notwendige“. Dabei wird die Seite neu geladen und bereits
+                    gesetzte Google-Cookies werden entfernt.
+                </p>
+                <p>
+                    <button
+                        type="button"
+                        class="secondary-button cookie-inline-button"
+                        data-cookie-settings
+                    >
+                        Cookie-Einstellungen öffnen
+                    </button>
+                </p>
+
+                <h3>5. Externe Medien &amp; Schriftarten</h3>
+                <p>
+                    Zur Darstellung der Seite laden wir Inhalte von externen
+                    Servern (Content-Delivery-Networks):
+                </p>
+                <ul>
+                    <li>Schriftarten (Google Fonts) von <code>fonts.googleapis.com</code> und <code>fonts.gstatic.com</code> (Google Ireland Limited, Irland)</li>
+                    <li>das Logo von <code>i.imgur.com</code> (Imgur)</li>
+                    <li>die Bilder der Event-Galerie von <code>i.postimg.cc</code> (Postimages)</li>
+                </ul>
+                <p>
+                    Dabei wird technisch bedingt deine IP-Adresse an den
+                    jeweiligen Anbieter übermittelt, damit dir die Inhalte
+                    ausgeliefert werden können. Diese Inhalte werden
+                    unabhängig von deiner Cookie-Auswahl geladen, da sie zur
+                    Darstellung der Seite gehören. Rechtsgrundlage ist
+                    Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an einer
+                    einheitlichen und ansprechenden Darstellung).
+                </p>
+
+                <h3>6. Externe Verlinkungen</h3>
+                <p>
+                    Diese Website enthält Links zu externen Angeboten, etwa zu
+                    unserem WhatsApp-Kanal (<code>whatsapp.com</code>), zum
+                    Bewerbungsformular bei Tally (<code>tally.so</code>) und
+                    zur Seite von SiteForge, die diese Website gebaut hat.
+                    Beim reinen Besuch unserer Website fließen keine Daten an
+                    WhatsApp oder Tally. Erst wenn du einen dieser Links aktiv
+                    anklickst, verlässt du unsere Seite; ab dann gelten die
+                    Datenschutzbestimmungen des jeweiligen Anbieters, auf die
+                    wir keinen Einfluss haben.
+                </p>
+
+                <h3>7. Kontaktaufnahme per E-Mail</h3>
+                <p>
+                    Wenn du uns per E-Mail an
+                    <a href="mailto:gogosofficialgroup@gmail.com">gogosofficialgroup@gmail.com</a>
+                    schreibst, verarbeiten wir deine E-Mail-Adresse und den
+                    Inhalt deiner Nachricht, um deine Anfrage zu beantworten.
+                    Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO bzw.
+                    Art. 6 Abs. 1 lit. b DSGVO, wenn es um die Teilnahme am
+                    Event geht. Wir löschen deine Daten, sobald deine Anfrage
+                    erledigt ist und keine gesetzlichen Aufbewahrungspflichten
+                    entgegenstehen.
+                </p>
+
+                <h3>8. Deine Rechte</h3>
+                <p>
+                    Du hast gegenüber uns folgende Rechte bezüglich deiner
+                    personenbezogenen Daten:
+                </p>
+                <ul>
+                    <li>Auskunft (Art. 15 DSGVO)</li>
+                    <li>Berichtigung (Art. 16 DSGVO)</li>
+                    <li>Löschung (Art. 17 DSGVO)</li>
+                    <li>Einschränkung der Verarbeitung (Art. 18 DSGVO)</li>
+                    <li>Datenübertragbarkeit (Art. 20 DSGVO)</li>
+                    <li>Widerruf einer erteilten Einwilligung mit Wirkung für die Zukunft (Art. 7 Abs. 3 DSGVO)</li>
+                </ul>
+                <p>
+                    Außerdem hast du das Recht, dich bei einer
+                    Datenschutz-Aufsichtsbehörde zu beschweren (Art. 77 DSGVO),
+                    zum Beispiel beim Thüringer Landesbeauftragten für den
+                    Datenschutz und die Informationsfreiheit (TLfDI). Für
+                    deine Anliegen erreichst du uns unter
+                    <a href="mailto:gogosofficialgroup@gmail.com">gogosofficialgroup@gmail.com</a>.
+                </p>
+
+                <p>
+                    Stand: November 2026
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- =========================================================
          GALERIE-OVERLAY (GLEICHES PRINZIP WIE DAS IMPRESSUM)
     ========================================================= -->
     <section
@@ -3473,6 +3854,34 @@
             </div>
         </div>
     </section>
+
+    <!-- =========================================================
+         COOKIE-BANNER (ERST NACH DEM INTRO, OHNE JS NICHT SICHTBAR)
+    ========================================================= -->
+    <div
+        class="cookie-banner"
+        id="cookieBanner"
+        role="dialog"
+        aria-modal="false"
+        aria-labelledby="cookieBannerTitle"
+        aria-describedby="cookieBannerText"
+        hidden
+    >
+        <h2 class="cookie-banner-title" id="cookieBannerTitle">Datenschutz &amp; Cookies</h2>
+        <p class="cookie-banner-text" id="cookieBannerText">
+            Wir nutzen technisch notwendige Speicherfunktionen für diese Seite
+            sowie – mit deiner Einwilligung – den Google Tag Manager zur
+            anonymisierten Analyse und Verbesserung unseres Events. Details
+            findest du in unserer
+            <a href="#datenschutzModal" data-cookie-open="datenschutz">Datenschutzerklärung</a>
+            und im
+            <a href="#impressumModal" data-cookie-open="impressum">Impressum</a>.
+        </p>
+        <div class="cookie-banner-actions">
+            <button type="button" class="secondary-button" id="cookieDeny">Nur Notwendige</button>
+            <button type="button" class="primary-button" id="cookieAccept">Alle akzeptieren</button>
+        </div>
+    </div>
 
     <!-- =========================================================
          BACK TO TOP
@@ -3587,6 +3996,7 @@
             const header = document.getElementById("header");
             const mainElement = document.getElementById("top");
             const footerElement = document.getElementById("footer");
+            const cookieBanner = document.getElementById("cookieBanner");
             const backTop = document.getElementById("backTop");
             const heroSection = document.getElementById("mainContent");
 
@@ -3629,6 +4039,17 @@
                 } else {
                     el.removeAttribute("inert");
                     el.removeAttribute("aria-hidden");
+                }
+
+                // Der Cookie-Banner liegt außerhalb von Header/Main/Footer und folgt dem Footer
+                if (el === footerElement && cookieBanner) {
+                    if (value) {
+                        cookieBanner.setAttribute("inert", "");
+                        cookieBanner.setAttribute("aria-hidden", "true");
+                    } else {
+                        cookieBanner.removeAttribute("inert");
+                        cookieBanner.removeAttribute("aria-hidden");
+                    }
                 }
             }
 
@@ -4041,10 +4462,17 @@
             const impressumModal = document.getElementById("impressumModal");
             const modalClose = document.getElementById("modalClose");
 
+            const datenschutzButton = document.getElementById("datenschutzButton");
+            const datenschutzModal = document.getElementById("datenschutzModal");
+            const datenschutzClose = document.getElementById("datenschutzClose");
+
             let isMenuOpen = false;
             let isModalOpen = false;
             let lastModalTrigger = null;
             let modalFocusTimer = null;
+            let isDatenschutzOpen = false;
+            let lastDatenschutzTrigger = null;
+            let datenschutzFocusTimer = null;
 
             /* ---- Galerie-Overlay: Elemente & Zustand ---- */
             const galleryModal = document.getElementById("galleryModal");
@@ -4078,6 +4506,9 @@
                 }
                 if (isGalleryOpen) {
                     closeGalleryModal(false);
+                }
+                if (isDatenschutzOpen) {
+                    closeDatenschutzModal(false);
                 }
 
                 isMenuOpen = true;
@@ -4121,6 +4552,9 @@
                 }
                 if (isGalleryOpen) {
                     closeGalleryModal(false);
+                }
+                if (isDatenschutzOpen) {
+                    closeDatenschutzModal(false);
                 }
 
                 lastModalTrigger = triggerElement || document.activeElement;
@@ -4169,6 +4603,75 @@
                     lastModalTrigger.offsetParent !== null
                 ) {
                     lastModalTrigger.focus();
+                }
+            }
+
+            /* ---- Datenschutz-Dialog: Logik (analog Impressum) ---- */
+
+            function openDatenschutzModal(triggerElement) {
+                if (!datenschutzModal || !datenschutzClose) return;
+                if (isDatenschutzOpen) return;
+                if (isMenuOpen) {
+                    closeMobileMenu(false);
+                }
+                if (isModalOpen) {
+                    closeImpressumModal(false);
+                }
+                if (isGalleryOpen) {
+                    closeGalleryModal(false);
+                }
+
+                lastDatenschutzTrigger = triggerElement || document.activeElement;
+                isDatenschutzOpen = true;
+
+                datenschutzModal.classList.add("open");
+                datenschutzModal.setAttribute("aria-hidden", "false");
+
+                setElementInert(header, true);
+                setElementInert(mainElement, true);
+                setElementInert(footerElement, true);
+                updateScrollbarCompensation(true);
+
+                const datenschutzContent = document.getElementById("datenschutzContent");
+                if (datenschutzContent) {
+                    datenschutzContent.scrollTop = 0;
+                }
+
+                if (datenschutzFocusTimer) {
+                    window.clearTimeout(datenschutzFocusTimer);
+                }
+                datenschutzFocusTimer = window.setTimeout(() => {
+                    if (isDatenschutzOpen) {
+                        datenschutzClose.focus();
+                    }
+                }, 30);
+            }
+
+            function closeDatenschutzModal(restoreFocus = true) {
+                if (!datenschutzModal || !isDatenschutzOpen) return;
+
+                isDatenschutzOpen = false;
+                if (datenschutzFocusTimer) {
+                    window.clearTimeout(datenschutzFocusTimer);
+                    datenschutzFocusTimer = null;
+                }
+
+                datenschutzModal.classList.remove("open");
+                datenschutzModal.setAttribute("aria-hidden", "true");
+
+                setElementInert(header, false);
+                setElementInert(mainElement, false);
+                setElementInert(footerElement, false);
+                updateScrollbarCompensation(false);
+
+                if (
+                    restoreFocus &&
+                    lastDatenschutzTrigger &&
+                    typeof lastDatenschutzTrigger.focus === "function" &&
+                    document.contains(lastDatenschutzTrigger) &&
+                    lastDatenschutzTrigger.offsetParent !== null
+                ) {
+                    lastDatenschutzTrigger.focus();
                 }
             }
 
@@ -4324,6 +4827,9 @@
                 if (isModalOpen) {
                     closeImpressumModal(false);
                 }
+                if (isDatenschutzOpen) {
+                    closeDatenschutzModal(false);
+                }
 
                 lastGalleryTrigger = triggerElement || document.activeElement;
                 isGalleryOpen = true;
@@ -4454,6 +4960,39 @@
                     docEl.classList.add("modal-failed");
                 }
 
+                if (datenschutzButton && datenschutzModal && datenschutzClose) {
+                    datenschutzModal.setAttribute("role", "dialog");
+                    datenschutzModal.setAttribute("aria-modal", "true");
+                    datenschutzModal.setAttribute("aria-hidden", "true");
+                    datenschutzButton.setAttribute("aria-haspopup", "dialog");
+                    datenschutzButton.setAttribute("aria-controls", "datenschutzModal");
+
+                    datenschutzButton.addEventListener("click", (event) => {
+                        event.preventDefault();
+                        openDatenschutzModal(datenschutzButton);
+                    });
+
+                    datenschutzClose.addEventListener("click", () => {
+                        closeDatenschutzModal(true);
+                    });
+
+                    datenschutzModal.addEventListener("click", (event) => {
+                        if (event.target === datenschutzModal) {
+                            closeDatenschutzModal(true);
+                        }
+                    });
+
+                    if (window.location.hash === "#datenschutzModal") {
+                        openDatenschutzModal(datenschutzButton);
+                    }
+
+                    window.requestAnimationFrame(() => {
+                        datenschutzModal.classList.add("transitions-ready");
+                    });
+                } else {
+                    docEl.classList.add("modal-failed");
+                }
+
                 document.addEventListener("keydown", (event) => {
                     if (event.key === "Escape") {
                         if (isGalleryOpen) {
@@ -4464,6 +5003,11 @@
                         if (isModalOpen) {
                             event.preventDefault();
                             closeImpressumModal(true);
+                            return;
+                        }
+                        if (isDatenschutzOpen) {
+                            event.preventDefault();
+                            closeDatenschutzModal(true);
                             return;
                         }
                         if (isMenuOpen) {
@@ -4480,7 +5024,9 @@
                     }
 
                     if (event.key === "Tab") {
-                        const activeDialog = isGalleryOpen ? galleryModal : (isModalOpen ? impressumModal : null);
+                        const activeDialog = isGalleryOpen
+                            ? galleryModal
+                            : (isModalOpen ? impressumModal : (isDatenschutzOpen ? datenschutzModal : null));
 
                         if (activeDialog) {
                             const focusables = getFocusableElements(activeDialog);
@@ -5037,6 +5583,223 @@
             }
 
             /* =====================================================
+               COOKIE-CONSENT & GOOGLE TAG MANAGER (ECHTES OPT-IN)
+            ===================================================== */
+
+            const CONSENT_KEY = "schattenschreck_cookie_consent_v1";
+            const GTM_ID = "GTM-5DK82LGV";
+            let gtmLoaded = false;
+            let memoryConsent = null; // Fallback, falls localStorage blockiert ist
+            let cookieBannerTimer = null;
+            let lastCookieTrigger = null;
+
+            function readStoredConsent() {
+                try {
+                    const value = window.localStorage.getItem(CONSENT_KEY);
+                    return (value === "granted" || value === "denied") ? value : null;
+                } catch (_) {
+                    return memoryConsent;
+                }
+            }
+
+            function storeConsent(value) {
+                memoryConsent = value;
+                try {
+                    window.localStorage.setItem(CONSENT_KEY, value);
+                } catch (_) {
+                    /* Speicher blockiert: Entscheidung gilt nur für diesen Seitenaufruf */
+                }
+            }
+
+            // Lädt den Google Tag Manager – ausschließlich nach aktiver Einwilligung, max. einmal pro Seitenaufruf
+            function loadGoogleTagManager() {
+                if (gtmLoaded) return;
+                gtmLoaded = true;
+
+                (function (w, d, s, l, i) {
+                    w[l] = w[l] || [];
+                    w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
+                    var f = d.getElementsByTagName(s)[0],
+                        j = d.createElement(s),
+                        dl = l !== "dataLayer" ? "&l=" + l : "";
+                    j.async = true;
+                    j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
+                    f.parentNode.insertBefore(j, f);
+                })(window, document, "script", "dataLayer", GTM_ID);
+            }
+
+            function deleteAnalyticsCookies() {
+                const host = window.location.hostname;
+                const parts = host.split(".");
+                const domains = [null, host, "." + host];
+                for (let i = 1; i < parts.length - 1; i++) {
+                    domains.push("." + parts.slice(i).join("."));
+                }
+
+                document.cookie.split(";").forEach((cookie) => {
+                    const name = cookie.split("=")[0].trim();
+                    if (!/^(_ga|_gid|_gat)/.test(name)) return;
+                    domains.forEach((domain) => {
+                        document.cookie =
+                            name + "=; expires=Thu, 01 Jan 1970 00:00:00 GMT; max-age=0; path=/" +
+                            (domain ? "; domain=" + domain : "");
+                    });
+                });
+            }
+
+            function isIntroBlocking() {
+                return docEl.classList.contains("intro-pending") ||
+                    document.body.classList.contains("intro-active");
+            }
+
+            function showCookieBanner(moveFocus) {
+                if (!cookieBanner) return;
+                if (cookieBannerTimer) {
+                    window.clearTimeout(cookieBannerTimer);
+                    cookieBannerTimer = null;
+                }
+
+                // Läuft gerade ein Overlay, bleibt der Banner darunter inaktiv
+                if (footerElement && footerElement.hasAttribute("inert")) {
+                    cookieBanner.setAttribute("inert", "");
+                    cookieBanner.setAttribute("aria-hidden", "true");
+                }
+
+                cookieBanner.hidden = false;
+                void cookieBanner.offsetWidth; // Reflow, damit die Einblend-Transition greift
+                cookieBanner.classList.add("is-visible");
+
+                if (moveFocus) {
+                    const firstButton = document.getElementById("cookieDeny");
+                    if (firstButton) {
+                        firstButton.focus({ preventScroll: true });
+                    }
+                }
+            }
+
+            function hideCookieBanner() {
+                if (!cookieBanner || cookieBanner.hidden) return;
+
+                if (cookieBanner.contains(document.activeElement)) {
+                    if (
+                        lastCookieTrigger &&
+                        document.contains(lastCookieTrigger) &&
+                        typeof lastCookieTrigger.focus === "function" &&
+                        lastCookieTrigger.offsetParent !== null
+                    ) {
+                        lastCookieTrigger.focus({ preventScroll: true });
+                    } else if (document.activeElement && document.activeElement.blur) {
+                        document.activeElement.blur();
+                    }
+                }
+
+                cookieBanner.classList.remove("is-visible");
+                const instant = typeof reduceMotion !== "undefined" && reduceMotion;
+                cookieBannerTimer = window.setTimeout(() => {
+                    cookieBanner.hidden = true;
+                    cookieBannerTimer = null;
+                }, instant ? 0 : 320);
+            }
+
+            // Banner erst einblenden, wenn das Cinematic Intro beendet/übersprungen ist
+            function showCookieBannerAfterIntro() {
+                if (!isIntroBlocking()) {
+                    showCookieBanner(false);
+                    return;
+                }
+
+                const observer = new MutationObserver(() => {
+                    if (isIntroBlocking()) return;
+                    observer.disconnect();
+                    window.setTimeout(() => {
+                        if (readStoredConsent() === null) {
+                            showCookieBanner(false);
+                        }
+                    }, 600);
+                });
+                observer.observe(docEl, { attributes: true, attributeFilter: ["class"] });
+                observer.observe(document.body, { attributes: true, attributeFilter: ["class"] });
+            }
+
+            function applyConsent(choice) {
+                const previous = readStoredConsent();
+                storeConsent(choice);
+
+                if (choice === "granted") {
+                    loadGoogleTagManager();
+                    hideCookieBanner();
+                    return;
+                }
+
+                // Widerruf einer früheren Zustimmung bzw. bereits geladener GTM: Cookies löschen, sauber neu laden
+                if (previous === "granted" || gtmLoaded) {
+                    deleteAnalyticsCookies();
+                    try {
+                        window.history.replaceState(null, "", window.location.pathname + window.location.search);
+                    } catch (_) {
+                        /* ignorieren */
+                    }
+                    window.location.reload();
+                    return;
+                }
+
+                hideCookieBanner();
+            }
+
+            function openCookieSettings(triggerElement) {
+                if (isDatenschutzOpen) {
+                    closeDatenschutzModal(false);
+                }
+                lastCookieTrigger = triggerElement || null;
+                showCookieBanner(true);
+            }
+
+            function initCookieConsent() {
+                const stored = readStoredConsent();
+
+                if (stored === "granted") {
+                    loadGoogleTagManager();
+                }
+
+                if (!cookieBanner) return;
+
+                const acceptButton = document.getElementById("cookieAccept");
+                const denyButton = document.getElementById("cookieDeny");
+
+                if (acceptButton) {
+                    acceptButton.addEventListener("click", () => applyConsent("granted"));
+                }
+                if (denyButton) {
+                    denyButton.addEventListener("click", () => applyConsent("denied"));
+                }
+
+                // Links im Banner öffnen die Modals über dem Banner, ohne eine Entscheidung auszulösen
+                cookieBanner.querySelectorAll("[data-cookie-open]").forEach((link) => {
+                    link.addEventListener("click", (event) => {
+                        event.preventDefault();
+                        if (link.dataset.cookieOpen === "datenschutz") {
+                            openDatenschutzModal(link);
+                        } else {
+                            openImpressumModal(link);
+                        }
+                    });
+                });
+
+                const settingsButton = document.getElementById("cookieSettingsButton");
+                if (settingsButton) {
+                    settingsButton.setAttribute("aria-controls", "cookieBanner");
+                    settingsButton.addEventListener("click", () => openCookieSettings(settingsButton));
+                }
+                document.querySelectorAll("[data-cookie-settings]").forEach((btn) => {
+                    btn.addEventListener("click", () => openCookieSettings(settingsButton || btn));
+                });
+
+                if (stored === null) {
+                    showCookieBannerAfterIntro();
+                }
+            }
+
+            /* =====================================================
                INITIALISIERUNG MIT FEHLERISOLIERUNG & NOTFALL-FREIGABE
             ===================================================== */
 
@@ -5054,6 +5817,7 @@
             }
 
             const modules = [
+                initCookieConsent,
                 initNavigationAndOverlays,
                 initGallery,
                 initCountdown,
