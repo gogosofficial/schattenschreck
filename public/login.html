@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <meta name="robots" content="noindex, nofollow">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, sans-serif; }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #0b0d12;
+      color: #fff;
+      padding: 20px;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 380px;
+      background: #141822;
+      border: 1px solid #262c3a;
+      border-radius: 18px;
+      padding: 28px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.45);
+    }
+
+    h1 {
+      font-size: 22px;
+      margin-bottom: 6px;
+    }
+
+    p {
+      color: #9aa4b2;
+      font-size: 14px;
+      margin-bottom: 22px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      color: #aab3c0;
+      margin: 14px 0 6px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid #2c3444;
+      background: #0f131b;
+      color: #fff;
+      font-size: 15px;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: #6d5cff;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 20px;
+      padding: 13px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #6d5cff, #9b5cff);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .error {
+      display: none;
+      margin-top: 14px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: #3a1d24;
+      color: #ff8a9b;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1>Liveerschrecker Login</h1>
+    <p>Nur für Team-Mitglieder.</p>
+
+    <form id="loginForm">
+      <label for="username">Benutzername</label>
+      <input id="username" type="text" autocomplete="username" required>
+
+      <label for="password">Passwort</label>
+      <input id="password" type="password" autocomplete="current-password" required>
+
+      <button type="submit">Anmelden</button>
+      <div class="error" id="error">Falsche Daten. Versuch es nochmal.</div>
+    </form>
+  </main>
+
+  <script>
+    const USERS = {
+      "paul": "DEIN_PASSWORT_HIER"
+    };
+
+    document.getElementById("loginForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const user = document.getElementById("username").value.trim().toLowerCase();
+      const pass = document.getElementById("password").value;
+
+      if (USERS[user] && USERS[user] === pass) {
+        sessionStorage.setItem("liveerschrecker_login", "ok");
+        window.location.href = "/intern/";
+      } else {
+        document.getElementById("error").style.display = "block";
+      }
+    });
+  </script>
+</body>
+</html>
