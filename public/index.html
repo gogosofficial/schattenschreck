@@ -612,13 +612,22 @@
                         </form>
 
                         <div class="newsletter-success" id="nlSuccess" role="status" tabindex="-1" hidden>
-                            <div class="newsletter-success-icon" aria-hidden="true">✓</div>
-                            <h3 class="newsletter-success-title">Fast geschafft!</h3>
-                            <p>
-                                Wir haben dir eine E-Mail an <strong id="nlSuccessEmail"></strong>
-                                geschickt. Klick dort auf den Bestätigungslink, erst dann bist du
-                                eingetragen. Nichts angekommen? Schau kurz im Spam-Ordner nach.
+                            <div class="newsletter-success-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="3" y="5" width="18" height="14" rx="1"></rect>
+                                    <path d="m3 7 9 6 9-6"></path>
+                                </svg>
+                            </div>
+                            <h3 class="newsletter-success-title">Fast geschafft</h3>
+                            <p class="newsletter-success-lead">
+                                Schau in dein Postfach (auch&nbsp;Spam) und bestätige deine Anmeldung.
                             </p>
+                            <p class="newsletter-success-sent">
+                                Gesendet an <strong id="nlSuccessEmail"></strong>
+                            </p>
+                            <button class="nl-retry" id="nlRetry" type="button">
+                                Falsche Adresse? Nochmal eintragen
+                            </button>
                         </div>
                     </div>
                 </div>

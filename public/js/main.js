@@ -1412,6 +1412,7 @@ function initNewsletter() {
     const submitText = submit.querySelector(".nl-submit-text");
     const success = document.getElementById("nlSuccess");
     const successEmail = document.getElementById("nlSuccessEmail");
+    const retry = document.getElementById("nlRetry");
 
     const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
     const SUBMIT_LABEL = submitText.textContent;
@@ -1485,6 +1486,17 @@ function initNewsletter() {
         if (consentInput.checked) setFieldError(consentInput, consentErr, "");
         formErr.textContent = "";
     });
+
+    // Zurück zum Formular, z. B. bei vertippter Adresse
+    if (retry) {
+        retry.addEventListener("click", () => {
+            setBusy(false);
+            success.hidden = true;
+            form.hidden = false;
+            emailInput.focus();
+            emailInput.select();
+        });
+    }
 
     const ERROR_TEXT = {
         invalid_email: "Diese E-Mail-Adresse wurde nicht akzeptiert. Bitte prüfe deine Eingabe.",

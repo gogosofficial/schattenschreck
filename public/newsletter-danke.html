@@ -10,43 +10,155 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&family=Oswald:wght@500;600&display=swap">
-<link rel="stylesheet" href="/css/app.css">
 <style>
-.thanks-icon {
-  display: inline-grid; place-items: center; width: 56px; height: 56px; margin: 0 0 22px;
-  border: 1px solid var(--red-border); background: rgba(178, 8, 18, 0.14); color: var(--white); font-size: 24px;
+:root {
+  --bg: #090909;
+  --white: #f5f5f2;
+  --text: #e2e2df;
+  --muted: #a8a8a2;
+  --red: #b20812;
+  --red-hover: #d8111e;
+  --border: rgba(255, 255, 255, 0.13);
+  --font-sans: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-display: "Oswald", "Arial Narrow", sans-serif;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 }
-.thanks-list { list-style: none; margin: 0 0 24px; padding: 0; display: grid; gap: 10px; }
-.thanks-list li { position: relative; padding-left: 22px; }
-.thanks-list li::before { content: ""; position: absolute; left: 0; top: 0.72em; width: 10px; height: 2px; background: var(--red-hover); }
-.thanks-date { color: var(--white); font-weight: 600; }
-.thanks-actions { display: grid; gap: 12px; }
-.thanks-actions .secondary-button { min-height: 48px; }
+*, *::before, *::after { box-sizing: border-box; }
+html { background: var(--bg); color-scheme: dark; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: max(32px, env(safe-area-inset-top)) 20px max(32px, env(safe-area-inset-bottom));
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(150, 0, 12, 0.22), transparent 55%),
+    radial-gradient(circle at 50% 110%, rgba(130, 0, 12, 0.10), transparent 45%),
+    var(--bg);
+  color: var(--text);
+  font: 16px/1.6 var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-align: center;
+}
+::selection { background: var(--red); color: #fff; }
+:focus-visible { outline: 2px solid var(--red-hover); outline-offset: 4px; }
+
+.thanks { width: 100%; max-width: 520px; }
+
+.thanks-logo {
+  display: block;
+  width: min(360px, 82vw);
+  height: auto;
+  margin: 0 auto;
+  filter: drop-shadow(0 12px 40px rgba(178, 8, 18, 0.25));
+}
+.thanks-logo-fallback {
+  display: none;
+  margin: 0;
+  color: var(--white);
+  font: 600 clamp(32px, 9vw, 48px)/1 var(--font-display);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.img-broken { display: none; }
+.img-broken + .thanks-logo-fallback { display: block; }
+
+.thanks-rule { width: 44px; height: 2px; margin: 32px auto 26px; background: var(--red-hover); border: 0; }
+
+.thanks-label {
+  margin: 0 0 12px;
+  color: var(--muted);
+  font: 600 12px/1.4 var(--font-display);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+.thanks-label span { color: var(--red-hover); }
+
+h1 {
+  margin: 0;
+  color: var(--white);
+  font: 600 clamp(40px, 11vw, 64px)/1 var(--font-display);
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+.thanks-text {
+  max-width: 420px;
+  margin: 20px auto 0;
+  color: var(--muted);
+  font-size: 17px;
+  line-height: 1.7;
+  text-wrap: pretty;
+}
+.thanks-text strong { color: var(--white); font-weight: 600; }
+
+.thanks-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 340px;
+  min-height: 56px;
+  margin: 36px auto 0;
+  padding: 0 28px;
+  border: 1px solid var(--red);
+  background: var(--red);
+  color: #fff;
+  font: 600 15px var(--font-display);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: background 0.18s ease, border-color 0.18s ease, box-shadow 0.28s var(--ease-out), transform 0.28s var(--ease-out);
+}
+.thanks-button:hover { background: var(--red-hover); border-color: var(--red-hover); }
+.thanks-button:active { transform: translateY(1px) scale(0.985); transition-duration: 0.06s; }
+@media (hover: hover) and (pointer: fine) {
+  .thanks-button:hover { box-shadow: 0 12px 32px rgba(178, 8, 18, 0.32); }
+}
+
+.thanks-foot { margin: 28px 0 0; color: #85857f; font-size: 13px; }
+.thanks-foot a { color: var(--muted); text-decoration: underline; text-decoration-color: var(--red-hover); text-underline-offset: 3px; }
+.thanks-foot a:hover { color: var(--white); }
+
+/* Sanftes Einblenden */
+@media (prefers-reduced-motion: no-preference) {
+  .reveal { opacity: 0; transform: translateY(14px); animation: reveal 0.8s var(--ease-out) forwards; }
+  .reveal-1 { animation-delay: 0.12s; }
+  .reveal-2 { animation-delay: 0.24s; }
+  @keyframes reveal { to { opacity: 1; transform: none; } }
+}
+
+@media (forced-colors: active) {
+  .thanks-button { border: 1px solid ButtonText; }
+}
 </style>
 </head>
 <body>
-<a class="skip-link" href="#main">Zum Inhalt springen</a>
-<header class="header"><div class="container header-inner">
-<a class="logo-link" href="/" aria-label="Zur Startseite"><img class="logo" src="https://i.imgur.com/Cl27hzM.png" alt="Schattenschreck" width="130" height="44"></a>
-<a class="secondary-button" href="/">Zur Webseite</a>
-</div></header>
-<main class="container auth-wrap" id="main">
-<div class="card auth-card">
-<div class="thanks-icon" aria-hidden="true">✓</div>
-<div class="label">Newsletter</div>
-<h1 class="title">Anmeldung bestätigt</h1>
-<p class="auth-intro">Willkommen in den Schatten! Deine E-Mail-Adresse ist bestätigt. Ab jetzt erfährst du als Erste:r, was beim nächsten Schattenschreck am <time class="thanks-date" datetime="2027-10-31">31.&nbsp;Oktober&nbsp;2027</time> auf dich wartet.</p>
-<ul class="thanks-list">
-<li>Exklusive Vorab-Infos zur neuen Story</li>
-<li>Termine &amp; Einlasszeiten vor allen anderen</li>
-<li>Erinnerung kurz bevor der Nebel aufzieht</li>
-</ul>
-<div class="thanks-actions">
-<a class="primary-button" href="/">Zurück zur Webseite</a>
-<a class="secondary-button" href="https://whatsapp.com/channel/0029Vag7yzzATRSkigXng513" target="_blank" rel="noopener noreferrer">Auch im WhatsApp-Kanal folgen ↗</a>
-</div>
-<p class="hint">Du kannst dich jederzeit über den Link in jeder E-Mail wieder abmelden. Mehr dazu in der <a href="/#datenschutzModal">Datenschutzerklärung</a>.</p>
-</div>
+<main class="thanks">
+  <a class="reveal" href="/" aria-label="Zur Startseite von Schattenschreck">
+    <img class="thanks-logo" src="https://i.imgur.com/Cl27hzM.png" alt="Schattenschreck" width="440" height="192" decoding="async" fetchpriority="high" onerror="this.classList.add('img-broken')">
+    <p class="thanks-logo-fallback" aria-hidden="true">Schattenschreck</p>
+  </a>
+
+  <hr class="thanks-rule reveal reveal-1">
+
+  <div class="reveal reveal-1">
+    <p class="thanks-label"><span>✓</span>&nbsp; Anmeldung bestätigt</p>
+    <h1>Du bist dabei.</h1>
+    <p class="thanks-text">
+      Ab und zu bekommst du Neuigkeiten zum Schattenschreck.
+      <strong>Kein Spam</strong> und jederzeit mit einem Klick abbestellbar.
+    </p>
+  </div>
+
+  <div class="reveal reveal-2">
+    <a class="thanks-button" href="/">Zurück zur Webseite</a>
+    <p class="thanks-foot"><a href="/#datenschutzModal">Datenschutz</a></p>
+  </div>
 </main>
 </body>
 </html>
