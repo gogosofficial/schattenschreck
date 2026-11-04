@@ -501,6 +501,131 @@
         </section>
 
         <!-- =========================================================
+             NEWSLETTER (DIREKT NACH DER GALERIE: HÖCHSTES INTERESSE,
+             BEVOR ES IN DIE SACHLICHEN FAQ GEHT)
+        ========================================================= -->
+        <section class="newsletter-section" id="newsletter" aria-labelledby="newsletterHeading">
+            <div class="container">
+                <div class="newsletter-card reveal">
+                    <div class="newsletter-copy">
+                        <div class="section-label">
+                            Newsletter · Schattenschreck 2027
+                        </div>
+
+                        <h2 class="newsletter-title" id="newsletterHeading">
+                            Erfahre es<br>
+                            als Erste:r.
+                        </h2>
+
+                        <p class="newsletter-text">
+                            Der nächste Schattenschreck steigt am
+                            <time datetime="2027-10-31">31.&nbsp;Oktober&nbsp;2027</time>.
+                            Trag dich ein und bekomm alle Infos, bevor sie irgendwo anders
+                            auftauchen. Kein Spam, nur Post, wenn es wirklich etwas Neues gibt.
+                        </p>
+
+                        <ul class="newsletter-perks">
+                            <li>Exklusive Vorab-Infos zur neuen Story</li>
+                            <li>Termine &amp; Einlasszeiten vor allen anderen</li>
+                            <li>Erinnerung kurz bevor der Nebel aufzieht</li>
+                        </ul>
+                    </div>
+
+                    <div class="newsletter-form-wrap">
+                        <form
+                            class="newsletter-form"
+                            id="newsletterForm"
+                            action="/api/newsletter"
+                            method="post"
+                            novalidate
+                        >
+                            <div class="nl-field">
+                                <label for="nlName">Vorname</label>
+                                <input
+                                    id="nlName"
+                                    name="name"
+                                    type="text"
+                                    autocomplete="given-name"
+                                    maxlength="50"
+                                    required
+                                    aria-describedby="nlNameErr"
+                                >
+                                <p class="nl-field-err" id="nlNameErr"></p>
+                            </div>
+
+                            <div class="nl-field">
+                                <label for="nlEmail">E-Mail</label>
+                                <input
+                                    id="nlEmail"
+                                    name="email"
+                                    type="email"
+                                    inputmode="email"
+                                    autocomplete="email"
+                                    autocapitalize="none"
+                                    spellcheck="false"
+                                    maxlength="254"
+                                    required
+                                    aria-describedby="nlEmailErr"
+                                >
+                                <p class="nl-field-err" id="nlEmailErr"></p>
+                            </div>
+
+                            <!-- Honeypot gegen Bots: für Menschen unsichtbar und nicht fokussierbar -->
+                            <div class="nl-hp" aria-hidden="true">
+                                <label for="nlWebsite">Website (bitte leer lassen)</label>
+                                <input id="nlWebsite" name="website" type="text" tabindex="-1" autocomplete="off">
+                            </div>
+
+                            <div class="nl-consent">
+                                <input
+                                    id="nlConsent"
+                                    name="consent"
+                                    type="checkbox"
+                                    required
+                                    aria-describedby="nlConsentErr"
+                                >
+                                <label for="nlConsent">
+                                    Ich möchte Infos zu Schattenschreck per E-Mail erhalten.
+                                    Abmeldung jederzeit möglich. Mehr in der
+                                    <a href="#datenschutzModal" data-datenschutz-open>Datenschutzerklärung</a>.
+                                </label>
+                            </div>
+                            <p class="nl-field-err nl-consent-err" id="nlConsentErr"></p>
+
+                            <p class="nl-error" id="nlError" role="alert"></p>
+
+                            <button class="primary-button newsletter-submit" id="nlSubmit" type="submit">
+                                <span class="nl-submit-text">Jetzt eintragen</span>
+                            </button>
+
+                            <p class="nl-note">
+                                Du bekommst gleich eine E-Mail zur Bestätigung (Double-Opt-In).
+                            </p>
+
+                            <noscript>
+                                <p class="nl-error">
+                                    Für die Anmeldung wird JavaScript benötigt. Alternativ
+                                    schreib uns an
+                                    <a href="mailto:gogosofficialgroup@gmail.com">gogosofficialgroup@gmail.com</a>.
+                                </p>
+                            </noscript>
+                        </form>
+
+                        <div class="newsletter-success" id="nlSuccess" role="status" tabindex="-1" hidden>
+                            <div class="newsletter-success-icon" aria-hidden="true">✓</div>
+                            <h3 class="newsletter-success-title">Fast geschafft!</h3>
+                            <p>
+                                Wir haben dir eine E-Mail an <strong id="nlSuccessEmail"></strong>
+                                geschickt. Klick dort auf den Bestätigungslink, erst dann bist du
+                                eingetragen. Nichts angekommen? Schau kurz im Spam-Ordner nach.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================================
              FAQ
         ========================================================= -->
         <section class="section" id="faq" aria-labelledby="faqHeading">
@@ -1009,7 +1134,62 @@
                     entgegenstehen.
                 </p>
 
-                <h3>8. Deine Rechte</h3>
+                <h3>8. Newsletter (Brevo)</h3>
+                <p>
+                    Wenn du dich für unseren Newsletter einträgst, verarbeiten
+                    wir deinen Vornamen und deine E-Mail-Adresse, um dir Infos
+                    zum Schattenschreck zu schicken: etwa zum nächsten Event,
+                    zu Terminen und Einlasszeiten sowie exklusive Vorab-Infos.
+                    Pflichtangaben sind nur Vorname und E-Mail-Adresse.
+                </p>
+                <p>
+                    Für den Versand nutzen wir Brevo. Anbieter ist die
+                    Sendinblue GmbH, Köpenicker Straße 126, 10179 Berlin,
+                    Deutschland. Deine Angaben werden beim Absenden über
+                    unseren Hosting-Anbieter (Cloudflare) direkt an Brevo
+                    übermittelt und dort gespeichert; wir legen keine eigene
+                    Kopie an. Mit Brevo besteht ein Vertrag zur
+                    Auftragsverarbeitung nach Art. 28 DSGVO. Brevo kann
+                    erfassen, ob eine E-Mail zugestellt und geöffnet wurde und
+                    welche Links angeklickt wurden; diese Auswertung nutzen wir
+                    nur, um den Newsletter zu verbessern.
+                </p>
+                <p>
+                    <strong>Double-Opt-In:</strong> Nach der Anmeldung bekommst
+                    du eine E-Mail mit einem Bestätigungslink. Erst wenn du ihn
+                    anklickst, wirst du in den Verteiler aufgenommen. So stellen
+                    wir sicher, dass sich niemand mit einer fremden Adresse
+                    einträgt. Zum Nachweis deiner Einwilligung speichert Brevo
+                    den Zeitpunkt der Anmeldung und der Bestätigung sowie die
+                    dabei verwendete IP-Adresse.
+                </p>
+                <p>
+                    <strong>Rechtsgrundlage</strong> ist deine Einwilligung nach
+                    Art. 6 Abs. 1 lit. a DSGVO. Die Speicherung des
+                    Einwilligungsnachweises beruht auf Art. 6 Abs. 1 lit. f
+                    DSGVO (berechtigtes Interesse, die Einwilligung belegen zu
+                    können).
+                </p>
+                <p>
+                    <strong>Speicherdauer:</strong> Wir speichern deine Daten,
+                    solange du den Newsletter beziehst. Bestätigst du die
+                    Anmeldung nicht, werden die Daten gelöscht. Nach deiner
+                    Abmeldung wird deine E-Mail-Adresse aus dem Verteiler
+                    entfernt; sie kann auf einer Sperrliste verbleiben, damit
+                    du keine weiteren Mails erhältst, und der
+                    Einwilligungsnachweis kann bis zu drei Jahre aufbewahrt
+                    werden, um die frühere Einwilligung belegen zu können.
+                </p>
+                <p>
+                    <strong>Widerruf:</strong> Du kannst deine Einwilligung
+                    jederzeit mit Wirkung für die Zukunft widerrufen, über den
+                    Abmeldelink in jeder Newsletter-E-Mail oder per E-Mail an
+                    <a href="mailto:gogosofficialgroup@gmail.com">gogosofficialgroup@gmail.com</a>.
+                    Die Rechtmäßigkeit der bis dahin erfolgten Verarbeitung
+                    bleibt davon unberührt.
+                </p>
+
+                <h3>9. Deine Rechte</h3>
                 <p>
                     Du hast gegenüber uns folgende Rechte bezüglich deiner
                     personenbezogenen Daten:

@@ -1393,6 +1393,167 @@ document.addEventListener("visibilitychange", () => {
 }
 
 /* =====================================================
+   3b. NEWSLETTER-ANMELDUNG (BREVO DOUBLE-OPT-IN ÜBER /api/newsletter)
+===================================================== */
+
+function initNewsletter() {
+    const form = document.getElementById("newsletterForm");
+    if (!form) return;
+
+    const nameInput = document.getElementById("nlName");
+    const emailInput = document.getElementById("nlEmail");
+    const consentInput = document.getElementById("nlConsent");
+    const honeypot = document.getElementById("nlWebsite");
+    const nameErr = document.getElementById("nlNameErr");
+    const emailErr = document.getElementById("nlEmailErr");
+    const consentErr = document.getElementById("nlConsentErr");
+    const formErr = document.getElementById("nlError");
+    const submit = document.getElementById("nlSubmit");
+    const submitText = submit.querySelector(".nl-submit-text");
+    const success = document.getElementById("nlSuccess");
+    const successEmail = document.getElementById("nlSuccessEmail");
+
+    const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    const SUBMIT_LABEL = submitText.textContent;
+    let busy = false;
+
+    // Link zur Datenschutzerklärung öffnet das Modal (ohne JS: normaler Anker)
+    form.querySelectorAll("[data-datenschutz-open]").forEach((link) => {
+        link.addEventListener("click", (event) => {
+            event.preventDefault();
+            openDatenschutzModal(link);
+        });
+    });
+
+    function setFieldError(input, target, message) {
+        target.textContent = message;
+        if (message) input.setAttribute("aria-invalid", "true");
+        else input.removeAttribute("aria-invalid");
+    }
+
+    function setBusy(state) {
+        busy = state;
+        submit.disabled = state;
+        submit.setAttribute("aria-busy", state ? "true" : "false");
+        submit.classList.toggle("is-busy", state);
+        submitText.textContent = state ? "Wird gesendet …" : SUBMIT_LABEL;
+    }
+
+    function validate() {
+        const name = nameInput.value.trim();
+        const email = emailInput.value.trim();
+        let firstInvalid = null;
+
+        if (!name) {
+            setFieldError(nameInput, nameErr, "Bitte gib deinen Vornamen ein.");
+            firstInvalid = nameInput;
+        } else if (name.length > 50) {
+            setFieldError(nameInput, nameErr, "Der Vorname darf höchstens 50 Zeichen lang sein.");
+            firstInvalid = nameInput;
+        } else {
+            setFieldError(nameInput, nameErr, "");
+        }
+
+        if (!email) {
+            setFieldError(emailInput, emailErr, "Bitte gib deine E-Mail-Adresse ein.");
+            firstInvalid = firstInvalid || emailInput;
+        } else if (!EMAIL_RE.test(email)) {
+            setFieldError(emailInput, emailErr, "Diese E-Mail-Adresse sieht unvollständig aus.");
+            firstInvalid = firstInvalid || emailInput;
+        } else {
+            setFieldError(emailInput, emailErr, "");
+        }
+
+        if (!consentInput.checked) {
+            setFieldError(consentInput, consentErr, "Bitte bestätige, dass du Infos per E-Mail erhalten möchtest.");
+            firstInvalid = firstInvalid || consentInput;
+        } else {
+            setFieldError(consentInput, consentErr, "");
+        }
+
+        return firstInvalid;
+    }
+
+    // Fehler verschwinden, sobald das Feld korrigiert wird
+    [[nameInput, nameErr], [emailInput, emailErr]].forEach(([input, target]) => {
+        input.addEventListener("input", () => {
+            if (input.hasAttribute("aria-invalid")) setFieldError(input, target, "");
+            formErr.textContent = "";
+        });
+    });
+    consentInput.addEventListener("change", () => {
+        if (consentInput.checked) setFieldError(consentInput, consentErr, "");
+        formErr.textContent = "";
+    });
+
+    const ERROR_TEXT = {
+        invalid_email: "Diese E-Mail-Adresse wurde nicht akzeptiert. Bitte prüfe deine Eingabe.",
+        invalid_name: "Bitte gib nur deinen Vornamen ein (ohne Links oder Sonderzeichen).",
+        consent: "Bitte bestätige, dass du Infos per E-Mail erhalten möchtest."
+    };
+
+    form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        if (busy) return;
+        formErr.textContent = "";
+
+        const invalid = validate();
+        if (invalid) {
+            invalid.focus();
+            return;
+        }
+
+        setBusy(true);
+        const email = emailInput.value.trim();
+
+        try {
+            const response = await fetch("/api/newsletter", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "same-origin",
+                body: JSON.stringify({
+                    name: nameInput.value.trim(),
+                    email: email,
+                    consent: consentInput.checked,
+                    website: honeypot ? honeypot.value : ""
+                })
+            });
+
+            let data = null;
+            try { data = await response.json(); } catch (e) { data = null; }
+
+            if (response.ok && data && data.ok) {
+                successEmail.textContent = email;
+                form.hidden = true;
+                success.hidden = false;
+                success.focus();
+                return;
+            }
+
+            const code = data && data.error;
+            if (code === "invalid_email") {
+                setFieldError(emailInput, emailErr, ERROR_TEXT.invalid_email);
+                emailInput.focus();
+            } else if (code === "invalid_name") {
+                setFieldError(nameInput, nameErr, ERROR_TEXT.invalid_name);
+                nameInput.focus();
+            } else if (code === "consent") {
+                setFieldError(consentInput, consentErr, ERROR_TEXT.consent);
+                consentInput.focus();
+            } else if (response.status === 403) {
+                formErr.textContent = "Anmeldung blockiert. Lade die Seite neu und versuche es erneut.";
+            } else {
+                formErr.textContent = "Die Anmeldung hat gerade nicht geklappt. Versuche es in ein paar Minuten erneut oder schreib uns an gogosofficialgroup@gmail.com.";
+            }
+        } catch (err) {
+            formErr.textContent = "Keine Verbindung zum Server. Prüfe deine Internetverbindung und versuche es erneut.";
+        }
+
+        setBusy(false);
+    });
+}
+
+/* =====================================================
    4. FAQ ACCORDION (ZENTRAL KOORDINIERTE ANIMATIONEN)
 ===================================================== */
 
@@ -1927,6 +2088,7 @@ const modules = [
     initNavigationAndOverlays,
     initGallery,
     initCountdown,
+    initNewsletter,
     initFaq,
     initScrollAndReveal
 ];
