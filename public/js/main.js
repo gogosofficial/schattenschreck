@@ -6,54 +6,30 @@ window.__schattenschreckInitialized = true;
 
 /* =====================================================
    GALERIE-BILDER (HIER JEDERZEIT LEICHT AUSTAUSCHEN / ERGÄNZEN)
-   Pro Jahr: label (Tab-Text), note (Hinweis-Badge, optional), images (Direktlinks)
+   Die Bilder liegen in public/images/galerie/ als <Jahr>-<Nr>.webp (Anzeige)
+   und <Jahr>-<Nr>.jpg (Link „Bild in voller Größe öffnen“).
+   Pro Jahr: label (Tab-Text), note (Hinweis, optional), count (Anzahl Bilder).
    Neue Jahre einfach als weiteren Eintrag ergänzen – Tabs entstehen automatisch.
 ===================================================== */
 
-const GALLERY_DATA = {
-    "2026": {
-label: "2026 (Neu)",
-note: "Neue Bilder von 2026 veröffentlicht",
-images: [
-    "https://i.postimg.cc/xCMJLHVp/cc17fa3e-35fb-4310-9fe8-15f0932d45dd.jpg",
-    "https://i.postimg.cc/sxzBmXVP/3b1feca0-a4be-493c-9076-ead6d1f5907f.jpg",
-    "https://i.postimg.cc/L85JNGMs/9BA880C8-B368-4FEB-BAEE-9E7D55730D4C.jpg",
-    "https://i.postimg.cc/DwN8D5vK/0443c57a-508a-423e-8569-7730d2e4db34.jpg",
-    "https://i.postimg.cc/jjJLrN2R/179ad8ca-8a01-431f-a3d1-75897a39023c.jpg"
-]
-    },
-    "2025": {
-label: "2025",
-note: "",
-images: [
-    "https://i.postimg.cc/xTSGpfsd/bb1280a1-d39a-4212-8d84-2b3bd39a261c.jpg",
-    "https://i.postimg.cc/pXYfgw4V/d1cb3507-c40e-4e3f-b9b7-2abd1b99dba8.jpg",
-    "https://i.postimg.cc/3xtgwg3Z/794CB09D-517C-403F-9F67-827CCBA50B43.jpg",
-    "https://i.postimg.cc/KzMLQwB5/06316b00-5694-43e7-93a5-beeee5556b09.jpg",
-    "https://i.postimg.cc/2jnhWpzR/f1afada9-6013-49ee-89bf-539dc262dd9b.jpg"
-]
-    },
-    "2024": {
-label: "2024",
-note: "",
-images: [
-    "https://i.postimg.cc/RhJts8tg/4e0b1d45-34f1-43ae-8ffb-659ebc88d4de.jpg",
-    "https://i.postimg.cc/TwF03nJX/53fb4270-8bde-4cd0-b30a-74afaf763f42.jpg",
-    "https://i.postimg.cc/3r09bbYs/0175b7e3-0579-4aab-b2e4-66991303144e.jpg",
-    "https://i.postimg.cc/m2xVxNr2/2df6dc38-6b0a-461e-a585-451f0a8bf5b3.jpg",
-    "https://i.postimg.cc/P5CqmZm1/571223d4-52b7-410f-ac57-3b22a27a8998.jpg"
-]
-    },
-    "2023": {
-label: "2023",
-note: "",
-images: [
-    "https://i.postimg.cc/T3cp2GJP/37b77913-a662-454a-8ece-0a780045ec77.jpg",
-    "https://i.postimg.cc/y8KDzW9M/50154b5b-e8f0-4158-bf1d-8470c21de5b0.jpg",
-    "https://i.postimg.cc/qB9tj1vY/24059b0f-2805-4356-8de4-13897438377a.jpg"
-]
-    }
+const GALLERY_PATH = "/images/galerie/";
+
+const GALLERY_SOURCE = {
+    "2026": { label: "2026", note: "Neu: die Bilder von 2026", count: 5 },
+    "2025": { label: "2025", note: "", count: 5 },
+    "2024": { label: "2024", note: "", count: 5 },
+    "2023": { label: "2023", note: "", count: 3 }
 };
+
+const GALLERY_DATA = {};
+Object.keys(GALLERY_SOURCE).forEach((year) => {
+    const entry = GALLERY_SOURCE[year];
+    GALLERY_DATA[year] = {
+        label: entry.label,
+        note: entry.note,
+        images: Array.from({ length: entry.count }, (_, i) => `${GALLERY_PATH}${year}-${i + 1}.webp`)
+    };
+});
 
 /* =====================================================
    ZENTRALE KONFIGURATION (EVENT & INTRO-FEINABSTIMMUNG)
@@ -565,6 +541,9 @@ const datenschutzButton = document.getElementById("datenschutzButton");
 const datenschutzModal = document.getElementById("datenschutzModal");
 const datenschutzClose = document.getElementById("datenschutzClose");
 
+// Muss zum Breakpoint in css/main.css passen (Tablet: max-width 1000px)
+const MOBILE_NAV_MAX_WIDTH = 1000;
+
 let isMenuOpen = false;
 let isModalOpen = false;
 let lastModalTrigger = null;
@@ -639,7 +618,7 @@ function closeMobileMenu(restoreFocusToButton = true) {
     setElementInert(footerElement, false);
     updateScrollbarCompensation(false);
 
-    if (restoreFocusToButton && window.innerWidth <= 800) {
+    if (restoreFocusToButton && window.innerWidth <= MOBILE_NAV_MAX_WIDTH) {
 menuButton.focus();
     }
 }
@@ -776,10 +755,6 @@ lastDatenschutzTrigger.focus();
 
 /* ---- Galerie-Overlay: Logik ---- */
 
-function pad2(n) {
-    return String(n).padStart(2, "0");
-}
-
 function renderGalleryTabs() {
     if (!galleryTabsEl) return;
     galleryTabsEl.textContent = "";
@@ -844,13 +819,13 @@ galleryImageEl.src = url;
     }
 
     if (galleryCounterNumEl) {
-galleryCounterNumEl.textContent = `${pad2(galleryIndex + 1)} / ${pad2(total)}`;
+galleryCounterNumEl.textContent = `${galleryIndex + 1} / ${total}`;
     }
     if (galleryCounterYearEl) {
 galleryCounterYearEl.textContent = `Schattenschreck ${galleryYear}`;
     }
     if (galleryDownloadEl) {
-galleryDownloadEl.setAttribute("href", url);
+galleryDownloadEl.setAttribute("href", url.replace(/\.webp$/, ".jpg"));
     }
 
     // Nächstes Bild leise vorladen, damit das Durchschalten ohne Wartezeit klappt
@@ -920,7 +895,7 @@ function galleryStep(direction) {
     showGalleryImage(galleryIndex + direction);
 }
 
-function openGalleryModal(year, triggerElement) {
+function openGalleryModal(year, triggerElement, startIndex) {
     if (!galleryModal || !galleryClose || galleryYears.length === 0) return;
     if (isMenuOpen) {
 closeMobileMenu(false);
@@ -935,7 +910,7 @@ closeDatenschutzModal(false);
     lastGalleryTrigger = triggerElement || document.activeElement;
     isGalleryOpen = true;
 
-    selectGalleryYear(String(year || galleryYears[0]), 0);
+    selectGalleryYear(String(year || galleryYears[0]), Number(startIndex) || 0);
 
     galleryModal.classList.add("open");
     galleryModal.setAttribute("aria-hidden", "false");
@@ -1162,7 +1137,7 @@ if (event.key === "Tab") {
     window.addEventListener(
 "resize",
 () => {
-    if (window.innerWidth > 800 && isMenuOpen) {
+    if (window.innerWidth > MOBILE_NAV_MAX_WIDTH && isMenuOpen) {
         closeMobileMenu(false);
     }
 },
@@ -1194,7 +1169,7 @@ btn.setAttribute("aria-haspopup", "dialog");
 btn.setAttribute("aria-controls", "galleryModal");
 btn.addEventListener("click", (event) => {
     event.preventDefault();
-    openGalleryModal(btn.dataset.galleryYear || galleryYears[0], btn);
+    openGalleryModal(btn.dataset.galleryYear || galleryYears[0], btn, btn.dataset.galleryIndex);
 });
     });
 
@@ -1254,13 +1229,13 @@ swipeTracking = false;
 galleryModal.classList.add("transitions-ready");
     });
 
-    /* ---- Preloading beim Seitenstart: nur das erste Bild von 2026 ----
+    /* ---- Preloading beim Seitenstart: nur das erste Bild des neuesten Jahres ----
        Alle weiteren Bilder folgen erst beim Öffnen der Galerie bzw.
        Jahreswechsel (siehe preloadGalleryYear). Die Helfer preloadCache,
        canPreload und preloadImage liegen im äußeren Scope. */
     function startInitialPreload() {
 if (!canPreload()) return;
-const first = GALLERY_DATA["2026"];
+const first = GALLERY_DATA[galleryYears[0]];
 if (first && first.images && first.images.length > 0) {
     preloadImage(first.images[0]);
 }
@@ -1862,6 +1837,57 @@ if (event.matches) {
 }
 
 /* =====================================================
+   5b. NAVIGATION: AKTUELLEN ABSCHNITT MARKIEREN
+===================================================== */
+
+function initActiveNav() {
+    if (!("IntersectionObserver" in window)) return;
+
+    const links = Array.from(document.querySelectorAll('.desktop-nav a[href^="#"]'));
+    const byId = new Map();
+    links.forEach((link) => {
+        const id = link.getAttribute("href").slice(1);
+        if (document.getElementById(id)) byId.set(id, link);
+    });
+    if (byId.size === 0) return;
+
+    const visible = new Set();
+
+    function update() {
+        // Der oberste sichtbare Abschnitt (in Dokumentreihenfolge) gilt als aktiv
+        let activeId = null;
+        byId.forEach((_, id) => {
+            if (activeId === null && visible.has(id)) activeId = id;
+        });
+        byId.forEach((link, id) => {
+            if (id === activeId) link.setAttribute("aria-current", "true");
+            else link.removeAttribute("aria-current");
+        });
+    }
+
+    const observer = new IntersectionObserver(
+        (entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) visible.add(entry.target.id);
+                else visible.delete(entry.target.id);
+            });
+            update();
+        },
+        { rootMargin: "-35% 0px -55% 0px" }
+    );
+
+    // In Dokumentreihenfolge beobachten, damit „oberster sichtbarer Abschnitt“ stimmt
+    const ordered = Array.from(byId.keys()).sort((a, b) => {
+        const pos = document.getElementById(a).compareDocumentPosition(document.getElementById(b));
+        return pos & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1;
+    });
+    const orderedMap = new Map(ordered.map((id) => [id, byId.get(id)]));
+    byId.clear();
+    orderedMap.forEach((link, id) => byId.set(id, link));
+    byId.forEach((_, id) => observer.observe(document.getElementById(id)));
+}
+
+/* =====================================================
    COOKIE-CONSENT & GOOGLE TAG MANAGER (ECHTES OPT-IN)
 ===================================================== */
 
@@ -2102,7 +2128,8 @@ const modules = [
     initCountdown,
     initNewsletter,
     initFaq,
-    initScrollAndReveal
+    initScrollAndReveal,
+    initActiveNav
 ];
 
 modules.forEach((initFn) => {

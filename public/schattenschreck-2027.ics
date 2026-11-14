@@ -1,0 +1,21 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//GOGOS Gruppe//Schattenschreck//DE
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:schattenschreck-2027@schattenschreck.pages.dev
+DTSTAMP:20261114T120000Z
+DTSTART:20271031T170000Z
+DTEND:20271031T190000Z
+SUMMARY:Schattenschreck 2027 (Einlass 18 bis 20 Uhr)
+LOCATION:Schattenschreck-Garten\, Wardersee
+DESCRIPTION:Einlass 18 bis 20 Uhr\, Eintritt frei\, ohne Anmeldung.
+URL:https://schattenschreck.pages.dev/
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Morgen ist Schattenschreck
+TRIGGER:-P1D
+END:VALARM
+END:VEVENT
+END:VCALENDAR

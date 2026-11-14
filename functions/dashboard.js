@@ -70,13 +70,12 @@ export async function onRequestGet({ request, env }) {
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow"><meta name="theme-color" content="#090909"><meta name="color-scheme" content="dark">
 <title>Dashboard — Schattenschreck</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&family=Oswald:wght@500;600&display=swap">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/css/app.css"></head>
 <body data-user="${esc(email)}">
 <a class="skip-link" href="#main">Zum Inhalt springen</a>
 <header class="header"><div class="container header-inner">
-<img class="logo" src="https://i.imgur.com/Cl27hzM.png" alt="Schattenschreck" width="130" height="44">
+<img class="logo" src="/images/logo.png" alt="Schattenschreck" width="485" height="83">
 <div class="head-right"><span class="head-user" title="${esc(email)}"><span class="sr-only">Angemeldet als </span>${esc(email)}</span><button class="secondary-button" id="logout" type="button">Abmelden</button></div>
 </div>
 <nav class="dash-nav" aria-label="Dashboard-Bereiche"><div class="container dash-nav-inner">
@@ -123,7 +122,7 @@ ${myZone ? "" : `<p class="card-note">Sobald dein Posten feststeht, erscheint er
       "X-Frame-Options": "DENY",
       "X-Content-Type-Options": "nosniff",
       "Referrer-Policy": "no-referrer",
-      "Content-Security-Policy": "default-src 'none'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' https://i.imgur.com; script-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'",
+      "Content-Security-Policy": "default-src 'none'; style-src 'self'; font-src 'self'; img-src 'self'; script-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'",
     },
   });
 }

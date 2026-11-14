@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /login.html
+Disallow: /api/
+
+Sitemap: https://schattenschreck.pages.dev/sitemap.xml

@@ -7,10 +7,17 @@ Webseite zum Horror-Event **Schattenschreck** (31.10.2027, Wardersee) mit gesch�
 ```
 schattenschreck/
 ├── public/                     Statische Dateien (Build-Ausgabeverzeichnis für Cloudflare Pages)
-│   ├── index.html              Öffentliche Startseite (Intro, Countdown, Infos, Galerie, FAQ, Impressum, Datenschutz)
+│   ├── index.html              Öffentliche Startseite (Intro, Hero mit Countdown, Besuch, Erlebnis, Galerie, Newsletter, FAQ, Mitmachen, Impressum, Datenschutz)
 │   ├── login.html              Team-Login
 │   ├── newsletter-danke.html   Zielseite nach dem Klick auf den Bestätigungslink („Anmeldung bestätigt“)
+│   ├── 404.html                Fehlerseite für unbekannte Adressen
 │   ├── _redirects              Leitet alte Asset-Pfade (/ss.css, /login.js, /dash.js) auf die neuen um
+│   ├── _headers                Cache- und Sicherheits-Header für Cloudflare Pages
+│   ├── robots.txt, sitemap.xml Hinweise für Suchmaschinen
+│   ├── schattenschreck-2027.ics Kalendereintrag zum Herunterladen (Datum/Uhrzeit bei Änderungen anpassen)
+│   ├── favicon.svg, favicon.png, apple-touch-icon.png
+│   ├── fonts/                  Oswald und DM Sans als lokale Variable Fonts (woff2)
+│   ├── images/                 Logo, GOGOS-Logo, Vorschaubild fürs Teilen (og.jpg), galerie/
 │   ├── css/
 │   │   ├── main.css            Styles der öffentlichen Startseite
 │   │   └── app.css             Styles für Login und Dashboard (gleiche Farben & Schriften)
@@ -34,7 +41,13 @@ schattenschreck/
     └── hash.mjs                Lokales Hilfsskript: erzeugt Passwort-Hashes für die USERS-Variable
 ```
 
-Bilder (Logos, Galerie) liegen extern bei imgur bzw. postimg und sind in der Datenschutzerklärung genannt. Wenn sie später lokal gehostet werden, gehören sie nach `public/images/`. Dann auch die Datenschutzerklärung anpassen.
+Schriften, Logos und Galerie-Bilder liegen lokal in `public/fonts/` und `public/images/`. Die Seite lädt beim Aufruf nichts von Dritten nach (so steht es auch in der Datenschutzerklärung, Punkt 5). Nur die E-Mail-Vorlagen verweisen weiter auf das Logo bei imgur, weil E-Mails absolute Bildadressen brauchen.
+
+### Galerie-Bilder ergänzen
+
+1. Bild als `<Jahr>-<Nr>.webp` (Anzeige) und `<Jahr>-<Nr>.jpg` (Link „Bild in voller Größe öffnen“) nach `public/images/galerie/` legen, Hochformat 3:4.
+2. In `public/js/main.js` oben in `GALLERY_SOURCE` die Anzahl (`count`) des Jahres erhöhen bzw. ein neues Jahr eintragen.
+3. Optional: Vorschaubild im Abschnitt „Galerie“ in `public/index.html` tauschen (`data-gallery-year`, `data-gallery-index` ab 0) und die Zahl im Button „Alle 18 Bilder ansehen“ anpassen.
 
 ## Konfiguration in Cloudflare
 
@@ -58,7 +71,7 @@ Die ausgegebene Zeile in `USERS` einfügen. Wer aus `USERS` entfernt wird, ist s
 
 ## Newsletter (Brevo)
 
-Das Formular auf der Startseite (zwischen Galerie und FAQ) schickt Vorname, E-Mail und Einwilligung an `/api/newsletter`. Die Function prüft Herkunft (Origin), Eingaben und das versteckte Honeypot-Feld und ruft dann `POST https://api.brevo.com/v3/contacts/doubleOptinConfirmation` auf. Brevo verschickt die Bestätigungsmail; erst nach dem Klick landet der Kontakt in der Liste und wird auf `/newsletter-danke.html` (gleiche Domain wie die Anfrage) weitergeleitet.
+Das Formular auf der Startseite (zwischen Galerie und FAQ, in der Navigation als „Newsletter“ verlinkt) schickt Vorname, E-Mail und Einwilligung an `/api/newsletter`. Die Function prüft Herkunft (Origin), Eingaben und das versteckte Honeypot-Feld und ruft dann `POST https://api.brevo.com/v3/contacts/doubleOptinConfirmation` auf. Brevo verschickt die Bestätigungsmail; erst nach dem Klick landet der Kontakt in der Liste und wird auf `/newsletter-danke.html` (gleiche Domain wie die Anfrage) weitergeleitet.
 
 Einmalig in Brevo einrichten:
 

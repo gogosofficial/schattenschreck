@@ -3,6 +3,10 @@
    Gleiche Farben & Schriften wie die öffentliche Webseite (css/main.css)
 ========================================================= */
 
+/* Lokal gehostete Variable Fonts (SIL Open Font License) */
+@font-face { font-family: "Oswald"; src: url("/fonts/oswald.woff2") format("woff2"); font-weight: 200 700; font-style: normal; font-display: swap; }
+@font-face { font-family: "DM Sans"; src: url("/fonts/dm-sans.woff2") format("woff2"); font-weight: 100 1000; font-style: normal; font-display: swap; }
+
 :root {
   --bg: #090909;
   --panel: #111;
@@ -87,7 +91,7 @@ button, input { font: inherit; color: inherit; }
 }
 .header-inner { height: var(--header-h); display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .logo-link { display: inline-flex; flex-shrink: 0; }
-.logo { height: 44px; width: auto; display: block; }
+.logo { height: 30px; width: auto; display: block; }
 .head-right { display: flex; align-items: center; gap: 14px; min-width: 0; font-size: 14px; color: var(--muted); }
 .head-user { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 32ch; }
 
@@ -280,7 +284,7 @@ g:hover > .zone:not(.me) { fill: #1d1d1d; }
 @media (max-width: 640px) {
   :root { --header-h: 62px; }
   .container { width: calc(100% - 30px); }
-  .logo { height: 38px; }
+  .logo { height: 26px; }
   .head-user { display: none; }
   .card { padding: 22px 18px; }
   .hero { padding-top: 32px; }
