@@ -70,12 +70,13 @@ export async function onRequestGet({ request, env }) {
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow"><meta name="theme-color" content="#090909"><meta name="color-scheme" content="dark">
 <title>Dashboard — Schattenschreck</title>
+<link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/css/app.css"></head>
 <body data-user="${esc(email)}">
 <a class="skip-link" href="#main">Zum Inhalt springen</a>
 <header class="header"><div class="container header-inner">
-<img class="logo" src="/images/logo.png" alt="Schattenschreck" width="485" height="83">
+<img class="logo" src="/images/brand/logo-quer.svg" alt="Schattenschreck Horror" width="2567" height="464">
 <div class="head-right"><span class="head-user" title="${esc(email)}"><span class="sr-only">Angemeldet als </span>${esc(email)}</span><button class="secondary-button" id="logout" type="button">Abmelden</button></div>
 </div>
 <nav class="dash-nav" aria-label="Dashboard-Bereiche"><div class="container dash-nav-inner">
